@@ -11,7 +11,6 @@ import {
 export default function DigiassurFooter() {
   return (
     <footer className="bg-[#1d4b75] text-white" id="contact">
-      {/* Main Footer Container */}
       <div className="max-w-[1440px] mx-auto px-6 lg:px-12 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-8">
           {/* Column 1: Brand & Presentation (3 cols) */}
@@ -66,14 +65,13 @@ export default function DigiassurFooter() {
               <li>
                 <Link href="/epargne" className="text-[#f48161] font-bold flex items-center gap-1">
                   <span>Épargne</span>
-                  <span className="text-[9px] bg-[#f48161] text-white px-1.5 py-0.2 rounded-full font-bold">Actif</span>
                 </Link>
               </li>
               <li><Link href="/loisir" className="hover:text-white transition">Loisir</Link></li>
               <li className="pt-2">
                 <a href="https://pippipyalah.com/" target="_blank" rel="noreferrer" className="flex items-center gap-1.5 text-emerald-400 font-semibold hover:underline">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
-                  PipPipYalah
+                  <img src="/images/icon-pippip.svg" alt="" className="h-3.5 w-auto" />
+                  <span>PipPipYalah</span>
                 </a>
               </li>
             </ul>
@@ -116,14 +114,14 @@ export default function DigiassurFooter() {
               <div className="space-y-2">
                 <Link
                   href="/connexion"
-                  className="flex items-center gap-2 bg-[#f48161] hover:bg-[#e46e4e] text-white px-3 py-2 rounded-full text-xs font-semibold shadow-xs transition"
+                  className="flex items-center gap-2 bg-[#f48161] hover:bg-[#e46e4e] text-white px-3 py-1.5 rounded-full text-xs font-semibold shadow-xs transition"
                 >
-                  <UserPlus className="w-3.5 h-3.5" />
+                  <img src="/images/icon-user-orange.png" alt="" className="h-5 w-auto" />
                   <span>Créer un compte</span>
                 </Link>
                 <Link
                   href="/connexion"
-                  className="flex items-center gap-2 bg-[#568ba9] hover:bg-[#4a7a96] text-white px-3 py-2 rounded-full text-xs font-semibold shadow-xs transition"
+                  className="flex items-center gap-2 bg-[#568ba9] hover:bg-[#4a7a96] text-white px-3 py-1.5 rounded-full text-xs font-semibold shadow-xs transition"
                 >
                   <LogIn className="w-3.5 h-3.5" />
                   <span>Se connecter</span>
@@ -185,19 +183,19 @@ export default function DigiassurFooter() {
               </h4>
               <div className="flex flex-col gap-2 text-xs text-slate-300">
                 <a href="https://www.facebook.com/digiassur.ma/" target="_blank" rel="noreferrer" className="hover:text-white flex items-center gap-2">
-                  <span className="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center text-xs font-bold">f</span>
+                  <img src="/images/facebook.png" alt="" className="w-4 h-4 object-contain" />
                   <span>Facebook</span>
                 </a>
                 <a href="https://www.linkedin.com/company/digiassur/" target="_blank" rel="noreferrer" className="hover:text-white flex items-center gap-2">
-                  <span className="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center text-xs font-bold">in</span>
+                  <img src="/images/linkedin.png" alt="" className="w-4 h-4 object-contain" />
                   <span>LinkedIn</span>
                 </a>
                 <a href="https://www.instagram.com/digiassur.ma/" target="_blank" rel="noreferrer" className="hover:text-white flex items-center gap-2">
-                  <span className="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center text-xs font-bold">ig</span>
+                  <img src="/images/instagram.png" alt="" className="w-4 h-4 object-contain" />
                   <span>Instagram</span>
                 </a>
                 <a href="https://www.youtube.com/channel/UCN4K0mt2lmuigcyoz7XqCkQ" target="_blank" rel="noreferrer" className="hover:text-white flex items-center gap-2">
-                  <span className="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center text-xs font-bold">yt</span>
+                  <img src="/images/youtube.png" alt="" className="w-4 h-4 object-contain" />
                   <span>YouTube</span>
                 </a>
               </div>

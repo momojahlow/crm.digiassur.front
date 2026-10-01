@@ -1,9 +1,5 @@
 import { useState } from "react";
 import { 
-  Headphones, 
-  MapPin, 
-  Mail, 
-  MessageCircle, 
   X, 
   Send, 
   Bot,
@@ -15,7 +11,7 @@ export default function FloatingWidgets() {
   const [messages, setMessages] = useState<Array<{ sender: "bot" | "user"; text: string }>>([
     {
       sender: "bot",
-      text: "Bonjour ! Je suis Digibot, votre conseiller virtuel Digiassur. Comment puis-je vous aider pour votre projet d'épargne aujourd'hui ?",
+      text: "Bonjour ! Je suis Digibot, votre conseiller virtuel Digiassur. Comment puis-je vous aider pour votre devis d'assurance aujourd'hui ?",
     },
   ]);
   const [inputValue, setInputValue] = useState("");
@@ -29,14 +25,14 @@ export default function FloatingWidgets() {
     setInputValue("");
 
     setTimeout(() => {
-      let reply = "Je transmets votre demande à notre conseiller expert épargne. Vous pouvez également remplir le simulateur ci-dessus ou nous contacter au (+212) 522 36 81 82.";
+      let reply = "Je transmets votre demande à notre conseiller expert. Vous pouvez également remplir notre formulaire de devis en ligne ou nous appeler au (+212) 522 36 81 82.";
       const lower = userText.toLowerCase();
-      if (lower.includes("taux") || lower.includes("rendement")) {
-        reply = "Nos contrats d'épargne partenaires offrent des rendements attractifs nets d'impôts avec capital garanti. Remplissez notre formulaire pour une simulation sur mesure !";
-      } else if (lower.includes("retraite")) {
-        reply = "L'assurance retraite complémentaire Digiassur vous permet de constituer un capital ou une rente à vie avec de réels avantages fiscaux.";
-      } else if (lower.includes("devis") || lower.includes("simulation")) {
-        reply = "Vous pouvez faire votre simulation immédiatement dans la section 'Simulateur & Devis Gratuit' sur cette page !";
+      if (lower.includes("auto")) {
+        reply = "Pour l'assurance Auto, nos tarifs démarrent à partir de 153 DHS TTC/mois avec attestation livrée à domicile. Consultez notre onglet Auto pour votre devis en direct !";
+      } else if (lower.includes("moto")) {
+        reply = "Pour l'assurance Moto & Scooter, nos formules démarrent à partir de 62.5 DHS TTC/mois avec assistance 24/7.";
+      } else if (lower.includes("epargne") || lower.includes("retraite")) {
+        reply = "Notre solution Épargne vous permet de constituer un capital garanti avec d'excellents rendements défiscalisés. Remplissez notre simulateur interactif pour voir votre projection !";
       }
 
       setMessages((prev) => [...prev, { sender: "bot", text: reply }]);
@@ -46,66 +42,58 @@ export default function FloatingWidgets() {
   return (
     <>
       {/* Side Quick Action Bar (Floating on Right Edge) */}
-      <div className="fixed right-0 top-1/2 -translate-y-1/2 z-40 flex flex-col bg-[#fe977b] rounded-l-lg shadow-xl overflow-hidden divide-y divide-white/20">
+      <div className="fixed right-0 top-[400px] z-50 flex flex-col divide-y-2 divide-white shadow-xl">
         <a
           href="tel:+212522368182"
-          className="p-2.5 hover:bg-[#f48161] text-white flex items-center justify-center transition"
-          title="Appelez un conseiller"
+          className="p-1 bg-[#fe977b] hover:bg-[#e46e4e] transition flex items-center justify-center"
+          title="Assistance téléphonique"
         >
-          <Headphones className="w-5 h-5" />
+          <img src="/images/casque-orange.png" alt="Casque" className="w-8 h-8 object-contain" />
         </a>
         <a
-          href="#contact"
-          className="p-2.5 hover:bg-[#f48161] text-white flex items-center justify-center transition"
-          title="Notre agence à Casablanca"
+          href="/contact"
+          className="px-1 py-1 bg-[#fe977b] hover:bg-[#e46e4e] transition flex items-center justify-center"
+          title="Adresse de l'agence"
         >
-          <MapPin className="w-5 h-5" />
+          <img src="/images/icon-pin.svg" alt="Localisation" className="w-8 h-6 mx-auto object-contain" />
         </a>
         <a
-          href="mailto:contact@digiassur.ma"
-          className="p-2.5 hover:bg-[#f48161] text-white flex items-center justify-center transition"
-          title="Nous envoyer un email"
+          href="/contact"
+          className="p-1 bg-[#fe977b] hover:bg-[#e46e4e] transition flex items-center justify-center"
+          title="Nous écrire"
         >
-          <Mail className="w-5 h-5" />
+          <img src="/images/icon-unread-mail.svg" alt="Email" className="py-1 w-6 h-6 object-contain" />
         </a>
         <a
-          href="https://api.whatsapp.com/send/?phone=212711454567&text=Bonjour,%20je%20souhaite%20des%20informations%20sur%20l'epargne"
+          href="https://api.whatsapp.com/send/?phone=212711454567&text=Bonjour,%20je%20souhaite%20un%20renseignement%20assurance"
           target="_blank"
           rel="noreferrer"
-          className="p-2.5 hover:bg-[#f48161] text-white flex items-center justify-center transition"
-          title="Discuter sur WhatsApp"
+          className="p-1 bg-[#fe977b] hover:bg-[#e46e4e] transition flex items-center justify-center"
+          title="WhatsApp direct"
         >
-          <img
-            src="/images/whatsapp.png"
-            alt="WhatsApp"
-            className="w-5 h-5 object-contain"
-            onError={(e) => {
-              (e.currentTarget as HTMLImageElement).src = "https://digiassur.ma/assets/img/whatsapp-icon.png";
-            }}
-          />
+          <img src="/images/whatsapp.png" alt="WhatsApp" className="w-8 h-8 object-contain" />
         </a>
       </div>
 
       {/* Floating Bottom-Right Pill: Digibot à l'écoute */}
-      <div className="fixed right-4 bottom-5 z-40">
+      <div className="fixed right-2 bottom-[15px] z-50">
         <button
           type="button"
           onClick={() => setChatOpen(!chatOpen)}
-          className="flex items-center gap-3 bg-[#f48161] hover:bg-[#e46e4e] text-white px-4 py-2.5 rounded-full shadow-2xl transition transform hover:scale-105 cursor-pointer"
+          className="flex items-center gap-[12px] bg-[#f48161] hover:bg-[#e46e4e] rounded-[40px] p-[7px] w-[205px] h-[58px] shadow-2xl transition transform hover:scale-102 cursor-pointer"
         >
-          <div className="w-9 h-9 rounded-full bg-[#fef1eb] flex items-center justify-center text-[#f48161]">
-            <MessageCircle className="w-5 h-5 fill-current" />
+          <div className="bg-[#fef1eb] flex justify-center items-center rounded-[22px] py-[10px] w-[44px] h-[44px] shrink-0">
+            <img src="/images/icon-digibot.svg" alt="" className="w-6 h-6" />
           </div>
-          <span className="font-bold text-xs sm:text-sm tracking-wide pr-1">
+          <span className="font-semibold text-white text-[14px] whitespace-nowrap">
             Digibot à l'écoute
           </span>
         </button>
       </div>
 
-      {/* Interactive Chat Popup */}
+      {/* Interactive Chat Modal */}
       {chatOpen && (
-        <div className="fixed right-4 bottom-20 z-50 w-[340px] sm:w-[380px] bg-white rounded-2xl shadow-2xl border border-slate-200 flex flex-col overflow-hidden animate-in slide-in-from-bottom-5 duration-200">
-          {/* Header */}
+        <div className="fixed right-4 bottom-24 z-50 w-[340px] sm:w-[380px] bg-white rounded-2xl shadow-2xl border border-slate-200 flex flex-col overflow-hidden animate-in slide-in-from-bottom-5 duration-200">
           <div className="bg-[#153954] text-white px-5 py-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-full bg-[#f48161] flex items-center justify-center">
@@ -121,13 +109,12 @@ export default function FloatingWidgets() {
             </div>
             <button
               onClick={() => setChatOpen(false)}
-              className="text-white/70 hover:text-white p-1"
+              className="text-white/70 hover:text-white p-1 cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
           </div>
 
-          {/* Messages list */}
           <div className="p-4 h-[300px] overflow-y-auto space-y-3 bg-slate-50 text-xs">
             {messages.map((msg, i) => (
               <div
@@ -157,11 +144,10 @@ export default function FloatingWidgets() {
             ))}
           </div>
 
-          {/* Input form */}
           <form onSubmit={handleSendMessage} className="p-3 bg-white border-t border-slate-100 flex gap-2">
             <input
               type="text"
-              placeholder="Posez votre question sur l'épargne..."
+              placeholder="Posez votre question..."
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               className="flex-1 bg-slate-50 border border-slate-200 rounded-full px-4 py-2 text-xs focus:outline-none focus:border-[#568ba9]"

@@ -1,17 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import { 
-  Car, 
-  Bike, 
-  ShieldAlert, 
-  Home, 
-  Plane, 
-  HeartPulse, 
-  PiggyBank, 
-  Bike as LeisureIcon, 
-  Search, 
-  User, 
-  Globe, 
   ChevronDown, 
   Menu, 
   X,
@@ -29,14 +18,14 @@ export default function DigiassurHeader({ onSimulate }: DigiassurHeaderProps) {
   const [location] = useLocation();
 
   const products = [
-    { name: "Auto", icon: Car, href: "/auto" },
-    { name: "Moto", icon: Bike, href: "/moto" },
-    { name: "Accident", icon: ShieldAlert, href: "/accident" },
-    { name: "Habitation", icon: Home, href: "/habitation" },
-    { name: "Voyage", icon: Plane, href: "/voyage" },
-    { name: "Santé/Prévoyance", icon: HeartPulse, href: "/sante" },
-    { name: "Epargne", icon: PiggyBank, href: "/epargne", defaultActive: true },
-    { name: "Loisir", icon: LeisureIcon, href: "/loisir" },
+    { name: "Auto", icon: "/images/icon-car.svg", href: "/auto" },
+    { name: "Moto", icon: "/images/icon-moto.svg", href: "/moto" },
+    { name: "Accident", icon: "/images/icon-accident.svg", href: "/accident" },
+    { name: "Habitation", icon: "/images/icon-habitation.svg", href: "/habitation" },
+    { name: "Voyage", icon: "/images/icon-voyage.svg", href: "/voyage" },
+    { name: "Santé/Prévoyance", icon: "/images/icon-sante.svg", href: "/sante" },
+    { name: "Epargne", icon: "/images/icon-epargne.svg", href: "/epargne", defaultActive: true },
+    { name: "Loisir", icon: "/images/icon-loisir.svg", href: "/loisir" },
   ];
 
   return (
@@ -49,7 +38,7 @@ export default function DigiassurHeader({ onSimulate }: DigiassurHeaderProps) {
             <Link 
               href="/" 
               className={`font-semibold px-4 py-1.5 rounded-md shadow-xs transition ${
-                location === "/" || location === "/epargne"
+                location === "/" || location === "/epargne" || location === "/auto" || location === "/moto"
                   ? "bg-[#f48161] text-white" 
                   : "bg-slate-100 text-slate-700 hover:bg-slate-200"
               }`}
@@ -80,23 +69,23 @@ export default function DigiassurHeader({ onSimulate }: DigiassurHeaderProps) {
               rel="noreferrer" 
               className="text-slate-600 hover:text-[#1d4b75] font-medium px-3 py-1.5 rounded-md transition hover:bg-slate-50 flex items-center gap-1.5"
             >
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              PipPipYalah
+              <img src="/images/icon-pippip.svg" alt="" className="h-4 w-auto" />
+              <span>PipPipYalah</span>
             </a>
           </div>
 
           {/* Right utilities: Language + Espace Client */}
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2 bg-[#568ba9] text-white px-3.5 py-1.5 rounded-md text-xs font-semibold cursor-pointer shadow-xs hover:bg-[#4a7a96] transition">
-              <Globe className="w-3.5 h-3.5" />
+            <div className="flex items-center gap-2 bg-[#568ba9] text-white px-3 py-1 rounded-md text-xs font-semibold cursor-pointer shadow-xs hover:bg-[#4a7a96] transition">
+              <img src="/images/icon-lang.png" alt="Lang" className="h-6 w-auto object-contain" />
               <span>Français</span>
               <ChevronDown className="w-3 h-3 opacity-80" />
             </div>
             <Link 
               href="/connexion" 
-              className="flex items-center gap-2 bg-[#f48161] text-white px-4 py-1.5 rounded-md text-xs font-semibold shadow-xs hover:bg-[#e67050] transition"
+              className="flex items-center gap-2 bg-[#f48161] text-white px-3.5 py-1 rounded-md text-xs font-semibold shadow-xs hover:bg-[#e67050] transition"
             >
-              <User className="w-3.5 h-3.5" />
+              <img src="/images/icon-user-orange.png" alt="" className="h-6 w-auto object-contain" />
               <span>Espace client</span>
             </Link>
           </div>
@@ -114,10 +103,9 @@ export default function DigiassurHeader({ onSimulate }: DigiassurHeaderProps) {
           />
         </Link>
 
-        {/* Desktop Product Navigation Links */}
+        {/* Desktop Product Navigation Links with Figma SVGs */}
         <nav className="hidden lg:flex items-center gap-1 xl:gap-2">
           {products.map((item) => {
-            const Icon = item.icon;
             const isActive = location === item.href || (location === "/" && item.defaultActive);
             return (
               <Link
@@ -129,7 +117,11 @@ export default function DigiassurHeader({ onSimulate }: DigiassurHeaderProps) {
                     : "text-slate-700 hover:text-[#1d4b75] hover:bg-slate-50"
                 }`}
               >
-                <Icon className={`w-4 h-4 ${isActive ? "text-[#f48161]" : "text-slate-500"}`} />
+                <img 
+                  src={item.icon} 
+                  alt="" 
+                  className={`w-5 h-5 object-contain ${isActive ? "filter sepia contrast-150" : "opacity-75"}`} 
+                />
                 <span>{item.name}</span>
               </Link>
             );
@@ -142,7 +134,7 @@ export default function DigiassurHeader({ onSimulate }: DigiassurHeaderProps) {
             className="ml-2 p-2 text-slate-500 hover:text-[#1d4b75] hover:bg-slate-100 rounded-full transition cursor-pointer"
             aria-label="Recherche"
           >
-            <Search className="w-4 h-4" />
+            <img src="/images/icon-search.svg" alt="Search" className="w-5 h-5" />
           </button>
         </nav>
 
@@ -157,10 +149,10 @@ export default function DigiassurHeader({ onSimulate }: DigiassurHeaderProps) {
           </Link>
           <Link
             href="/connexion"
-            className="bg-[#f48161] text-white p-2 rounded-lg text-xs font-semibold"
+            className="p-1.5 rounded-lg text-xs font-semibold"
             aria-label="Espace client"
           >
-            <User className="w-5 h-5" />
+            <img src="/images/icon-user-orange.png" alt="" className="h-7 w-auto" />
           </Link>
           <button
             type="button"
@@ -173,14 +165,14 @@ export default function DigiassurHeader({ onSimulate }: DigiassurHeaderProps) {
         </div>
       </div>
 
-      {/* Search Input Bar (Dropdown) */}
+      {/* Search Dropdown */}
       {searchOpen && (
         <div className="border-t border-slate-100 bg-slate-50 py-3 px-6 shadow-inner animate-in fade-in duration-200">
           <div className="max-w-[1440px] mx-auto flex items-center gap-3">
-            <Search className="w-5 h-5 text-slate-400" />
+            <img src="/images/icon-search.svg" alt="" className="w-4 h-4 opacity-50" />
             <input
               type="text"
-              placeholder="Que recherchez-vous ? (ex: devis épargne, auto, retraite...)"
+              placeholder="Que recherchez-vous ? (ex: devis auto, moto, épargne...)"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full bg-white px-4 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-[#568ba9]"
@@ -200,7 +192,6 @@ export default function DigiassurHeader({ onSimulate }: DigiassurHeaderProps) {
       {mobileMenuOpen && (
         <div className="lg:hidden border-t border-slate-200 bg-white shadow-xl animate-in slide-in-from-top-2 duration-200">
           <div className="p-4 space-y-4 max-h-[calc(100vh-80px)] overflow-y-auto">
-            {/* Quick Segments */}
             <div className="flex gap-2">
               <Link 
                 href="/"
@@ -218,13 +209,11 @@ export default function DigiassurHeader({ onSimulate }: DigiassurHeaderProps) {
               </Link>
             </div>
 
-            {/* Insurance products */}
             <div className="space-y-1">
               <p className="text-xs font-bold text-slate-400 uppercase tracking-wider px-2 py-1">
                 Nos assurances
               </p>
               {products.map((item) => {
-                const Icon = item.icon;
                 const isActive = location === item.href || (location === "/" && item.defaultActive);
                 return (
                   <Link
@@ -237,7 +226,7 @@ export default function DigiassurHeader({ onSimulate }: DigiassurHeaderProps) {
                         : "text-slate-700 hover:bg-slate-50"
                     }`}
                   >
-                    <Icon className="w-5 h-5 text-[#f48161]" />
+                    <img src={item.icon} alt="" className="w-5 h-5 object-contain" />
                     <span>{item.name}</span>
                     {isActive && <span className="ml-auto text-[10px] bg-[#f48161] text-white px-2 py-0.5 rounded-full font-bold">Actif</span>}
                   </Link>
@@ -245,7 +234,6 @@ export default function DigiassurHeader({ onSimulate }: DigiassurHeaderProps) {
               })}
             </div>
 
-            {/* Mobile CTAs */}
             <div className="pt-4 border-t border-slate-100 space-y-2">
               <button
                 type="button"
