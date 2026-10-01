@@ -1,1 +1,7 @@
-{"routes":[{"path":"/","title":"Digiassur — Votre quotidien, bien protégé"},{"path":"/404","title":"Page introuvable"}]}
+{
+  "routes": [
+    { "path": "/", "title": "Digiassur — Votre quotidien, bien protégé" },
+    { "path": "/epargne", "title": "Épargne — Digiassur" },
+    { "path": "/404", "title": "Page introuvable" }
+  ]
+}

@@ -1,0 +1,1352 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap");
+
+.epargne-page {
+  --epargne-blue: #4a819d;
+  --epargne-blue-deep: #2b5274;
+  --epargne-blue-dark: #204667;
+  --epargne-teal: #5aa5a8;
+  --epargne-coral: #f27f61;
+  --epargne-ink: #303946;
+  --epargne-copy: #61666e;
+  --epargne-line: #e7e7e7;
+  min-height: 100vh;
+  overflow: hidden;
+  color: var(--epargne-ink);
+  background: #fff;
+  font-family: "DM Sans", Arial, sans-serif;
+  font-size: 15px;
+  line-height: 1.55;
+}
+.epargne-page *,
+.epargne-page *::before,
+.epargne-page *::after {
+  box-sizing: border-box;
+}
+.epargne-page h1,
+.epargne-page h2,
+.epargne-page h3,
+.epargne-page p {
+  margin-top: 0;
+}
+.epargne-page a {
+  color: inherit;
+  text-decoration: none;
+}
+.epargne-page button,
+.epargne-page a {
+  -webkit-tap-highlight-color: transparent;
+}
+.epargne-page button:focus-visible,
+.epargne-page a:focus-visible,
+.epargne-page input:focus-visible {
+  outline: 3px solid rgba(242, 127, 97, 0.68);
+  outline-offset: 3px;
+}
+.epargne-container {
+  width: min(100% - 64px, 1440px);
+  margin-inline: auto;
+}
+
+/* Brand and two-level navigation */
+.epargne-header {
+  position: relative;
+  z-index: 20;
+  background: #fff;
+  box-shadow: 0 1px 5px rgba(23, 48, 66, 0.08);
+}
+.epargne-utility {
+  min-height: 47px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding-inline: max(3.5vw, 28px);
+  border-bottom: 1px solid #ededed;
+}
+.epargne-utility-left,
+.epargne-audience-links,
+.epargne-utility-right {
+  display: flex;
+  align-items: center;
+}
+.epargne-utility-left {
+  min-width: 0;
+  gap: clamp(14px, 2vw, 34px);
+}
+.epargne-audience-trigger {
+  min-height: 34px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: 0;
+  border-radius: 4px;
+  padding: 0 15px;
+  color: #fff;
+  background: var(--epargne-coral);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.epargne-audience-links {
+  gap: clamp(14px, 2vw, 30px);
+  color: #74777b;
+  font-size: 12px;
+  white-space: nowrap;
+}
+.epargne-audience-links a,
+.epargne-footer-column a {
+  transition: color 0.18s ease;
+}
+.epargne-audience-links a:hover {
+  color: var(--epargne-blue);
+}
+.epargne-pip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.epargne-pip span {
+  color: #55b5a6;
+  font-size: 15px;
+  text-shadow: 4px 1px #f2b644;
+}
+.epargne-utility-right {
+  gap: 23px;
+}
+.epargne-language-wrap {
+  position: relative;
+}
+.epargne-language-trigger,
+.epargne-client-link {
+  min-height: 35px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  border: 0;
+  border-radius: 4px;
+  padding: 0 12px;
+  color: #fff;
+  background: var(--epargne-blue);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.epargne-client-link {
+  padding-inline: 15px;
+  background: var(--epargne-coral);
+}
+.epargne-language-menu {
+  position: absolute;
+  z-index: 25;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 138px;
+  display: grid;
+  gap: 7px;
+  border: 1px solid #e6e8e8;
+  border-radius: 7px;
+  padding: 11px;
+  background: #fff;
+  box-shadow: 0 12px 28px rgba(20, 49, 70, 0.16);
+  color: var(--epargne-ink);
+  font-size: 12px;
+}
+.epargne-language-menu span:first-child {
+  color: var(--epargne-coral);
+  font-weight: 700;
+}
+.epargne-primary-row {
+  min-height: 63px;
+  display: flex;
+  align-items: center;
+  gap: clamp(15px, 3vw, 44px);
+  padding: 6px max(3.5vw, 28px);
+}
+.epargne-brand {
+  width: max-content;
+  display: inline-flex;
+  align-items: center;
+  gap: 1px;
+  flex: 0 0 auto;
+  color: #4c9c9d;
+}
+.epargne-brand-image {
+  width: 133px;
+  height: 49px;
+  display: block;
+  object-fit: contain;
+}
+.epargne-language-icon {
+  width: 21px;
+  height: 21px;
+  object-fit: contain;
+}
+.epargne-search-icon {
+  width: 19px;
+  height: 19px;
+  object-fit: contain;
+}
+.epargne-product-icon {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+  object-fit: contain;
+}
+.epargne-product-nav {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: 1;
+  gap: clamp(8px, 1.45vw, 24px);
+}
+.epargne-product-nav > a {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding-block: 8px;
+  color: #747a7e;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: color 0.18s ease;
+}
+.epargne-product-nav > a::before {
+  display: none;
+}
+.epargne-product-nav > a:hover,
+.epargne-product-nav > a.is-active {
+  color: var(--epargne-blue);
+}
+.epargne-product-nav > a.is-active::after {
+  position: absolute;
+  right: 0;
+  bottom: 1px;
+  left: 20px;
+  height: 2px;
+  background: var(--epargne-coral);
+  content: "";
+}
+.epargne-icon-button,
+.epargne-mobile-account {
+  width: 38px;
+  height: 38px;
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 auto;
+  border: 0;
+  border-radius: 50%;
+  color: var(--epargne-blue);
+  background: transparent;
+}
+.epargne-search-desktop {
+  margin-left: 3px;
+}
+.epargne-search-mobile,
+.epargne-menu-toggle,
+.epargne-mobile-account {
+  display: none;
+}
+.epargne-search-panel {
+  position: absolute;
+  z-index: 30;
+  top: 100%;
+  right: 28px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid var(--epargne-line);
+  border-radius: 8px;
+  padding: 13px;
+  background: #fff;
+  box-shadow: 0 10px 28px rgba(25, 49, 68, 0.15);
+}
+.epargne-search-panel label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  clip: rect(0 0 0 0);
+  overflow: hidden;
+}
+.epargne-search-panel input {
+  width: min(55vw, 330px);
+  min-height: 38px;
+  border: 1px solid #d9dfe1;
+  border-radius: 4px;
+  padding: 0 10px;
+  font: inherit;
+}
+.epargne-search-panel button {
+  min-height: 38px;
+  border: 0;
+  border-radius: 4px;
+  padding: 0 12px;
+  color: #fff;
+  background: var(--epargne-blue);
+  font: inherit;
+  font-size: 12px;
+}
+
+/* Savings hero */
+.epargne-hero {
+  position: relative;
+  min-height: clamp(380px, 32.4vw, 494px);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  isolation: isolate;
+}
+.epargne-hero-photo {
+  min-width: 0;
+  min-height: clamp(380px, 32.4vw, 494px);
+  overflow: hidden;
+  background: #e7e4df;
+}
+.epargne-hero-photo img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: center 51%;
+}
+.epargne-hero-panel {
+  position: relative;
+  min-width: 0;
+  min-height: clamp(380px, 32.4vw, 494px);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  padding: 48px clamp(38px, 5vw, 88px);
+  color: #fff;
+  background: var(--epargne-blue);
+  text-align: left;
+}
+.epargne-piggy-watermark {
+  position: absolute;
+  top: 50%;
+  left: 53%;
+  width: min(82%, 430px);
+  height: auto;
+  transform: translate(-50%, -50%);
+  opacity: 0.44;
+}
+.epargne-hero-copy {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 620px);
+}
+.epargne-hero-copy h1 {
+  max-width: 620px;
+  margin: 0 0 22px;
+  font-family: Manrope, "DM Sans", sans-serif;
+  font-size: clamp(25px, 2.55vw, 39px);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.5px;
+}
+.epargne-hero-copy p {
+  margin: 0 0 23px;
+  font-size: clamp(17px, 1.45vw, 23px);
+  line-height: 1.4;
+}
+.epargne-button {
+  min-height: 45px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  border: 0;
+  border-radius: 2px;
+  padding: 0 25px;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 800;
+  text-align: center;
+  text-transform: uppercase;
+  transition:
+    transform 0.18s ease,
+    background-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+.epargne-button:hover {
+  transform: translateY(-2px);
+}
+.epargne-button-coral {
+  color: #fff;
+  background: var(--epargne-coral);
+  box-shadow: 0 5px 13px rgba(120, 61, 48, 0.12);
+}
+.epargne-button-coral:hover {
+  background: #e86f51;
+  box-shadow: 0 7px 16px rgba(120, 61, 48, 0.18);
+}
+.epargne-savings-badge {
+  position: absolute;
+  z-index: 3;
+  top: 50%;
+  left: 50%;
+  width: 82px;
+  height: 82px;
+  display: grid;
+  place-items: center;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  color: #6ec9c9;
+  background: #e8fbfa;
+}
+.epargne-savings-badge img {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+}
+
+/* Welcome section and partner logos */
+.epargne-intro {
+  padding: 43px 0 55px;
+}
+.epargne-intro > h2 {
+  max-width: 900px;
+  margin: 0 auto 43px;
+  padding-inline: 22px;
+  color: #343b47;
+  font-family: Manrope, "DM Sans", sans-serif;
+  font-size: clamp(25px, 2.35vw, 36px);
+  font-weight: 800;
+  line-height: 1.2;
+  text-align: center;
+}
+.epargne-intro-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas: "copy photo";
+  align-items: center;
+  gap: clamp(28px, 5vw, 78px);
+}
+.epargne-intro-photo {
+  grid-area: photo;
+  min-width: 0;
+  overflow: hidden;
+}
+.epargne-intro-photo img {
+  width: 100%;
+  aspect-ratio: 1.86 / 1;
+  display: block;
+  object-fit: cover;
+  object-position: center 52%;
+}
+.epargne-intro-copy {
+  grid-area: copy;
+  color: var(--epargne-copy);
+  font-size: 14px;
+  line-height: 1.65;
+}
+.epargne-intro-copy p {
+  margin: 0 0 15px;
+}
+.epargne-intro-copy .epargne-button {
+  margin-top: 10px;
+  min-width: 262px;
+}
+.epargne-partners {
+  padding-top: 0;
+  padding-bottom: 42px;
+}
+.epargne-partner-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: clamp(10px, 2.5vw, 42px);
+}
+.epargne-partner {
+  min-width: 0;
+  min-height: 95px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #ededed;
+  background: #fff;
+}
+.epargne-partner img {
+  width: min(86%, 170px);
+  max-height: 72px;
+  object-fit: contain;
+}
+.epargne-axa-mark {
+  position: relative;
+  min-width: 56px;
+  min-height: 55px;
+  display: grid;
+  place-items: end center;
+  overflow: hidden;
+  padding: 0 7px 4px;
+  color: white;
+  background: #315c98;
+  font-family: Arial, sans-serif;
+  font-size: 23px;
+  font-weight: 800;
+  font-style: italic;
+}
+.epargne-axa-mark i {
+  position: absolute;
+  top: -9px;
+  right: 14px;
+  width: 4px;
+  height: 75px;
+  transform: rotate(38deg);
+  background: #f06b5d;
+}
+.epargne-allianz-mark {
+  color: #09518a;
+  font-family: Georgia, serif;
+  font-size: clamp(15px, 1.65vw, 22px);
+  font-weight: 700;
+  white-space: nowrap;
+}
+.epargne-allianz-mark b {
+  margin-left: 4px;
+  font-family: Arial, sans-serif;
+  font-size: 21px;
+}
+.epargne-sanlam-mark {
+  color: #1677a8;
+  font-family: Arial, sans-serif;
+  font-size: clamp(15px, 1.5vw, 20px);
+  font-weight: 800;
+  white-space: nowrap;
+}
+.epargne-sanlam-mark b {
+  color: #2f6c9a;
+}
+.epargne-rma-mark {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #244c74;
+  font-family: Georgia, serif;
+  font-size: clamp(17px, 1.6vw, 22px);
+  font-weight: 700;
+}
+.epargne-rma-mark small {
+  color: #727b83;
+  font-family: Arial, sans-serif;
+  font-size: 5.5px;
+  line-height: 1.2;
+}
+.epargne-assurwi-mark {
+  color: #4e9999;
+  font-size: clamp(16px, 1.45vw, 20px);
+  font-weight: 800;
+  letter-spacing: -0.9px;
+}
+.epargne-assurwi-mark span {
+  color: #ee6e4e;
+}
+.epargne-atlanta-mark {
+  display: grid;
+  grid-template-columns: auto auto;
+  align-items: center;
+  column-gap: 5px;
+  color: #25749a;
+  font-size: clamp(9px, 1.05vw, 14px);
+  font-weight: 700;
+  white-space: nowrap;
+}
+.epargne-atlanta-mark b {
+  color: #49a0a5;
+  font-size: 18px;
+}
+.epargne-atlanta-mark small {
+  grid-column: 2;
+  margin-top: -8px;
+  font-size: 5px;
+  letter-spacing: 0.6px;
+}
+.epargne-partner-dots {
+  display: flex;
+  justify-content: center;
+  gap: 11px;
+  margin-top: 20px;
+}
+.epargne-partner-dots button {
+  width: 9px;
+  height: 9px;
+  border: 0;
+  border-radius: 50%;
+  padding: 0;
+  background: #f4d2ca;
+  transition:
+    transform 0.18s ease,
+    background 0.18s ease;
+}
+.epargne-partner-dots button.is-current {
+  transform: scale(1.12);
+  background: var(--epargne-coral);
+}
+
+/* Footer */
+.epargne-footer {
+  color: rgba(255, 255, 255, 0.86);
+  background: var(--epargne-blue-deep);
+}
+.epargne-footer-main {
+  display: grid;
+  grid-template-columns: 1.2fr 0.86fr 0.92fr 1fr 1.07fr;
+  gap: clamp(20px, 3vw, 48px);
+  padding-top: 47px;
+  padding-bottom: 38px;
+}
+.epargne-brand--light .epargne-brand-image {
+  width: 150px;
+  height: 56px;
+}
+.epargne-footer-about > p {
+  max-width: 270px;
+  margin: 21px 0 0;
+  color: rgba(255, 255, 255, 0.83);
+  font-size: 12px;
+  line-height: 1.65;
+}
+.epargne-footer-about > p strong {
+  color: #fff;
+}
+.epargne-footer h2 {
+  margin: 4px 0 16px;
+  color: #afbdc9;
+  font-family: Manrope, sans-serif;
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+.epargne-footer-client-area {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.epargne-client-area {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 9px;
+}
+.epargne-client-area h2 {
+  margin-bottom: 3px;
+  color: #afbdc9;
+}
+.epargne-client-pill {
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 999px;
+  padding: 0 13px;
+  color: white;
+  background: var(--epargne-coral);
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+  transition: background 0.18s ease;
+}
+.epargne-client-pill:hover {
+  background: #e86f51;
+}
+.epargne-footer-link-grid,
+.epargne-footer-contact-grid {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(18px, 2vw, 36px);
+}
+.epargne-footer-column {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+.epargne-footer-column a,
+.epargne-footer-column > strong,
+.epargne-footer-languages span {
+  color: rgba(255, 255, 255, 0.81);
+  font-size: 11px;
+  line-height: 1.4;
+}
+.epargne-footer-column a:hover {
+  color: #ffd5ca;
+}
+.epargne-footer-column > strong {
+  margin-top: 2px;
+  color: white;
+  font-weight: 700;
+}
+.epargne-footer-link-grid .epargne-footer-column:first-child {
+  gap: 7px;
+}
+.epargne-footer-languages {
+  display: grid;
+  gap: 8px;
+  margin-top: 10px;
+}
+.epargne-footer-languages h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 1px;
+  color: #afbdc9;
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+.epargne-footer-languages b {
+  margin-left: 4px;
+  color: var(--epargne-coral);
+}
+.epargne-contact-column {
+  gap: 14px;
+}
+.epargne-contact-line {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.epargne-contact-line svg {
+  flex: 0 0 auto;
+  color: #ff967d;
+}
+.epargne-social {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  padding-top: 22px;
+}
+.epargne-social h2 {
+  margin: 0;
+}
+.epargne-social > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+}
+.epargne-social a {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 12px;
+  font-weight: 600;
+}
+.epargne-social a:hover {
+  color: #ffd5ca;
+}
+.epargne-legal-band {
+  background: rgba(9, 39, 66, 0.25);
+}
+.epargne-legal-links {
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 23px;
+}
+.epargne-legal-links a {
+  color: rgba(255, 255, 255, 0.83);
+  font-size: 10px;
+}
+.epargne-copyright {
+  min-height: 38px;
+  display: flex;
+  align-items: center;
+  color: #5e6268;
+  background: #fff;
+  font-size: 11px;
+}
+
+/* Fixed help rail, chat action and simulation dialog */
+.epargne-help-rail {
+  position: fixed;
+  z-index: 30;
+  top: 43%;
+  right: 0;
+  display: grid;
+  overflow: hidden;
+  border-radius: 9px 0 0 9px;
+  background: var(--epargne-coral);
+  box-shadow: 0 4px 12px rgba(30, 49, 61, 0.12);
+}
+.epargne-help-rail a {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.55);
+  color: #fff;
+  transition: background 0.18s ease;
+}
+.epargne-help-rail a:last-child {
+  border-bottom: 0;
+}
+.epargne-help-rail a:hover {
+  background: #e86f51;
+}
+.epargne-chat-widget {
+  position: fixed;
+  z-index: 31;
+  right: 26px;
+  bottom: 23px;
+  display: grid;
+  justify-items: end;
+  gap: 11px;
+}
+.epargne-chat-button {
+  min-height: 53px;
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+  border: 4px solid #ffab94;
+  border-radius: 999px;
+  padding: 4px 17px 4px 7px;
+  color: #fff;
+  background: var(--epargne-coral);
+  box-shadow: 0 5px 18px rgba(20, 47, 66, 0.2);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+}
+.epargne-chat-icon {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: var(--epargne-coral);
+  background: #fff5f0;
+}
+.epargne-chat-panel {
+  width: min(320px, calc(100vw - 34px));
+  border: 1px solid #e7e7e7;
+  border-radius: 12px;
+  padding: 16px;
+  background: #fff;
+  box-shadow: 0 12px 36px rgba(20, 47, 66, 0.2);
+  color: var(--epargne-ink);
+}
+.epargne-chat-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  color: var(--epargne-blue-deep);
+}
+.epargne-chat-heading button {
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: #f2f5f6;
+  color: var(--epargne-ink);
+}
+.epargne-chat-panel p {
+  margin: 9px 0 12px;
+  color: var(--epargne-copy);
+  font-size: 12px;
+}
+.epargne-chat-panel > a {
+  min-height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--epargne-blue-deep);
+  font-size: 12px;
+  font-weight: 700;
+}
+.epargne-simulation-dialog {
+  width: min(480px, calc(100vw - 32px));
+  border: 0;
+  border-radius: 13px;
+  padding: 25px;
+  color: var(--epargne-ink);
+  box-shadow: 0 24px 75px rgba(17, 42, 61, 0.25);
+}
+.epargne-simulation-dialog::backdrop {
+  background: rgba(20, 39, 55, 0.52);
+  backdrop-filter: blur(2px);
+}
+.epargne-dialog-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+.epargne-dialog-kicker {
+  color: var(--epargne-coral);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+.epargne-dialog-heading h2 {
+  margin: 5px 0 0;
+  color: var(--epargne-blue-deep);
+  font-family: Manrope, sans-serif;
+  font-size: 23px;
+  line-height: 1.2;
+}
+.epargne-dialog-close {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  border: 0;
+  border-radius: 50%;
+  color: var(--epargne-ink);
+  background: #f2f5f5;
+}
+.epargne-simulation-dialog > p {
+  margin: 15px 0 20px;
+  color: var(--epargne-copy);
+  font-size: 13px;
+  line-height: 1.65;
+}
+.epargne-dialog-actions {
+  display: grid;
+  gap: 10px;
+}
+.epargne-dialog-actions .epargne-button {
+  width: 100%;
+  text-transform: none;
+}
+.epargne-button-outline {
+  border: 1px solid #d8e1e4;
+  color: var(--epargne-blue-deep);
+  background: #fff;
+}
+
+@media (max-width: 1150px) {
+  .epargne-container {
+    width: min(100% - 48px, 1060px);
+  }
+  .epargne-utility {
+    padding-inline: 24px;
+  }
+  .epargne-primary-row {
+    padding-inline: 24px;
+    gap: 22px;
+  }
+  .epargne-audience-links {
+    gap: 14px;
+  }
+  .epargne-product-nav {
+    gap: 9px;
+  }
+  .epargne-product-nav > a {
+    font-size: 11px;
+  }
+  .epargne-product-nav > a::before {
+    display: none;
+  }
+  .epargne-footer-main {
+    grid-template-columns: 1.1fr 0.9fr 1.15fr;
+  }
+  .epargne-footer-link-grid {
+    grid-column: 2 / 4;
+  }
+  .epargne-footer-contact-grid {
+    grid-column: 1 / -1;
+  }
+  .epargne-footer-contact-grid > section {
+    max-width: 360px;
+  }
+}
+@media (max-width: 760px) {
+  .epargne-container {
+    width: min(100% - 36px, 560px);
+  }
+  .epargne-utility {
+    min-height: 50px;
+    padding: 0 10px;
+  }
+  .epargne-utility-left {
+    gap: 0;
+  }
+  .epargne-audience-trigger {
+    min-height: 50px;
+    border-radius: 0;
+    padding: 0 13px;
+    font-size: 12px;
+  }
+  .epargne-audience-links {
+    position: absolute;
+    z-index: 30;
+    top: 50px;
+    left: 10px;
+    display: none;
+    min-width: 220px;
+    align-items: stretch;
+    gap: 0;
+    border: 1px solid #e7e7e7;
+    border-radius: 0 0 8px 8px;
+    padding: 7px 13px;
+    background: #fff;
+    box-shadow: 0 10px 24px rgba(25, 49, 68, 0.15);
+    white-space: normal;
+  }
+  .epargne-audience-links.is-open {
+    display: grid;
+  }
+  .epargne-audience-links a {
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+  }
+  .epargne-audience-links a:last-child {
+    border-bottom: 0;
+  }
+  .epargne-utility-right {
+    gap: 7px;
+  }
+  .epargne-language-wrap,
+  .epargne-client-link {
+    display: none;
+  }
+  .epargne-search-mobile,
+  .epargne-menu-toggle {
+    width: 38px;
+    height: 38px;
+    display: inline-grid;
+  }
+  .epargne-search-mobile {
+    color: #fff;
+    background: var(--epargne-blue);
+  }
+  .epargne-menu-toggle {
+    color: var(--epargne-blue-deep);
+  }
+  .epargne-primary-row {
+    min-height: 63px;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 6px 13px;
+  }
+  .epargne-brand-word {
+    font-size: 26px;
+  }
+  .epargne-brand-mark {
+    width: 25px;
+    height: 25px;
+  }
+  .epargne-mobile-account {
+    width: 39px;
+    height: 39px;
+    display: inline-grid;
+    color: #fff;
+    background: var(--epargne-coral);
+  }
+  .epargne-product-nav {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    left: 0;
+    display: none;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    border-top: 1px solid #ececec;
+    padding: 8px 17px 14px;
+    background: #fff;
+    box-shadow: 0 12px 24px rgba(25, 49, 68, 0.13);
+  }
+  .epargne-product-nav.is-open {
+    display: grid;
+  }
+  .epargne-product-nav > a {
+    min-height: 43px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #f1f1f1;
+    padding: 5px 2px;
+    font-size: 13px;
+  }
+  .epargne-product-nav > a::before {
+    display: inline-block;
+  }
+  .epargne-product-nav > a.is-active::after {
+    right: 10px;
+    left: 18px;
+    bottom: 5px;
+  }
+  .epargne-search-desktop {
+    display: none;
+  }
+  .epargne-search-panel {
+    top: 50px;
+    right: 8px;
+    left: 8px;
+    justify-content: stretch;
+    padding: 10px;
+  }
+  .epargne-search-panel input {
+    width: 100%;
+    flex: 1;
+  }
+
+  .epargne-hero {
+    min-height: 246px;
+    display: block;
+    background: var(--epargne-blue);
+  }
+  .epargne-hero-photo {
+    display: none;
+  }
+  .epargne-hero-panel {
+    min-height: 246px;
+    padding: 27px 25px 34px;
+    text-align: center;
+  }
+  .epargne-piggy-watermark {
+    top: 52%;
+    left: 50%;
+    width: min(86%, 365px);
+    opacity: 0.5;
+  }
+  .epargne-hero-copy {
+    width: min(100%, 490px);
+  }
+  .epargne-hero-copy h1 {
+    margin: 0 auto 18px;
+    font-size: clamp(22px, 5.5vw, 29px);
+    line-height: 1.2;
+    letter-spacing: -0.35px;
+  }
+  .epargne-hero-copy p {
+    margin-bottom: 17px;
+    font-size: clamp(15px, 4vw, 19px);
+  }
+  .epargne-button {
+    min-height: 43px;
+    padding-inline: 18px;
+    font-size: 11px;
+  }
+  .epargne-hero-copy .epargne-button {
+    min-width: min(100%, 245px);
+  }
+  .epargne-savings-badge {
+    top: auto;
+    bottom: -42px;
+    width: 84px;
+    height: 84px;
+  }
+  .epargne-intro {
+    padding: 67px 0 30px;
+  }
+  .epargne-intro > h2 {
+    max-width: 540px;
+    margin-bottom: 33px;
+    padding-inline: 26px;
+    font-size: clamp(23px, 6vw, 31px);
+    line-height: 1.2;
+  }
+  .epargne-intro-layout {
+    width: 100%;
+    grid-template-columns: 1fr;
+    grid-template-areas: "photo" "copy";
+    gap: 0;
+  }
+  .epargne-intro-photo img {
+    width: 100%;
+    aspect-ratio: 1.72 / 1;
+    object-position: center 48%;
+  }
+  .epargne-intro-copy {
+    width: min(100% - 36px, 560px);
+    margin: 0 auto;
+    padding-top: 25px;
+    font-size: 13px;
+    line-height: 1.45;
+  }
+  .epargne-intro-copy p {
+    margin-bottom: 12px;
+  }
+  .epargne-intro-copy .epargne-button {
+    width: min(100%, 270px);
+    display: flex;
+    margin: 23px auto 0;
+  }
+  .epargne-partners {
+    padding-top: 0;
+    padding-bottom: 32px;
+  }
+  .epargne-partner-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+  .epargne-partner {
+    min-height: 82px;
+  }
+  .epargne-partner.is-mobile-hidden {
+    display: none;
+  }
+  .epargne-partner-dots {
+    gap: 11px;
+    margin-top: 17px;
+  }
+
+  .epargne-footer-main {
+    display: flex;
+    flex-direction: column;
+    gap: 34px;
+    padding-top: 31px;
+    padding-bottom: 25px;
+  }
+  .epargne-footer-about {
+    text-align: center;
+  }
+  .epargne-footer-about .epargne-brand {
+    margin-inline: auto;
+  }
+  .epargne-brand--light .epargne-brand-word {
+    font-size: 35px;
+  }
+  .epargne-footer-about > p {
+    max-width: 100%;
+    margin-top: 18px;
+    font-size: 12px;
+    line-height: 1.55;
+  }
+  .epargne-client-area {
+    align-items: center;
+    gap: 10px;
+  }
+  .epargne-client-area h2 {
+    margin-bottom: 3px;
+  }
+  .epargne-client-pill {
+    min-height: 38px;
+    font-size: 12px;
+  }
+  .epargne-footer-link-grid,
+  .epargne-footer-contact-grid {
+    width: 100%;
+    grid-column: auto;
+    gap: 22px;
+  }
+  .epargne-footer-column {
+    gap: 9px;
+  }
+  .epargne-footer h2 {
+    margin-bottom: 12px;
+    font-size: 12px;
+  }
+  .epargne-footer-column a,
+  .epargne-footer-column > strong,
+  .epargne-footer-languages span {
+    font-size: 11px;
+  }
+  .epargne-footer-link-grid .epargne-footer-column:first-child {
+    gap: 8px;
+  }
+  .epargne-footer-contact-grid > section {
+    max-width: none;
+  }
+  .epargne-contact-column {
+    gap: 13px;
+  }
+  .epargne-contact-line {
+    line-height: 1.35;
+  }
+  .epargne-footer-languages {
+    gap: 8px;
+    margin-top: 14px;
+  }
+  .epargne-social {
+    flex-direction: column;
+    justify-content: center;
+    gap: 13px;
+    padding-top: 20px;
+    text-align: center;
+  }
+  .epargne-social > div {
+    justify-content: center;
+    gap: 12px 16px;
+  }
+  .epargne-social span {
+    font-size: 11px;
+  }
+  .epargne-legal-links {
+    min-height: 58px;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 8px 19px;
+    padding-block: 12px;
+  }
+  .epargne-legal-links a {
+    font-size: 10px;
+  }
+  .epargne-copyright {
+    min-height: 43px;
+    font-size: 10px;
+  }
+  .epargne-help-rail {
+    top: 52%;
+  }
+  .epargne-help-rail a {
+    width: 39px;
+    height: 42px;
+  }
+  .epargne-chat-widget {
+    right: 12px;
+    bottom: 13px;
+  }
+  .epargne-chat-button {
+    min-height: 48px;
+    gap: 7px;
+    padding-right: 11px;
+    font-size: 11px;
+  }
+  .epargne-chat-icon {
+    width: 33px;
+    height: 33px;
+  }
+  .epargne-simulation-dialog {
+    padding: 21px;
+  }
+  .epargne-dialog-heading h2 {
+    font-size: 21px;
+  }
+}
+@media (max-width: 380px) {
+  .epargne-utility {
+    padding-inline: 7px;
+  }
+  .epargne-audience-trigger {
+    padding-inline: 10px;
+  }
+  .epargne-utility-right {
+    gap: 2px;
+  }
+  .epargne-search-mobile,
+  .epargne-menu-toggle {
+    width: 34px;
+    height: 34px;
+  }
+  .epargne-footer-link-grid,
+  .epargne-footer-contact-grid {
+    gap: 14px;
+  }
+  .epargne-footer h2 {
+    font-size: 11px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .epargne-page *,
+  .epargne-page *::before,
+  .epargne-page *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
