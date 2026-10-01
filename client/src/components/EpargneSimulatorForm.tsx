@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "wouter";
 import { 
   User, 
   Phone, 
@@ -316,9 +317,9 @@ export default function EpargneSimulatorForm() {
                     />
                     <span className="text-xs text-slate-600 leading-normal">
                       J'ai lu et j'accepte les{" "}
-                      <a href="https://digiassur.ma/mentions-legales" target="_blank" rel="noreferrer" className="text-[#153954] underline font-bold">
+                      <Link href="/mentions-legales" className="text-[#153954] underline font-bold">
                         conditions générales
-                      </a>{" "}
+                      </Link>{" "}
                       d'utilisation notamment la mention relative à la protection des données personnelles.
                     </span>
                   </label>

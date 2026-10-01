@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link, useLocation } from "wouter";
 import { 
   Car, 
   Bike, 
@@ -25,16 +26,17 @@ export default function DigiassurHeader({ onSimulate }: DigiassurHeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [location] = useLocation();
 
   const products = [
-    { name: "Auto", icon: Car, href: "#auto" },
-    { name: "Moto", icon: Bike, href: "#moto" },
-    { name: "Accident", icon: ShieldAlert, href: "#accident" },
-    { name: "Habitation", icon: Home, href: "#habitation" },
-    { name: "Voyage", icon: Plane, href: "#voyage" },
-    { name: "Santé/Prévoyance", icon: HeartPulse, href: "#sante" },
-    { name: "Epargne", icon: PiggyBank, href: "#", active: true },
-    { name: "Loisir", icon: LeisureIcon, href: "#loisir" },
+    { name: "Auto", icon: Car, href: "/auto" },
+    { name: "Moto", icon: Bike, href: "/moto" },
+    { name: "Accident", icon: ShieldAlert, href: "/accident" },
+    { name: "Habitation", icon: Home, href: "/habitation" },
+    { name: "Voyage", icon: Plane, href: "/voyage" },
+    { name: "Santé/Prévoyance", icon: HeartPulse, href: "/sante" },
+    { name: "Epargne", icon: PiggyBank, href: "/epargne", defaultActive: true },
+    { name: "Loisir", icon: LeisureIcon, href: "/loisir" },
   ];
 
   return (
@@ -44,27 +46,34 @@ export default function DigiassurHeader({ onSimulate }: DigiassurHeaderProps) {
         <div className="max-w-[1440px] mx-auto px-6 h-[46px] flex items-center justify-between text-[13px]">
           {/* Left Categories */}
           <div className="flex items-center gap-2">
-            <span className="bg-[#f48161] text-white font-semibold px-4 py-1.5 rounded-md shadow-xs transition hover:bg-[#e67050] cursor-pointer">
+            <Link 
+              href="/" 
+              className={`font-semibold px-4 py-1.5 rounded-md shadow-xs transition ${
+                location === "/" || location === "/epargne"
+                  ? "bg-[#f48161] text-white" 
+                  : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+              }`}
+            >
               Particuliers
-            </span>
-            <a 
-              href="https://digiassur.ma/entreprise" 
+            </Link>
+            <Link 
+              href="/entreprise" 
               className="text-slate-600 hover:text-[#1d4b75] font-medium px-3 py-1.5 rounded-md transition hover:bg-slate-50"
             >
               Entreprises
-            </a>
-            <a 
-              href="https://digiassur.ma" 
+            </Link>
+            <Link 
+              href="/marocains-etranger" 
               className="text-slate-600 hover:text-[#1d4b75] font-medium px-3 py-1.5 rounded-md transition hover:bg-slate-50"
             >
               Marocains de l'étranger
-            </a>
-            <a 
-              href="https://digiassur.ma/demande-affiliation" 
+            </Link>
+            <Link 
+              href="/affiliation" 
               className="text-slate-600 hover:text-[#1d4b75] font-medium px-3 py-1.5 rounded-md transition hover:bg-slate-50"
             >
               Affiliation
-            </a>
+            </Link>
             <a 
               href="https://pippipyalah.com/" 
               target="_blank" 
@@ -83,13 +92,13 @@ export default function DigiassurHeader({ onSimulate }: DigiassurHeaderProps) {
               <span>Français</span>
               <ChevronDown className="w-3 h-3 opacity-80" />
             </div>
-            <a 
-              href="https://fr.digiassur.ma/connexion" 
+            <Link 
+              href="/connexion" 
               className="flex items-center gap-2 bg-[#f48161] text-white px-4 py-1.5 rounded-md text-xs font-semibold shadow-xs hover:bg-[#e67050] transition"
             >
               <User className="w-3.5 h-3.5" />
               <span>Espace client</span>
-            </a>
+            </Link>
           </div>
         </div>
       </div>
@@ -97,24 +106,21 @@ export default function DigiassurHeader({ onSimulate }: DigiassurHeaderProps) {
       {/* Main Navigation Bar */}
       <div className="max-w-[1440px] mx-auto px-4 lg:px-6 h-[70px] flex items-center justify-between">
         {/* Digiassur Logo */}
-        <a href="/" className="flex items-center gap-2">
+        <Link href="/" className="flex items-center gap-2 cursor-pointer">
           <img 
             src="/images/logo-digiassur.svg" 
             alt="Digiassur" 
             className="h-10 lg:h-12 w-auto object-contain"
-            onError={(e) => {
-              (e.currentTarget as HTMLImageElement).src = "https://digiassur.ma/assets/img/frame-4.svg";
-            }}
           />
-        </a>
+        </Link>
 
         {/* Desktop Product Navigation Links */}
         <nav className="hidden lg:flex items-center gap-1 xl:gap-2">
           {products.map((item) => {
             const Icon = item.icon;
-            const isActive = item.active;
+            const isActive = location === item.href || (location === "/" && item.defaultActive);
             return (
-              <a
+              <Link
                 key={item.name}
                 href={item.href}
                 className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-semibold transition ${
@@ -125,7 +131,7 @@ export default function DigiassurHeader({ onSimulate }: DigiassurHeaderProps) {
               >
                 <Icon className={`w-4 h-4 ${isActive ? "text-[#f48161]" : "text-slate-500"}`} />
                 <span>{item.name}</span>
-              </a>
+              </Link>
             );
           })}
 
@@ -133,7 +139,7 @@ export default function DigiassurHeader({ onSimulate }: DigiassurHeaderProps) {
           <button 
             type="button" 
             onClick={() => setSearchOpen(!searchOpen)}
-            className="ml-2 p-2 text-slate-500 hover:text-[#1d4b75] hover:bg-slate-100 rounded-full transition"
+            className="ml-2 p-2 text-slate-500 hover:text-[#1d4b75] hover:bg-slate-100 rounded-full transition cursor-pointer"
             aria-label="Recherche"
           >
             <Search className="w-4 h-4" />
@@ -142,24 +148,24 @@ export default function DigiassurHeader({ onSimulate }: DigiassurHeaderProps) {
 
         {/* Mobile Header Right Actions */}
         <div className="flex items-center gap-2 lg:hidden">
-          <a
-            href="tel:+212522368182"
+          <Link
+            href="/contact"
             className="p-2 text-slate-600 hover:text-[#1d4b75] rounded-lg"
-            aria-label="Appeler Digiassur"
+            aria-label="Contacter Digiassur"
           >
             <Phone className="w-5 h-5" />
-          </a>
-          <a
-            href="https://fr.digiassur.ma/connexion"
+          </Link>
+          <Link
+            href="/connexion"
             className="bg-[#f48161] text-white p-2 rounded-lg text-xs font-semibold"
             aria-label="Espace client"
           >
             <User className="w-5 h-5" />
-          </a>
+          </Link>
           <button
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-2 text-slate-700 hover:text-[#1d4b75] rounded-lg"
+            className="p-2 text-slate-700 hover:text-[#1d4b75] rounded-lg cursor-pointer"
             aria-label={mobileMenuOpen ? "Fermer le menu" : "Ouvrir le menu"}
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -182,7 +188,7 @@ export default function DigiassurHeader({ onSimulate }: DigiassurHeaderProps) {
             />
             <button
               onClick={() => setSearchOpen(false)}
-              className="text-xs font-medium text-slate-500 hover:text-slate-800"
+              className="text-xs font-medium text-slate-500 hover:text-slate-800 cursor-pointer"
             >
               Fermer
             </button>
@@ -196,15 +202,20 @@ export default function DigiassurHeader({ onSimulate }: DigiassurHeaderProps) {
           <div className="p-4 space-y-4 max-h-[calc(100vh-80px)] overflow-y-auto">
             {/* Quick Segments */}
             <div className="flex gap-2">
-              <span className="flex-1 text-center bg-[#f48161] text-white font-semibold py-2 rounded-md text-xs">
+              <Link 
+                href="/"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex-1 text-center bg-[#f48161] text-white font-semibold py-2 rounded-md text-xs"
+              >
                 Particuliers
-              </span>
-              <a 
-                href="https://digiassur.ma/entreprise" 
+              </Link>
+              <Link 
+                href="/entreprise" 
+                onClick={() => setMobileMenuOpen(false)}
                 className="flex-1 text-center bg-slate-100 text-slate-700 font-semibold py-2 rounded-md text-xs"
               >
                 Entreprises
-              </a>
+              </Link>
             </div>
 
             {/* Insurance products */}
@@ -214,21 +225,22 @@ export default function DigiassurHeader({ onSimulate }: DigiassurHeaderProps) {
               </p>
               {products.map((item) => {
                 const Icon = item.icon;
+                const isActive = location === item.href || (location === "/" && item.defaultActive);
                 return (
-                  <a
+                  <Link
                     key={item.name}
                     href={item.href}
                     onClick={() => setMobileMenuOpen(false)}
                     className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium ${
-                      item.active
+                      isActive
                         ? "bg-orange-50 text-[#f48161] font-bold"
                         : "text-slate-700 hover:bg-slate-50"
                     }`}
                   >
                     <Icon className="w-5 h-5 text-[#f48161]" />
                     <span>{item.name}</span>
-                    {item.active && <span className="ml-auto text-[10px] bg-[#f48161] text-white px-2 py-0.5 rounded-full font-bold">Actif</span>}
-                  </a>
+                    {isActive && <span className="ml-auto text-[10px] bg-[#f48161] text-white px-2 py-0.5 rounded-full font-bold">Actif</span>}
+                  </Link>
                 );
               })}
             </div>
@@ -241,16 +253,17 @@ export default function DigiassurHeader({ onSimulate }: DigiassurHeaderProps) {
                   setMobileMenuOpen(false);
                   onSimulate?.();
                 }}
-                className="w-full bg-[#f48161] text-white font-bold py-3 rounded-xl shadow-md text-center hover:bg-[#e67050] transition"
+                className="w-full bg-[#f48161] text-white font-bold py-3 rounded-xl shadow-md text-center hover:bg-[#e67050] transition cursor-pointer"
               >
                 OBTENIR UNE SIMULATION
               </button>
-              <a
-                href="https://fr.digiassur.ma/connexion"
+              <Link
+                href="/connexion"
+                onClick={() => setMobileMenuOpen(false)}
                 className="block w-full border border-slate-200 text-[#1d4b75] font-semibold py-2.5 rounded-xl text-center text-sm"
               >
                 Accéder à l'espace client
-              </a>
+              </Link>
             </div>
           </div>
         </div>

@@ -1,9 +1,9 @@
+import { Link } from "wouter";
 import { 
   Phone, 
   Mail, 
   MapPin, 
   Globe, 
-  ChevronRight, 
   UserPlus, 
   LogIn 
 } from "lucide-react";
@@ -16,16 +16,13 @@ export default function DigiassurFooter() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-8">
           {/* Column 1: Brand & Presentation (3 cols) */}
           <div className="lg:col-span-3 space-y-4">
-            <a href="/" className="inline-block">
+            <Link href="/" className="inline-block cursor-pointer">
               <img
                 src="/images/logo-digiassur-white.svg"
                 alt="Digiassur"
                 className="h-10 w-auto object-contain"
-                onError={(e) => {
-                  (e.currentTarget as HTMLImageElement).src = "https://digiassur.ma/assets/img/frame-2.svg";
-                }}
               />
-            </a>
+            </Link>
             <p className="text-xs text-slate-300 leading-relaxed pt-2">
               Bienvenue sur <strong className="text-white">Digiassur</strong>, le site qui vous aide à trouver la meilleure assurance et qui défend au mieux vos intérêts !
               <br /><br />
@@ -41,38 +38,38 @@ export default function DigiassurFooter() {
             </h4>
             <ul className="space-y-1.5 text-xs text-slate-300">
               <li>
-                <a href="https://digiassur.ma" className="font-semibold text-white hover:text-[#f48161] transition">
+                <Link href="/" className="font-semibold text-white hover:text-[#f48161] transition">
                   Particuliers
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="https://digiassur.ma/entreprise" className="font-semibold text-white hover:text-[#f48161] transition">
+                <Link href="/entreprise" className="font-semibold text-white hover:text-[#f48161] transition">
                   Entreprises
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="https://digiassur.ma" className="font-semibold text-white hover:text-[#f48161] transition">
+                <Link href="/marocains-etranger" className="font-semibold text-white hover:text-[#f48161] transition">
                   Marocains de l'étranger
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="https://digiassur.ma/demande-affiliation" className="font-semibold text-white hover:text-[#f48161] transition">
+                <Link href="/affiliation" className="font-semibold text-white hover:text-[#f48161] transition">
                   Affiliation
-                </a>
+                </Link>
               </li>
-              <li className="pt-2"><a href="#auto" className="hover:text-white transition">Auto</a></li>
-              <li><a href="#moto" className="hover:text-white transition">Moto</a></li>
-              <li><a href="#accident" className="hover:text-white transition">Accident</a></li>
-              <li><a href="#habitation" className="hover:text-white transition">Habitation</a></li>
-              <li><a href="#voyage" className="hover:text-white transition">Voyage</a></li>
-              <li><a href="#sante" className="hover:text-white transition">Santé / Prévoyance</a></li>
+              <li className="pt-2"><Link href="/auto" className="hover:text-white transition">Auto</Link></li>
+              <li><Link href="/moto" className="hover:text-white transition">Moto</Link></li>
+              <li><Link href="/accident" className="hover:text-white transition">Accident</Link></li>
+              <li><Link href="/habitation" className="hover:text-white transition">Habitation</Link></li>
+              <li><Link href="/voyage" className="hover:text-white transition">Voyage</Link></li>
+              <li><Link href="/sante" className="hover:text-white transition">Santé / Prévoyance</Link></li>
               <li>
-                <a href="#" className="text-[#f48161] font-bold flex items-center gap-1">
+                <Link href="/epargne" className="text-[#f48161] font-bold flex items-center gap-1">
                   <span>Épargne</span>
-                  <span className="text-[9px] bg-[#f48161] text-white px-1.5 py-0.2 rounded-full font-bold">Ici</span>
-                </a>
+                  <span className="text-[9px] bg-[#f48161] text-white px-1.5 py-0.2 rounded-full font-bold">Actif</span>
+                </Link>
               </li>
-              <li><a href="#loisir" className="hover:text-white transition">Loisir</a></li>
+              <li><Link href="/loisir" className="hover:text-white transition">Loisir</Link></li>
               <li className="pt-2">
                 <a href="https://pippipyalah.com/" target="_blank" rel="noreferrer" className="flex items-center gap-1.5 text-emerald-400 font-semibold hover:underline">
                   <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
@@ -89,9 +86,9 @@ export default function DigiassurFooter() {
                 Nous connaître
               </h4>
               <ul className="space-y-1.5 text-xs text-slate-300">
-                <li><a href="https://digiassur.ma" className="hover:text-white transition">Qui sommes-nous ?</a></li>
-                <li><a href="https://digiassur.ma/contactez-nous" className="hover:text-white transition">Contact</a></li>
-                <li><a href="https://digiassur.ma/blogs" className="hover:text-white transition">Blog</a></li>
+                <li><Link href="/qui-sommes-nous" className="hover:text-white transition">Qui sommes-nous ?</Link></li>
+                <li><Link href="/contact" className="hover:text-white transition">Contact</Link></li>
+                <li><Link href="/blog" className="hover:text-white transition">Blog</Link></li>
               </ul>
             </div>
 
@@ -100,12 +97,12 @@ export default function DigiassurFooter() {
                 Liens utiles
               </h4>
               <ul className="space-y-1.5 text-xs text-slate-300">
-                <li><a href="#association" className="hover:text-white transition">Association</a></li>
-                <li><a href="#metier" className="hover:text-white transition">Association par métier</a></li>
-                <li><a href="#besoin" className="hover:text-white transition">Association par besoin</a></li>
-                <li><a href="#rse" className="hover:text-white transition">RSE</a></li>
-                <li><a href="#conscious" className="hover:text-white transition">Conscious days</a></li>
-                <li><a href="https://digiassur.ma/programme-aji-tkhdem" className="hover:text-white transition">Aji tkhdam</a></li>
+                <li><Link href="/association" className="hover:text-white transition">Association</Link></li>
+                <li><Link href="/association-metier" className="hover:text-white transition">Association par métier</Link></li>
+                <li><Link href="/association-besoin" className="hover:text-white transition">Association par besoin</Link></li>
+                <li><Link href="/rse" className="hover:text-white transition">RSE</Link></li>
+                <li><Link href="/conscious-days" className="hover:text-white transition">Conscious days</Link></li>
+                <li><Link href="/aji-tkhdem" className="hover:text-white transition">Aji tkhdam</Link></li>
               </ul>
             </div>
           </div>
@@ -117,20 +114,20 @@ export default function DigiassurFooter() {
                 Espace client
               </h4>
               <div className="space-y-2">
-                <a
-                  href="https://fr.digiassur.ma/connexion"
+                <Link
+                  href="/connexion"
                   className="flex items-center gap-2 bg-[#f48161] hover:bg-[#e46e4e] text-white px-3 py-2 rounded-full text-xs font-semibold shadow-xs transition"
                 >
                   <UserPlus className="w-3.5 h-3.5" />
                   <span>Créer un compte</span>
-                </a>
-                <a
-                  href="https://fr.digiassur.ma/connexion"
+                </Link>
+                <Link
+                  href="/connexion"
                   className="flex items-center gap-2 bg-[#568ba9] hover:bg-[#4a7a96] text-white px-3 py-2 rounded-full text-xs font-semibold shadow-xs transition"
                 >
                   <LogIn className="w-3.5 h-3.5" />
                   <span>Se connecter</span>
-                </a>
+                </Link>
               </div>
             </div>
 
@@ -151,9 +148,9 @@ export default function DigiassurFooter() {
                   <div className="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center shrink-0">
                     <Mail className="w-3.5 h-3.5 text-[#f48161]" />
                   </div>
-                  <a href="mailto:contact@digiassur.ma" className="hover:text-white transition break-all">
+                  <Link href="/contact" className="hover:text-white transition break-all">
                     contact@digiassur.ma
-                  </a>
+                  </Link>
                 </li>
                 <li className="flex items-start gap-2.5">
                   <div className="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center shrink-0 mt-0.5">
@@ -216,17 +213,17 @@ export default function DigiassurFooter() {
             Copyright {new Date().getFullYear()} © <strong className="text-white">DigiAssur - By Assur'wi</strong>. Tous droits réservés.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-4 text-slate-400">
-            <a href="https://digiassur.ma/pdf/CGV.pdf" target="_blank" rel="noreferrer" className="hover:text-white transition">
+            <Link href="/cgv" className="hover:text-white transition">
               Conditions générales de vente
-            </a>
+            </Link>
             <span>•</span>
-            <a href="https://digiassur.ma/mentions-legales" target="_blank" rel="noreferrer" className="hover:text-white transition">
+            <Link href="/mentions-legales" className="hover:text-white transition">
               Politique de confidentialité
-            </a>
+            </Link>
             <span>•</span>
-            <a href="https://digiassur.ma/pdf/mentions_legales-digiassur.pdf" target="_blank" rel="noreferrer" className="hover:text-white transition">
+            <Link href="/mentions-legales" className="hover:text-white transition">
               Mentions légales
-            </a>
+            </Link>
           </div>
         </div>
       </div>
