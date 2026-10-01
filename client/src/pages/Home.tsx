@@ -1,33 +1,51 @@
 import { useCallback } from "react";
-import DigiassurFooter from "@/components/DigiassurFooter";
 import DigiassurHeader from "@/components/DigiassurHeader";
-import DigiassurHero from "@/components/DigiassurHero";
-import InsuranceExplorer from "@/components/InsuranceExplorer";
-import TrustSection from "@/components/TrustSection";
-import "./digiassur.css";
+import EpargneHero from "@/components/EpargneHero";
+import EpargneWelcome from "@/components/EpargneWelcome";
+import PartnersSection from "@/components/PartnersSection";
+import EpargneSimulatorForm from "@/components/EpargneSimulatorForm";
+import WhyDigiassur from "@/components/WhyDigiassur";
+import AssurwiBanner from "@/components/AssurwiBanner";
+import DigiassurFooter from "@/components/DigiassurFooter";
+import FloatingWidgets from "@/components/FloatingWidgets";
 
 export default function Home() {
-  const scrollTo = useCallback((id: string) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  const scrollToSimulation = useCallback(() => {
+    const el = document.getElementById("simulation");
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
   }, []);
 
   return (
-    <div className="digiassur-site">
-      <DigiassurHeader onExplore={() => scrollTo("nos-assurances")} />
-      <main>
-        <DigiassurHero onExplore={() => scrollTo("nos-assurances")} />
-        <TrustSection />
-        <InsuranceExplorer onContact={() => scrollTo("contact")} />
-        <section className="contact-banner" aria-labelledby="contact-banner-title">
-          <div className="container contact-banner-inner">
-            <div>
-              <span className="eyebrow">À vos côtés, tout simplement</span>
-              <h2 id="contact-banner-title">Vous avez une question ?<br /><em>On est là pour vous.</em></h2>
-            </div>
-            <a className="button button-coral button-large" href="#contact">Parlons de votre projet <span aria-hidden="true">↗</span></a>
-          </div>
-        </section>
+    <div className="min-h-screen bg-white text-slate-800 flex flex-col font-sans selection:bg-[#f48161] selection:text-white">
+      {/* Navigation Header */}
+      <DigiassurHeader onSimulate={scrollToSimulation} />
+
+      <main className="flex-1">
+        {/* Hero Section (Figma Desktop - 24) */}
+        <EpargneHero onSimulate={scrollToSimulation} />
+
+        {/* Welcome Section (Figma Desktop - 24 / iPhone 14 Pro Max - 15) */}
+        <EpargneWelcome onSimulate={scrollToSimulation} />
+
+        {/* Partners Logos (AXA, Allianz, Sanlam, RMA, Assur'wi, AtlantaSanad) */}
+        <PartnersSection />
+
+        {/* Interactive Simulation & Contact Form (Figma Desktop - 25) */}
+        <EpargneSimulatorForm />
+
+        {/* 7 Key Advantages: Pourquoi choisir Digiassur ? */}
+        <WhyDigiassur />
+
+        {/* Legal Authority & CNDP Accreditation */}
+        <AssurwiBanner />
       </main>
+
+      {/* Floating Action Bar & Digibot Chat Widget */}
+      <FloatingWidgets />
+
+      {/* Official Digiassur Footer */}
       <DigiassurFooter />
     </div>
   );
