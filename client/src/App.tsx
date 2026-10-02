@@ -8,6 +8,7 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 // Internal Pages
 import Home from "./pages/Home";
 import AutoPage from "./pages/AutoPage";
+import AutoDevisPage from "./pages/AutoDevisPage";
 import MotoPage from "./pages/MotoPage";
 import ProductPage from "./pages/ProductPage";
 import ConnexionPage from "./pages/ConnexionPage";
@@ -21,8 +22,10 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/epargne" component={Home} />
 
-      {/* Auto & Moto (Figma Node 299-8058) */}
+      {/* Auto & Moto (Figma Node 299-8058 & Live Devis Funnel) */}
       <Route path="/auto" component={AutoPage} />
+      <Route path="/auto/devis-auto" component={AutoDevisPage} />
+      <Route path="/auto/devis" component={AutoDevisPage} />
       <Route path="/moto" component={MotoPage} />
 
       {/* Other insurance products */}

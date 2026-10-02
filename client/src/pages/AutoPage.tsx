@@ -91,22 +91,20 @@ export default function AutoPage() {
                     </p>
 
                     <div className="flex flex-wrap gap-4">
-                      <button
-                        type="button"
-                        onClick={scrollToDevis}
+                      <Link
+                        href="/auto/devis-auto"
                         className="inline-flex items-center gap-2 bg-[#f48161] hover:bg-[#e46e4e] text-white font-bold text-sm tracking-wider uppercase px-7 py-3.5 shadow-lg transition transform hover:-translate-y-0.5 cursor-pointer"
                       >
                         <span>OBTENIR MON TARIF AUTO</span>
                         <ArrowRight className="w-4 h-4" />
-                      </button>
+                      </Link>
 
-                      <button
-                        type="button"
-                        onClick={scrollToDevis}
+                      <Link
+                        href="/auto/devis-auto"
                         className="inline-flex items-center gap-2 bg-[#689ebd] hover:bg-[#588da9] text-white font-bold text-sm tracking-wider uppercase px-7 py-3.5 shadow-lg transition transform hover:-translate-y-0.5 cursor-pointer"
                       >
                         <span>COMPARER MON DEVIS ACTUEL</span>
-                      </button>
+                      </Link>
                     </div>
                   </div>
                 </div>
@@ -134,13 +132,12 @@ export default function AutoPage() {
               <p className="text-base text-cyan-100 font-light mb-8">
                 Recevez votre attestation à domicile ou au bureau
               </p>
-              <button
-                type="button"
-                onClick={scrollToDevis}
-                className="w-full bg-[#f48161] text-white font-bold text-sm uppercase py-4 shadow-xl mb-3 cursor-pointer"
+              <Link
+                href="/auto/devis-auto"
+                className="w-full bg-[#f48161] text-white font-bold text-sm uppercase py-4 shadow-xl mb-3 cursor-pointer block text-center"
               >
                 OBTENIR MON TARIF AUTO
-              </button>
+              </Link>
             </div>
           </div>
         </section>
