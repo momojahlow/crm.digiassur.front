@@ -7,6 +7,7 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 
 // Internal Pages
 import Home from "./pages/Home";
+import EpargnePage from "./pages/EpargnePage";
 import AutoPage from "./pages/AutoPage";
 import AutoDevisPage from "./pages/AutoDevisPage";
 import MotoPage from "./pages/MotoPage";
@@ -18,9 +19,11 @@ import MentionsLegalesPage from "./pages/MentionsLegalesPage";
 function Router() {
   return (
     <Switch>
-      {/* Home & Epargne */}
+      {/* Home (Figma proposition-4 / Node 188-2894) */}
       <Route path="/" component={Home} />
-      <Route path="/epargne" component={Home} />
+
+      {/* Epargne (Figma Desktop - 24) */}
+      <Route path="/epargne" component={EpargnePage} />
 
       {/* Auto & Moto (Figma Node 299-8058 & Live Devis Funnel) */}
       <Route path="/auto" component={AutoPage} />
