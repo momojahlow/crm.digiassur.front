@@ -46,8 +46,13 @@ export default function VoyageDevisPage() {
     enCouple: "non",
     conjointNom: "",
     conjointPrenom: "",
+    conjointCin: "",
+    conjointDateNaissance: "",
     avecEnfants: "non",
     nombreEnfants: "1",
+    enfants: [
+      { nom: "", prenom: "", dateNaissance: "" }
+    ],
   });
 
   // Step 3: Véhicule
@@ -79,6 +84,11 @@ export default function VoyageDevisPage() {
       if (!assure.telephone.trim()) errs.telephone = "Téléphone obligatoire";
       if (!assure.email.trim()) errs.email = "Email obligatoire";
       if (!assure.passeport.trim()) errs.passeport = "Numéro de passeport obligatoire";
+    }
+    if (s === 2) {
+      if (famille.enCouple === "oui" && !famille.conjointNom.trim()) {
+        errs.conjointNom = "Nom du conjoint obligatoire";
+      }
     }
     setErrors(errs);
     return Object.keys(errs).length === 0;
@@ -299,56 +309,209 @@ export default function VoyageDevisPage() {
                   Voyagez-vous en famille ou accompagné(e) ?
                 </h2>
 
-                <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-3">
-                  <div className="font-bold text-sm text-[#153954]">Êtes-vous en couple durant ce voyage ?</div>
-                  <div className="flex gap-4">
-                    <label className="inline-flex items-center gap-2 cursor-pointer text-sm">
+                {/* Êtes-vous en couple durant ce voyage ? */}
+                <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-4">
+                  <div className="font-bold text-sm text-[#153954]">
+                    Êtes-vous en couple durant ce voyage ?
+                  </div>
+                  <div className="flex gap-6">
+                    <label className="inline-flex items-center gap-2 cursor-pointer text-sm font-medium">
                       <input
                         type="radio"
                         name="couple"
                         checked={famille.enCouple === "oui"}
                         onChange={() => setFamille({ ...famille, enCouple: "oui" })}
-                        className="accent-[#f48360]"
+                        className="w-4 h-4 accent-[#f48360]"
                       />
                       <span>Oui</span>
                     </label>
-                    <label className="inline-flex items-center gap-2 cursor-pointer text-sm">
+                    <label className="inline-flex items-center gap-2 cursor-pointer text-sm font-medium">
                       <input
                         type="radio"
                         name="couple"
                         checked={famille.enCouple === "non"}
                         onChange={() => setFamille({ ...famille, enCouple: "non" })}
-                        className="accent-[#f48360]"
+                        className="w-4 h-4 accent-[#f48360]"
                       />
                       <span>Non</span>
                     </label>
                   </div>
+
+                  {/* Si oui : prendre le nom du conjoint et ses informations */}
+                  {famille.enCouple === "oui" && (
+                    <div className="pt-4 border-t border-slate-200 animate-in fade-in duration-200">
+                      <div className="text-xs font-bold uppercase text-slate-600 tracking-wider mb-3">
+                        Informations du conjoint
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <div className="bg-gray-200 rounded-full p-1.5 flex items-center space-x-1">
+                            <div className="w-8 h-8 rounded-full bg-[#f48360] text-white flex items-center justify-center shrink-0">
+                              <User className="w-4 h-4" />
+                            </div>
+                            <input
+                              type="text"
+                              placeholder="Nom du conjoint *"
+                              value={famille.conjointNom}
+                              onChange={e => setFamille({ ...famille, conjointNom: e.target.value })}
+                              className="p-2 bg-gray-200 border-0 flex-1 rounded-r-full text-neutral-700 text-sm focus:outline-none"
+                            />
+                          </div>
+                          {errors.conjointNom && <p className="text-red-500 text-xs mt-1 pl-4">{errors.conjointNom}</p>}
+                        </div>
+
+                        <div>
+                          <div className="bg-gray-200 rounded-full p-1.5 flex items-center space-x-1">
+                            <div className="w-8 h-8 rounded-full bg-[#f48360] text-white flex items-center justify-center shrink-0">
+                              <User className="w-4 h-4" />
+                            </div>
+                            <input
+                              type="text"
+                              placeholder="Prénom du conjoint"
+                              value={famille.conjointPrenom}
+                              onChange={e => setFamille({ ...famille, conjointPrenom: e.target.value })}
+                              className="p-2 bg-gray-200 border-0 flex-1 rounded-r-full text-neutral-700 text-sm focus:outline-none"
+                            />
+                          </div>
+                        </div>
+
+                        <div>
+                          <div className="bg-gray-200 rounded-full p-1.5 flex items-center space-x-1">
+                            <div className="w-8 h-8 rounded-full bg-[#f48360] text-white flex items-center justify-center shrink-0">
+                              <CreditCard className="w-4 h-4" />
+                            </div>
+                            <input
+                              type="text"
+                              placeholder="CIN du conjoint"
+                              value={famille.conjointCin}
+                              onChange={e => setFamille({ ...famille, conjointCin: e.target.value.toUpperCase() })}
+                              className="p-2 bg-gray-200 border-0 flex-1 rounded-r-full text-neutral-700 text-sm focus:outline-none"
+                            />
+                          </div>
+                        </div>
+
+                        <div>
+                          <div className="bg-gray-200 rounded-full p-1.5 flex items-center space-x-1">
+                            <div className="w-8 h-8 rounded-full bg-[#f48360] text-white flex items-center justify-center shrink-0">
+                              <CalendarIcon className="w-4 h-4" />
+                            </div>
+                            <input
+                              type="date"
+                              value={famille.conjointDateNaissance}
+                              onChange={e => setFamille({ ...famille, conjointDateNaissance: e.target.value })}
+                              className="p-2 bg-gray-200 border-0 flex-1 rounded-r-full text-neutral-700 text-sm focus:outline-none"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
-                <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-3">
-                  <div className="font-bold text-sm text-[#153954]">Avez-vous des enfants qui vous accompagnent ?</div>
-                  <div className="flex gap-4">
-                    <label className="inline-flex items-center gap-2 cursor-pointer text-sm">
+                {/* Avez-vous des enfants qui vous accompagnent ? */}
+                <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-4">
+                  <div className="font-bold text-sm text-[#153954]">
+                    Avez-vous des enfants qui vous accompagnent ?
+                  </div>
+                  <div className="flex gap-6">
+                    <label className="inline-flex items-center gap-2 cursor-pointer text-sm font-medium">
                       <input
                         type="radio"
                         name="enfants"
                         checked={famille.avecEnfants === "oui"}
                         onChange={() => setFamille({ ...famille, avecEnfants: "oui" })}
-                        className="accent-[#f48360]"
+                        className="w-4 h-4 accent-[#f48360]"
                       />
                       <span>Oui</span>
                     </label>
-                    <label className="inline-flex items-center gap-2 cursor-pointer text-sm">
+                    <label className="inline-flex items-center gap-2 cursor-pointer text-sm font-medium">
                       <input
                         type="radio"
                         name="enfants"
                         checked={famille.avecEnfants === "non"}
                         onChange={() => setFamille({ ...famille, avecEnfants: "non" })}
-                        className="accent-[#f48360]"
+                        className="w-4 h-4 accent-[#f48360]"
                       />
                       <span>Non</span>
                     </label>
                   </div>
+
+                  {/* Si oui : demander le nombre d'enfants et leurs détails */}
+                  {famille.avecEnfants === "oui" && (
+                    <div className="pt-4 border-t border-slate-200 animate-in fade-in duration-200 space-y-4">
+                      <div className="max-w-xs">
+                        <label className="text-xs font-bold uppercase text-slate-600 tracking-wider block mb-1">
+                          Nombre d'enfants accompagnants *
+                        </label>
+                        <select
+                          value={famille.nombreEnfants}
+                          onChange={e => {
+                            const count = parseInt(e.target.value, 10);
+                            const currentEnfants = [...famille.enfants];
+                            while (currentEnfants.length < count) {
+                              currentEnfants.push({ nom: "", prenom: "", dateNaissance: "" });
+                            }
+                            setFamille({
+                              ...famille,
+                              nombreEnfants: e.target.value,
+                              enfants: currentEnfants.slice(0, count)
+                            });
+                          }}
+                          className="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-sm font-medium focus:ring-2 focus:ring-[#f48360] focus:outline-none"
+                        >
+                          <option value="1">1 enfant</option>
+                          <option value="2">2 enfants</option>
+                          <option value="3">3 enfants</option>
+                          <option value="4">4 enfants</option>
+                          <option value="5">5 enfants ou plus</option>
+                        </select>
+                      </div>
+
+                      <div className="space-y-3 pt-2">
+                        {famille.enfants.slice(0, parseInt(famille.nombreEnfants, 10) || 1).map((enfant, idx) => (
+                          <div key={idx} className="p-3.5 bg-white rounded-xl border border-slate-200 shadow-xs">
+                            <span className="text-xs font-bold text-[#4b7f9c] block mb-2">
+                              Enfant {idx + 1}
+                            </span>
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                              <input
+                                type="text"
+                                placeholder={`Nom enfant ${idx + 1}`}
+                                value={enfant.nom}
+                                onChange={e => {
+                                  const updated = [...famille.enfants];
+                                  updated[idx] = { ...updated[idx], nom: e.target.value };
+                                  setFamille({ ...famille, enfants: updated });
+                                }}
+                                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-[#f48360]"
+                              />
+                              <input
+                                type="text"
+                                placeholder={`Prénom enfant ${idx + 1}`}
+                                value={enfant.prenom}
+                                onChange={e => {
+                                  const updated = [...famille.enfants];
+                                  updated[idx] = { ...updated[idx], prenom: e.target.value };
+                                  setFamille({ ...famille, enfants: updated });
+                                }}
+                                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-[#f48360]"
+                              />
+                              <input
+                                type="date"
+                                value={enfant.dateNaissance}
+                                onChange={e => {
+                                  const updated = [...famille.enfants];
+                                  updated[idx] = { ...updated[idx], dateNaissance: e.target.value };
+                                  setFamille({ ...famille, enfants: updated });
+                                }}
+                                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-600 focus:outline-none focus:ring-1 focus:ring-[#f48360]"
+                              />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 <div className="flex justify-between pt-4 border-t">
@@ -551,6 +714,18 @@ export default function VoyageDevisPage() {
                     <span className="text-slate-500">Passeport :</span>
                     <strong>{assure.passeport}</strong>
                   </div>
+                  {famille.enCouple === "oui" && (
+                    <div className="flex justify-between">
+                      <span className="text-slate-500">Conjoint(e) :</span>
+                      <strong>{famille.conjointPrenom ? `${famille.conjointPrenom} ` : ""}{famille.conjointNom}</strong>
+                    </div>
+                  )}
+                  {famille.avecEnfants === "oui" && (
+                    <div className="flex justify-between">
+                      <span className="text-slate-500">Enfants accompagnants :</span>
+                      <strong>{famille.nombreEnfants} {parseInt(famille.nombreEnfants, 10) > 1 ? "enfants" : "enfant"}</strong>
+                    </div>
+                  )}
                   <div className="flex justify-between">
                     <span className="text-slate-500">Plafond médical :</span>
                     <strong>30 000 € (300 000 DHS)</strong>
