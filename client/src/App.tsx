@@ -12,6 +12,8 @@ import AutoPage from "./pages/AutoPage";
 import AutoDevisPage from "./pages/AutoDevisPage";
 import MotoPage from "./pages/MotoPage";
 import MotoDevisPage from "./pages/MotoDevisPage";
+import AccidentPage from "./pages/AccidentPage";
+import AccidentDevisPage from "./pages/AccidentDevisPage";
 import ProductPage from "./pages/ProductPage";
 import ConnexionPage from "./pages/ConnexionPage";
 import ContactPage from "./pages/ContactPage";
@@ -26,7 +28,7 @@ function Router() {
       {/* Epargne (Figma Desktop - 24) */}
       <Route path="/epargne" component={EpargnePage} />
 
-      {/* Auto (Figma Node 299-8058 & Live Devis Funnel) */}
+      {/* Auto (Figma Desktop - 8 & 5-Step Devis Funnel) */}
       <Route path="/auto" component={AutoPage} />
       <Route path="/auto/devis-auto" component={AutoDevisPage} />
       <Route path="/auto/devis" component={AutoDevisPage} />
@@ -36,10 +38,11 @@ function Router() {
       <Route path="/moto/devis-moto" component={MotoDevisPage} />
       <Route path="/moto/devis" component={MotoDevisPage} />
 
-      {/* Other insurance products */}
-      <Route path="/accident">
-        {() => <ProductPage productKey="accident" />}
-      </Route>
+      {/* Accident (Desktop - 14, 15, 16, 17 & Devis Pomme/Orange/Kiwi) */}
+      <Route path="/accident" component={AccidentPage} />
+      <Route path="/accident/devis-accident" component={AccidentDevisPage} />
+      <Route path="/accident/devis" component={AccidentDevisPage} />
+      <Route path="/accident/obtenir-un-devis" component={AccidentDevisPage} />
       <Route path="/habitation">
         {() => <ProductPage productKey="habitation" />}
       </Route>
