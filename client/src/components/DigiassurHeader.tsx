@@ -63,15 +63,6 @@ export default function DigiassurHeader({ onSimulate }: DigiassurHeaderProps) {
             >
               Affiliation
             </Link>
-            <a 
-              href="https://pippipyalah.com/" 
-              target="_blank" 
-              rel="noreferrer" 
-              className="text-slate-600 hover:text-[#1d4b75] font-medium px-3 py-1.5 rounded-md transition hover:bg-slate-50 flex items-center gap-1.5"
-            >
-              <img src="/images/icon-pippip.svg" alt="" className="h-4 w-auto" />
-              <span>PipPipYalah</span>
-            </a>
           </div>
 
           {/* Right utilities: Language + Espace Client */}

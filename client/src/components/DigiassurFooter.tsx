@@ -68,12 +68,6 @@ export default function DigiassurFooter() {
                 </Link>
               </li>
               <li><Link href="/loisir" className="hover:text-white transition">Loisir</Link></li>
-              <li className="pt-2">
-                <a href="https://pippipyalah.com/" target="_blank" rel="noreferrer" className="flex items-center gap-1.5 text-emerald-400 font-semibold hover:underline">
-                  <img src="/images/icon-pippip.svg" alt="" className="h-3.5 w-auto" />
-                  <span>PipPipYalah</span>
-                </a>
-              </li>
             </ul>
           </div>
 
