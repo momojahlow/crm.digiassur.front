@@ -1,7 +1,8 @@
 import { ArrowRight, Sparkles } from "lucide-react";
+import { Link } from "wouter";
 
 type EpargneHeroProps = {
-  onSimulate: () => void;
+  onSimulate?: () => void;
 };
 
 export default function EpargneHero({ onSimulate }: EpargneHeroProps) {
@@ -55,14 +56,13 @@ export default function EpargneHero({ onSimulate }: EpargneHeroProps) {
 
                 {/* Coral CTA Button */}
                 <div className="flex items-center gap-4">
-                  <button
-                    type="button"
-                    onClick={onSimulate}
+                  <Link
+                    href="/epargne/obtenir-un-devis"
                     className="inline-flex items-center gap-3 bg-[#f48161] hover:bg-[#e46e4e] text-white font-bold text-sm tracking-wider uppercase px-8 py-4 rounded-none shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5 cursor-pointer"
                   >
-                    <span>OBTENIR UNE SIMULATION</span>
+                    <span>OBTENIR MON DEVIS</span>
                     <ArrowRight className="w-4 h-4" />
-                  </button>
+                  </Link>
                 </div>
               </div>
             </div>
@@ -114,13 +114,13 @@ export default function EpargneHero({ onSimulate }: EpargneHeroProps) {
               Epargnez pour réaliser vos rêves.
             </p>
 
-            <button
-              type="button"
-              onClick={onSimulate}
-              className="w-full max-w-xs mx-auto bg-[#f48161] hover:bg-[#e46e4e] text-white font-bold text-sm uppercase py-4 px-6 shadow-xl transition-all"
+            <Link
+              href="/epargne/obtenir-un-devis"
+              className="inline-flex items-center justify-center gap-2 w-full max-w-xs mx-auto bg-[#f48161] hover:bg-[#e46e4e] text-white font-bold text-sm uppercase py-4 px-6 shadow-xl transition-all"
             >
-              OBTENIR UNE SIMULATION
-            </button>
+              <span>OBTENIR MON DEVIS</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
           </div>
         </div>
       </div>

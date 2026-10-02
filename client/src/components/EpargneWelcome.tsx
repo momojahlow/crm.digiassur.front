@@ -1,7 +1,8 @@
 import { ArrowRight, ShieldCheck, Sparkles, TrendingUp } from "lucide-react";
+import { Link } from "wouter";
 
 type EpargneWelcomeProps = {
-  onSimulate: () => void;
+  onSimulate?: () => void;
 };
 
 export default function EpargneWelcome({ onSimulate }: EpargneWelcomeProps) {
@@ -56,14 +57,13 @@ export default function EpargneWelcome({ onSimulate }: EpargneWelcomeProps) {
 
             {/* CTA Button */}
             <div className="pt-2">
-              <button
-                type="button"
-                onClick={onSimulate}
+              <Link
+                href="/epargne/obtenir-un-devis"
                 className="inline-flex items-center gap-3 bg-[#f48161] hover:bg-[#e46e4e] text-white font-bold text-sm tracking-wider uppercase px-8 py-4 rounded-none shadow-md hover:shadow-lg transition transform hover:-translate-y-0.5 cursor-pointer"
               >
-                <span>OBTENIR UNE SIMULATION</span>
+                <span>OBTENIR MON DEVIS</span>
                 <ArrowRight className="w-4 h-4" />
-              </button>
+              </Link>
             </div>
           </div>
 
