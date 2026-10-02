@@ -172,38 +172,51 @@ export default function AccidentDevisPage() {
 
       <main className="flex-1 pt-[116px]">
         {/* ============================================================== */}
-        {/* FIGMA STEPPER (Circular icons + connectors matching exact styles) */}
+        {/* FIGMA TIMELINE (Continuous connecting line + exact SVG icons)   */}
         {/* ============================================================== */}
-        <section className="bg-white border-b border-slate-200 py-6">
-          <div className="max-w-4xl mx-auto px-4">
-            <ol className="flex items-center justify-center gap-8 md:gap-16">
+        <section className="bg-white border-b border-slate-200 py-8">
+          <div className="max-w-4xl mx-auto px-4 relative">
+            {/* Background continuous track */}
+            <div className="hidden md:block absolute h-1 bg-slate-200 top-[48px] left-[15%] right-[15%] z-0" />
+            
+            {/* Active colored progress line */}
+            <div 
+              className="hidden md:block absolute h-1 bg-[#f48360] top-[48px] left-[15%] transition-all duration-300 z-0"
+              style={{
+                width: step === 1 ? "0%" : step === 2 ? "35%" : "70%"
+              }}
+            />
+
+            {/* Desktop timeline items */}
+            <ol className="hidden md:flex justify-between items-center relative z-10">
               {/* Step 1: Offres */}
-              <li className="relative">
+              <li className="flex flex-col items-center">
                 <button
                   type="button"
                   onClick={() => setStep(1)}
                   className="flex flex-col items-center cursor-pointer group"
                 >
                   <div
-                    className={`relative w-20 h-20 md:w-24 md:h-24 rounded-full text-white flex justify-center items-center border-4 border-white shadow-md transition-all ${
-                      step === 1 ? "bg-[#f48360] ring-4 ring-[#f48360]/20" : "bg-[#4b7f9c]"
+                    className={`relative w-24 h-24 rounded-full text-white flex justify-center items-center border-4 border-white shadow-md transition-all ${
+                      step === 1 
+                        ? "bg-[#f48360] ring-4 ring-[#f48360]/20 scale-105" 
+                        : "bg-[#4b7f9c]"
                     }`}
                   >
-                    <img src="/images/check-circle-4.svg" alt="Offres" className="w-10 h-10 md:w-12 md:h-12" />
-                    {/* Small dot connectors */}
-                    <div
-                      className={`hidden md:block absolute -left-1.5 border-2 border-white h-4 w-4 rounded-full ${
-                        step === 1 ? "bg-[#f48360]" : "bg-[#4b7f9c]"
-                      }`}
+                    <img 
+                      src="/images/icon-personal-injury.svg" 
+                      alt="Offres" 
+                      className="w-12 h-12 object-contain" 
                     />
+                    {/* Pip connector on right */}
                     <div
-                      className={`hidden md:block absolute -right-1.5 border-2 border-white h-4 w-4 rounded-full ${
-                        step > 1 ? "bg-[#4b7f9c]" : "bg-gray-300"
+                      className={`absolute -right-1.5 border-2 border-white h-4 w-4 rounded-full ${
+                        step > 1 ? "bg-[#4b7f9c]" : "bg-[#f48360]"
                       }`}
                     />
                   </div>
                   <p
-                    className={`mt-2 text-center text-xs md:text-sm uppercase font-bold tracking-tight ${
+                    className={`mt-2 text-center text-sm uppercase font-bold tracking-tight ${
                       step === 1 ? "text-[#f48360]" : "text-neutral-500"
                     }`}
                   >
@@ -213,7 +226,7 @@ export default function AccidentDevisPage() {
               </li>
 
               {/* Step 2: Assuré */}
-              <li className="relative">
+              <li className="flex flex-col items-center">
                 <button
                   type="button"
                   onClick={() => {
@@ -222,28 +235,33 @@ export default function AccidentDevisPage() {
                   className="flex flex-col items-center cursor-pointer group"
                 >
                   <div
-                    className={`relative w-20 h-20 md:w-24 md:h-24 rounded-full text-white flex justify-center items-center border-4 border-white shadow-md transition-all ${
+                    className={`relative w-24 h-24 rounded-full text-white flex justify-center items-center border-4 border-white shadow-md transition-all ${
                       step === 2
-                        ? "bg-[#f48360] ring-4 ring-[#f48360]/20"
+                        ? "bg-[#f48360] ring-4 ring-[#f48360]/20 scale-105"
                         : step > 2
                         ? "bg-[#4b7f9c]"
                         : "bg-gray-200"
                     }`}
                   >
-                    <img src="/images/prime-user-edit.svg" alt="Assuré" className="w-10 h-10 md:w-12 md:h-12" />
+                    <img 
+                      src="/images/prime-user-edit.svg" 
+                      alt="Assuré" 
+                      className="w-12 h-12 object-contain" 
+                    />
+                    {/* Connector pips */}
                     <div
-                      className={`hidden md:block absolute -left-1.5 border-2 border-white h-4 w-4 rounded-full ${
-                        step === 2 ? "bg-[#f48360]" : step > 2 ? "bg-[#4b7f9c]" : "bg-gray-300"
+                      className={`absolute -left-1.5 border-2 border-white h-4 w-4 rounded-full ${
+                        step === 2 ? "bg-[#f48360]" : step > 2 ? "bg-[#4b7f9c]" : "bg-gray-200"
                       }`}
                     />
                     <div
-                      className={`hidden md:block absolute -right-1.5 border-2 border-white h-4 w-4 rounded-full ${
-                        step > 2 ? "bg-[#4b7f9c]" : "bg-gray-300"
+                      className={`absolute -right-1.5 border-2 border-white h-4 w-4 rounded-full ${
+                        step === 2 ? "bg-[#f48360]" : step > 2 ? "bg-[#4b7f9c]" : "bg-gray-200"
                       }`}
                     />
                   </div>
                   <p
-                    className={`mt-2 text-center text-xs md:text-sm uppercase font-bold tracking-tight ${
+                    className={`mt-2 text-center text-sm uppercase font-bold tracking-tight ${
                       step === 2 ? "text-[#f48360]" : "text-neutral-500"
                     }`}
                   >
@@ -253,27 +271,34 @@ export default function AccidentDevisPage() {
               </li>
 
               {/* Step 3: Confirmation */}
-              <li className="relative">
+              <li className="flex flex-col items-center">
                 <div className="flex flex-col items-center">
                   <div
-                    className={`relative w-20 h-20 md:w-24 md:h-24 rounded-full text-white flex justify-center items-center border-4 border-white shadow-md transition-all ${
-                      step === 3 ? "bg-[#f48360] ring-4 ring-[#f48360]/20" : "bg-gray-200"
+                    className={`relative w-24 h-24 rounded-full text-white flex justify-center items-center border-4 border-white shadow-md transition-all ${
+                      step === 3 
+                        ? "bg-[#f48360] ring-4 ring-[#f48360]/20 scale-105" 
+                        : "bg-gray-200"
                     }`}
                   >
-                    <CheckCircle2 className="w-10 h-10 md:w-12 md:h-12 text-white" />
+                    <img 
+                      src="/images/check-circle-4.svg" 
+                      alt="Confirmation" 
+                      className="w-12 h-12 object-contain" 
+                    />
+                    {/* Connector pips */}
                     <div
-                      className={`hidden md:block absolute -left-1.5 border-2 border-white h-4 w-4 rounded-full ${
-                        step === 3 ? "bg-[#f48360]" : "bg-gray-300"
+                      className={`absolute -left-1.5 border-2 border-white h-4 w-4 rounded-full ${
+                        step === 3 ? "bg-[#f48360]" : "bg-gray-200"
                       }`}
                     />
                     <div
-                      className={`hidden md:block absolute -right-1.5 border-2 border-white h-4 w-4 rounded-full ${
-                        step === 3 ? "bg-[#f48360]" : "bg-gray-300"
+                      className={`absolute -right-1.5 border-2 border-white h-4 w-4 rounded-full ${
+                        step === 3 ? "bg-[#f48360]" : "bg-gray-200"
                       }`}
                     />
                   </div>
                   <p
-                    className={`mt-2 text-center text-xs md:text-sm uppercase font-bold tracking-tight ${
+                    className={`mt-2 text-center text-sm uppercase font-bold tracking-tight ${
                       step === 3 ? "text-[#f48360]" : "text-neutral-500"
                     }`}
                   >
@@ -282,6 +307,25 @@ export default function AccidentDevisPage() {
                 </div>
               </li>
             </ol>
+
+            {/* Responsive Mobile Timeline */}
+            <div className="flex items-center justify-start p-2 space-x-3 text-xs bg-gray-200 bg-opacity-60 md:hidden rounded-xl">
+              <div className="flex-none p-2 font-semibold text-center text-[#f06d2b] uppercase bg-gray-50 rounded-lg">
+                <div>Étape {step}</div>
+                <span className="font-normal text-[11px]">
+                  {step === 1 ? "Offres" : step === 2 ? "Assuré" : "Confirmation"}
+                </span>
+              </div>
+              <div className="flex-1 bg-white h-2.5 rounded-full overflow-hidden p-0.5">
+                <div
+                  className="h-full leading-none text-center text-white bg-[#f06d2b] rounded-full transition-all duration-300"
+                  style={{ width: `${Math.round((step / lastStep) * 100)}%` }}
+                />
+              </div>
+              <div className="w-12 py-1.5 text-center text-[#f06d2b] font-bold rounded-lg bg-gray-50">
+                {Math.round((step / lastStep) * 100)}%
+              </div>
+            </div>
           </div>
         </section>
 
