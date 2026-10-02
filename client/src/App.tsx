@@ -15,9 +15,13 @@ import MotoDevisPage from "./pages/MotoDevisPage";
 import AccidentPage from "./pages/AccidentPage";
 import AccidentDevisPage from "./pages/AccidentDevisPage";
 import HabitationPage from "./pages/HabitationPage";
+import HabitationDevisPage from "./pages/HabitationDevisPage";
 import VoyagePage from "./pages/VoyagePage";
+import VoyageDevisPage from "./pages/VoyageDevisPage";
 import SantePage from "./pages/SantePage";
+import SanteDevisPage from "./pages/SanteDevisPage";
 import LoisirPage from "./pages/LoisirPage";
+import LoisirDevisPage from "./pages/LoisirDevisPage";
 import ProductPage from "./pages/ProductPage";
 import ConnexionPage from "./pages/ConnexionPage";
 import ContactPage from "./pages/ContactPage";
@@ -50,15 +54,27 @@ function Router() {
 
       {/* Habitation */}
       <Route path="/habitation" component={HabitationPage} />
+      <Route path="/habitation/obtenir-un-devis" component={HabitationDevisPage} />
+      <Route path="/habitation/devis-habitation" component={HabitationDevisPage} />
+      <Route path="/habitation/devis" component={HabitationDevisPage} />
 
       {/* Voyage */}
       <Route path="/voyage" component={VoyagePage} />
+      <Route path="/voyage/obtenir-un-devis" component={VoyageDevisPage} />
+      <Route path="/voyage/devis-voyage" component={VoyageDevisPage} />
+      <Route path="/voyage/devis" component={VoyageDevisPage} />
 
       {/* Santé / Prévoyance */}
       <Route path="/sante" component={SantePage} />
+      <Route path="/sante/obtenir-un-devis" component={SanteDevisPage} />
+      <Route path="/sante/devis-sante" component={SanteDevisPage} />
+      <Route path="/sante/devis" component={SanteDevisPage} />
 
       {/* Loisir */}
       <Route path="/loisir" component={LoisirPage} />
+      <Route path="/loisir/obtenir-un-devis" component={LoisirDevisPage} />
+      <Route path="/loisir/devis-loisir" component={LoisirDevisPage} />
+      <Route path="/loisir/devis" component={LoisirDevisPage} />
       <Route path="/entreprise">
         {() => <ProductPage productKey="entreprise" />}
       </Route>

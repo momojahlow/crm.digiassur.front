@@ -59,7 +59,7 @@ export default function VoyagePage() {
 
                     <div className="flex flex-wrap gap-4">
                       <Link
-                        href="/auto/devis-auto"
+                        href="/voyage/obtenir-un-devis"
                         className="inline-flex items-center gap-2 bg-[#f48161] hover:bg-[#e46e4e] text-white font-bold text-sm tracking-wider uppercase px-8 py-3.5 shadow-lg transition transform hover:-translate-y-0.5 cursor-pointer"
                       >
                         <span>OBTENIR MON DEVIS</span>
@@ -96,7 +96,7 @@ export default function VoyagePage() {
                 Une protection maximale pour votre voyage et visa Schengen
               </p>
               <Link
-                href="/auto/devis-auto"
+                href="/voyage/obtenir-un-devis"
                 className="w-full bg-[#f48161] text-white font-bold text-sm uppercase py-4 shadow-xl mb-3 cursor-pointer block text-center"
               >
                 OBTENIR MON DEVIS
@@ -182,7 +182,7 @@ export default function VoyagePage() {
 
                 <div className="pt-2">
                   <Link
-                    href="/auto/devis-auto"
+                    href="/voyage/obtenir-un-devis"
                     className="inline-flex items-center gap-2 bg-[#f48161] hover:bg-[#e46e4e] text-white font-bold text-xs uppercase px-8 py-3.5 shadow-md cursor-pointer transition"
                   >
                     <span>OBTENIR MON DEVIS VOYAGE</span>

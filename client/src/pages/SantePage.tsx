@@ -58,7 +58,7 @@ export default function SantePage() {
 
                     <div className="flex flex-wrap gap-4">
                       <Link
-                        href="/auto/devis-auto"
+                        href="/sante/obtenir-un-devis"
                         className="inline-flex items-center gap-2 bg-[#f48161] hover:bg-[#e46e4e] text-white font-bold text-sm tracking-wider uppercase px-8 py-3.5 shadow-lg transition transform hover:-translate-y-0.5 cursor-pointer"
                       >
                         <span>OBTENIR MON DEVIS SANTÉ</span>
@@ -95,7 +95,7 @@ export default function SantePage() {
                 La santé est notre bien le plus précieux. Protégez votre famille en toute sérénité.
               </p>
               <Link
-                href="/auto/devis-auto"
+                href="/sante/obtenir-un-devis"
                 className="w-full bg-[#f48161] text-white font-bold text-sm uppercase py-4 shadow-xl mb-3 cursor-pointer block text-center"
               >
                 OBTENIR MON DEVIS SANTÉ
@@ -136,7 +136,7 @@ export default function SantePage() {
 
                 <div className="pt-2">
                   <Link
-                    href="/auto/devis-auto"
+                    href="/sante/obtenir-un-devis"
                     className="inline-flex items-center gap-2 bg-[#f48161] hover:bg-[#e46e4e] text-white font-bold text-xs uppercase px-8 py-3.5 shadow-md cursor-pointer transition"
                   >
                     <span>OBTENIR MON DEVIS SANTÉ</span>
