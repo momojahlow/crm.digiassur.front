@@ -14,6 +14,10 @@ import MotoPage from "./pages/MotoPage";
 import MotoDevisPage from "./pages/MotoDevisPage";
 import AccidentPage from "./pages/AccidentPage";
 import AccidentDevisPage from "./pages/AccidentDevisPage";
+import HabitationPage from "./pages/HabitationPage";
+import VoyagePage from "./pages/VoyagePage";
+import SantePage from "./pages/SantePage";
+import LoisirPage from "./pages/LoisirPage";
 import ProductPage from "./pages/ProductPage";
 import ConnexionPage from "./pages/ConnexionPage";
 import ContactPage from "./pages/ContactPage";
@@ -43,18 +47,18 @@ function Router() {
       <Route path="/accident/devis-accident" component={AccidentDevisPage} />
       <Route path="/accident/devis" component={AccidentDevisPage} />
       <Route path="/accident/obtenir-un-devis" component={AccidentDevisPage} />
-      <Route path="/habitation">
-        {() => <ProductPage productKey="habitation" />}
-      </Route>
-      <Route path="/voyage">
-        {() => <ProductPage productKey="voyage" />}
-      </Route>
-      <Route path="/sante">
-        {() => <ProductPage productKey="sante" />}
-      </Route>
-      <Route path="/loisir">
-        {() => <ProductPage productKey="loisir" />}
-      </Route>
+
+      {/* Habitation */}
+      <Route path="/habitation" component={HabitationPage} />
+
+      {/* Voyage */}
+      <Route path="/voyage" component={VoyagePage} />
+
+      {/* Santé / Prévoyance */}
+      <Route path="/sante" component={SantePage} />
+
+      {/* Loisir */}
+      <Route path="/loisir" component={LoisirPage} />
       <Route path="/entreprise">
         {() => <ProductPage productKey="entreprise" />}
       </Route>
