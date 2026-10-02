@@ -11,6 +11,7 @@ import EpargnePage from "./pages/EpargnePage";
 import AutoPage from "./pages/AutoPage";
 import AutoDevisPage from "./pages/AutoDevisPage";
 import MotoPage from "./pages/MotoPage";
+import MotoDevisPage from "./pages/MotoDevisPage";
 import ProductPage from "./pages/ProductPage";
 import ConnexionPage from "./pages/ConnexionPage";
 import ContactPage from "./pages/ContactPage";
@@ -25,11 +26,15 @@ function Router() {
       {/* Epargne (Figma Desktop - 24) */}
       <Route path="/epargne" component={EpargnePage} />
 
-      {/* Auto & Moto (Figma Node 299-8058 & Live Devis Funnel) */}
+      {/* Auto (Figma Node 299-8058 & Live Devis Funnel) */}
       <Route path="/auto" component={AutoPage} />
       <Route path="/auto/devis-auto" component={AutoDevisPage} />
       <Route path="/auto/devis" component={AutoDevisPage} />
+
+      {/* Moto (Figma Desktop - 8, 9, 10, 11, 13) */}
       <Route path="/moto" component={MotoPage} />
+      <Route path="/moto/devis-moto" component={MotoDevisPage} />
+      <Route path="/moto/devis" component={MotoDevisPage} />
 
       {/* Other insurance products */}
       <Route path="/accident">
