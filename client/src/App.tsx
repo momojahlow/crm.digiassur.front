@@ -8,6 +8,7 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 // Internal Pages
 import Home from "./pages/Home";
 import EpargnePage from "./pages/EpargnePage";
+import EpargneDevisPage from "./pages/EpargneDevisPage";
 import AutoPage from "./pages/AutoPage";
 import AutoDevisPage from "./pages/AutoDevisPage";
 import MotoPage from "./pages/MotoPage";
@@ -33,8 +34,11 @@ function Router() {
       {/* Home (Figma proposition-4 / Node 188-2894) */}
       <Route path="/" component={Home} />
 
-      {/* Epargne (Figma Desktop - 24) */}
+      {/* Epargne (Figma Desktop - 24 & Obtenir un devis) */}
       <Route path="/epargne" component={EpargnePage} />
+      <Route path="/epargne/obtenir-un-devis" component={EpargneDevisPage} />
+      <Route path="/epargne/devis-epargne" component={EpargneDevisPage} />
+      <Route path="/epargne/devis" component={EpargneDevisPage} />
 
       {/* Auto (Figma Desktop - 8 & 5-Step Devis Funnel) */}
       <Route path="/auto" component={AutoPage} />
