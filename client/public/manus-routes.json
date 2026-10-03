@@ -1,7 +1,10 @@
 {
   "routes": [
-    { "path": "/", "title": "Digiassur — Votre quotidien, bien protégé" },
+    { "path": "/", "title": "Digiassur — Votre assurance plus accessible" },
     { "path": "/epargne", "title": "Épargne — Digiassur" },
+    { "path": "/assurance/epargne", "title": "Épargne — Digiassur" },
+    { "path": "/assurance/:slug", "title": "Digiassur — Nos assurances" },
+    { "path": "/devis/:slug", "title": "Digiassur — Simulation guidée" },
     { "path": "/404", "title": "Page introuvable" }
   ]
 }

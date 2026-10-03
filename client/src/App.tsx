@@ -6,19 +6,24 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Epargne from "./pages/Epargne";
 import Home from "./pages/Home";
+import InsuranceProductPage from "./pages/InsuranceProductPage";
+import QuotePage from "./pages/QuotePage";
 
 function Router() {
   return (
     <Switch>
       <Route path="/" component={Home} />
       <Route path="/epargne" component={Epargne} />
+      <Route path="/assurance/epargne" component={Epargne} />
+      <Route path="/assurance/:slug" component={InsuranceProductPage} />
+      <Route path="/devis/:slug" component={QuotePage} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
   );
 }
 
-function App() {
+export default function App() {
   return (
     <ErrorBoundary>
       <ThemeProvider defaultTheme="light">
@@ -30,5 +35,3 @@ function App() {
     </ErrorBoundary>
   );
 }
-
-export default App;

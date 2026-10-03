@@ -1,38 +1,26 @@
-import { ArrowDown, ArrowRight, BadgeCheck, Sparkles } from "lucide-react";
+import { ArrowRight, BadgeCheck, CarFront } from "lucide-react";
+import { Link } from "wouter";
 
-type DigiassurHeroProps = {
-  onExplore: () => void;
-};
-
-export default function DigiassurHero({ onExplore }: DigiassurHeroProps) {
+export default function DigiassurHero() {
   return (
-    <section className="hero" aria-labelledby="hero-title">
-      <img
-        className="hero-image"
-        src="/manus-storage/async-images/glW4jrBAdfbYVnVMsCzgE7/image-1.webp"
-        alt="Une famille profite d’un moment paisible à la maison"
-      />
-      <div className="hero-shade" aria-hidden="true" />
-      <div className="container hero-inner">
-        <div className="hero-copy">
-          <div className="eyebrow hero-eyebrow"><Sparkles size={15} /> L’assurance, en plus simple</div>
-          <h1 id="hero-title">Votre quotidien,<br /><em>bien protégé.</em></h1>
-          <p className="hero-description">
-            Des solutions claires et un accompagnement humain pour protéger ce qui compte, à chaque étape de votre vie.
-          </p>
+    <section className="home-hero" aria-labelledby="home-hero-title">
+      <div className="home-hero-photo" aria-hidden="true" />
+      <div className="home-hero-tint" aria-hidden="true" />
+      <div className="page-width home-hero-inner">
+        <div className="hero-copy-card">
+          <span className="hero-brand-stamp"><CarFront size={25} /></span>
+          <span className="hero-kicker">Votre assurance auto, en toute simplicité</span>
+          <h1 id="home-hero-title">Assurer votre voiture<br />à partir de <em>153 DHS</em><br /><span className="hero-unit">TTC / Mois</span></h1>
+          <p>Recevez votre attestation à domicile ou au bureau. Des garanties claires et un accompagnement qui reste à vos côtés.</p>
           <div className="hero-actions">
-            <button className="button button-coral button-large" type="button" onClick={onExplore}>
-              Découvrir nos assurances <ArrowRight size={18} />
-            </button>
-            <a className="hero-secondary" href="#accompagnement"><span className="play-dot"><ArrowDown size={15} /></span> Notre engagement</a>
+            <Link className="button button-orange" href="/devis/auto">Obtenir mon tarif <ArrowRight size={16} /></Link>
+            <Link className="button button-outline-light" href="/assurance/auto">Découvrir l’assurance auto</Link>
           </div>
-          <div className="hero-assurance-note"><BadgeCheck size={17} /> Des garanties pensées pour vous, sans jargon.</div>
+          <div className="hero-footnote"><BadgeCheck size={16} /> Une simulation simple, sans engagement.</div>
         </div>
-        <a className="hero-scroll" href="#nos-assurances" aria-label="Faire défiler vers les assurances">
-          <span>Explorer</span><ArrowDown size={15} />
-        </a>
+        <div className="hero-side-note"><span className="hero-side-line" /> Protéger mieux, simplement</div>
       </div>
-      <div className="hero-caption"><span className="caption-line" /> Une protection qui vous ressemble</div>
+      <div className="hero-pagination" aria-label="Diapositive 1 sur 3"><span className="is-active" /><span /><span /></div>
     </section>
   );
 }

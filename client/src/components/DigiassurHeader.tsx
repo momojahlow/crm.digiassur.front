@@ -1,67 +1,46 @@
-import { ArrowRight, Headphones, Menu, X } from "lucide-react";
+import { ArrowRight, Globe2, Menu, UserRound, X } from "lucide-react";
 import { useState } from "react";
+import { Link } from "wouter";
+import { INSURANCES } from "@/lib/insurance-products";
 
-type DigiassurHeaderProps = {
-  onExplore: () => void;
-};
+const officialLogo = "https://digiassur.ma/assets/img/frame-4.svg";
 
-const navigation = [
-  { label: "Nos assurances", href: "#nos-assurances" },
-  { label: "Notre approche", href: "#accompagnement" },
-  { label: "Conseils", href: "#conseils" },
-];
-
-function BrandMark() {
-  return (
-    <a className="brand" href="#accueil" aria-label="Digiassur, accueil">
-      <span className="brand-mark" aria-hidden="true">
-        <svg viewBox="0 0 40 40" fill="none">
-          <path d="M20 3.8 34 9v9.8c0 8.1-5.3 14.2-14 17.4C11.3 33 6 26.9 6 18.8V9l14-5.2Z" fill="currentColor" />
-          <path d="m12.5 19.6 7.5-6.2 7.5 6.2v8.1h-5v-5.3h-5v5.3h-5v-8.1Z" fill="white" />
-          <path d="m10.9 18.9 9.1-7.5 9.1 7.5" stroke="white" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-      </span>
-      <span className="brand-name">digi<span>assur</span></span>
-    </a>
-  );
-}
-
-export default function DigiassurHeader({ onExplore }: DigiassurHeaderProps) {
+export default function DigiassurHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
   const closeMenu = () => setMenuOpen(false);
 
   return (
-    <header className="site-header" id="accueil">
-      <div className="topline">
-        <div className="container topline-inner">
-          <span className="topline-note"><Headphones size={15} strokeWidth={1.8} /> Un conseil ? Nos équipes sont là pour vous.</span>
-          <a href="#contact" className="topline-link">Parlons de votre projet <ArrowRight size={14} /></a>
+    <header className="digi-header">
+      <div className="topbar">
+        <div className="topbar-inner page-width">
+          <nav className="topbar-links" aria-label="Navigation secondaire">
+            <Link href="/" className="topbar-active">Particuliers</Link>
+            <a href="https://digiassur.ma/entreprise">Entreprises</a>
+            <a href="https://digiassur.ma/demande-affiliation">Affiliation</a>
+          </nav>
+          <div className="topbar-actions">
+            <button className="language-button" type="button" aria-label="Langue : français"><Globe2 size={15} /> Français <span aria-hidden="true">⌄</span></button>
+            <a className="client-button" href="https://fr.digiassur.ma/connexion"><UserRound size={16} /> Espace client</a>
+          </div>
         </div>
       </div>
-      <div className="nav-wrap">
-        <div className="container nav-inner">
-          <BrandMark />
-          <nav className={`main-nav${menuOpen ? " is-open" : ""}`} aria-label="Navigation principale">
-            {navigation.map((item) => (
-              <a key={item.href} href={item.href} onClick={closeMenu}>{item.label}</a>
-            ))}
-            <button className="nav-mobile-cta" type="button" onClick={() => { closeMenu(); onExplore(); }}>
-              Découvrir les offres <ArrowRight size={16} />
-            </button>
+      <div className="nav-shell">
+        <div className="page-width nav-row">
+          <Link href="/" className="site-logo" aria-label="Digiassur, accueil"><img className="site-logo-art" src={officialLogo} alt="Digiassur" /></Link>
+          <nav className={`product-nav${menuOpen ? " is-open" : ""}`} aria-label="Nos assurances">
+            {INSURANCES.map((product) => {
+              const Icon = product.icon;
+              return (
+                <Link key={product.slug} href={`/assurance/${product.slug}`} onClick={closeMenu} className="product-nav-link">
+                  <Icon size={17} strokeWidth={1.8} aria-hidden="true" />
+                  <span>{product.navName}</span>
+                </Link>
+              );
+            })}
+            <Link className="mobile-quote-link" href="/devis/auto" onClick={closeMenu}>Obtenir un devis <ArrowRight size={16} /></Link>
           </nav>
-          <div className="nav-actions">
-            <a href="#contact" className="client-link">Espace client</a>
-            <button className="button button-coral button-nav" type="button" onClick={onExplore}>
-              Faire un devis <ArrowRight size={16} />
-            </button>
-          </div>
-          <button
-            className="menu-toggle"
-            type="button"
-            aria-label={menuOpen ? "Fermer le menu" : "Ouvrir le menu"}
-            aria-expanded={menuOpen}
-            onClick={() => setMenuOpen((open) => !open)}
-          >
+          <Link className="nav-quote" href="/devis/auto">Obtenir mon tarif <ArrowRight size={15} /></Link>
+          <button className="menu-toggle" type="button" aria-label={menuOpen ? "Fermer le menu" : "Ouvrir le menu"} aria-expanded={menuOpen} onClick={() => setMenuOpen((open) => !open)}>
             {menuOpen ? <X size={22} /> : <Menu size={22} />}
           </button>
         </div>

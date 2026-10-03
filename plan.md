@@ -1,46 +1,49 @@
-# Digiassur React — implementation plan
+# Digiassur React — plan d’intégration complète
 
-## Scope
-Convert the supplied Figma file `Digiassur low-fidelity-wireframe`, linked at node `115:73`, into a reusable React template. The confirmed requirements are a faithful reproduction of the visible layout, hierarchy and content; maintainable React components; responsive behavior; Figma-derived graphic resources and styles; and implementation of the interactions shown or explicitly specified.
+## Objectif et références
+Intégrer dans le template React les catégories du fichier Figma `Digiassur-low-fidelity-wireframe`, préserver la page Épargne déjà développée sur la branche GitHub `work` et fournir un aperçu web interactif. Références de travail :
+- Site existant fourni par l’utilisateur : https://digiassur.ma/ — référence complémentaire pour la marque, la navigation et les contenus publics. Lecture seule : ne pas modifier le site en ligne.
+- Figma : https://www.figma.com/design/DNh2vAgDQDdvyqaOAmR3bI/Digiassur-low-fidelity-wireframe
+- Nœuds demandés : `115:73` pour la demande initiale d’export PNG, et `238:494` fourni ensuite comme repère. Le nœud `238:494` est le frame bureau `Desktop - 9` (1 440 × 1 923 px) du parcours Moto.
+- Pages Figma à couvrir : `High-fi Auto & habitation & Loisir`, `Hi-fi Moto & Accident & Epargne`, `high-fi voyage & Santé/Prévoyance`.
 
-## Source observation and working assumption
-The file opens in a read-only Figma view with several desktop and iPhone frames. The supplied node URL does not focus a single canvas object in the available viewer. The first implementation therefore follows the visible Digiassur desktop screen structure: white navigation, a wide lifestyle hero, service/insurance choices, coral calls to action and a deep-blue footer. Exact node-level text and assets remain subject to correction if the selected frame is different.
+## Résultat attendu
+- Page d’accueil interactive à `/` avec le langage de marque Digiassur et une navigation vers Auto, Moto, Accident, Habitation, Voyage, Santé/Prévoyance, Épargne et Loisir.
+- Pages de catégorie réutilisables et données propres à chaque assurance, avec liens directs vers leur parcours de simulation.
+- Formulaire multi-étapes adapté au produit, avec progression, validation, retour/continuer, réinitialisation, choix de formule, récapitulatif et fin de démonstration.
+- Préserver la page Épargne existante aux chemins `/epargne` et `/assurance/epargne`.
+- Routes statiques déclarées dans `client/public/manus-routes.json`.
+- Créer/pousser uniquement la branche `manus-work`; ne pas modifier `main` et ne pas publier le site.
 
-## Design direction
-- **Design movement:** contemporary French insurtech with an editorial, human-centered service interface.
-- **Core principles:** reassuring, clear, warm, and action-oriented.
-- **Color philosophy:** deep navy conveys reliability; coral highlights the next helpful action; white and pale blue-gray keep dense insurance content calm and legible.
-- **Layout paradigm:** full-width image-led hero with content anchored to a centered service-selector panel, followed by asymmetric editorial sections and a substantial navy footer.
-- **Signature elements:** coral pill-shaped CTA; soft-radius white service cards with small icon badges; a navy footer band with grouped contact and help links.
-- **Interaction philosophy:** simple, reversible selection states; navigation stays obvious; key CTAs scroll users to relevant insurance choices; mobile navigation expands and closes with accessible controls.
-- **Animation:** short 160–220 ms opacity/transform transitions for menu and card states; respect `prefers-reduced-motion`; no distracting looping effects.
-- **Typography system:** Inter (if already supplied by the project/runtime) or a clean system sans fallback; generous display sizing, compact labels, strong contrast and readable French body copy.
-- **Brand essence:** insurance for everyday life made easier to understand and compare; personality: reassuring, straightforward, human.
-- **Brand voice:** direct and helpful, never alarmist. Examples: “Votre quotidien, bien protégé.” and “Choisissez une protection qui vous ressemble.”
-- **Wordmark & logo:** a compact shield/house-line icon paired with the Digiassur wordmark; authored as inline SVG so it remains crisp and reusable.
-- **Signature brand color:** coral `#F28E7F`, paired with navy `#123B5A` and pale blue `#EAF4F7`.
+## Direction visuelle
+- **Mouvement :** insurtech marocaine accessible, inspirée de l’intégration Digiassur actuelle et des écrans Figma plutôt que d’un thème générique.
+- **Principes :** navigation immédiate entre produits; formulaires lisibles et guidés; hiérarchie éditoriale claire; mêmes repères sur bureau et mobile.
+- **Couleurs :** bleu/teal pour la confiance, corail/orange pour les actions, blanc pour les formulaires et gris bleuté pour les champs et séparateurs.
+- **Mise en page :** navigation à deux niveaux, hero illustré, sections produits et réassurance, puis pied de page profond. Les devis utilisent une barre d’étapes, une zone de formulaire claire et un panneau de confiance.
+- **Signatures :** icônes circulaires, boutons corail arrondis, progression teal et widgets de contact sur grand écran.
+- **Interactions :** transitions discrètes, validation près du champ, focus clavier visible et respect de `prefers-reduced-motion`.
+- **Typographie :** sans-serif nette et compacte, titres robustes, labels courts.
+- **Essence de marque :** courtier numérique qui rend les assurances plus accessibles aux particuliers au Maroc; personnalité claire, chaleureuse et réactive.
+- **Voix :** rassurante, directe, sans jargon; exemples : « Assurer votre voiture à partir de 153 DHS TTC/Mois » et « Recevez votre attestation à domicile ou au bureau ».
+- **Logo :** wordmark Digiassur public; couleur signature corail/orange avec bleu/teal institutionnel.
 
-## Project structure
-- `client/src/pages/Home.tsx`: page composition and lightweight local interactions.
-- `client/src/components/`: reusable header, hero, insurance selector, feature sections and footer.
-- `client/src/index.css`: responsive design tokens, typography, layout and interaction states.
-- `client/public/images/hero-home.jpg`: original hero photograph used only in the hero.
-- `client/public/manus-routes.json`: static route manifest for the current `/` page.
+## Architecture du projet
+- `client/src/App.tsx` : accueil, page Épargne héritée, catégories, parcours devis et route introuvable.
+- `client/src/lib/insurance-products.ts` : données des huit produits et champs adaptés.
+- `client/src/pages/Home.tsx` : accueil et accès aux produits/simulations.
+- `client/src/pages/InsuranceProductPage.tsx` : page produit réutilisable.
+- `client/src/pages/QuotePage.tsx` et `client/src/components/InsuranceWizard.tsx` : parcours de démonstration multi-étapes.
+- `client/src/pages/Epargne.tsx`, `client/src/pages/epargne.css`, `client/src/components/epargne/` : page Épargne originale et ses composants de menu, assistance et pied de page.
+- `client/public/images/epargne/` : photos, logos et ressources locales de la page Épargne.
+- `client/src/components/` : en-tête, hero, cartes de produits, réassurance et pied de page.
+- `client/src/pages/digiassur.css` : styles du site et des parcours d’assurance.
+- `client/public/manus-routes.json` : routes `/`, `/epargne`, `/assurance/:slug`, `/devis/:slug` et `/404`.
 
-## Runtime
-The initialized project is a React/TypeScript WebDev starter with server and database disabled. Use its static Vite development command on the configured port 3000; no authentication, private API, or persistent data is needed for this template.
+## Page Épargne héritée de la branche `work`
+La page Épargne existante provient de captures bureau/mobile fournies antérieurement. Elle conserve un menu Digiassur dédié, une hero partagée photo/panneau bleu, une présentation produit, un carrousel de partenaires, un pied de page et des actions d’assistance adaptées au mobile. Son bouton de simulation ouvre une boîte de dialogue locale, sans envoi backend. Les images et logos restent dans `client/public/images/epargne/` pour être servis localement; les sources publiques d’origine sont documentées dans l’historique du projet.
 
-## Active continuation: Épargne page (2026-10-01)
+## Limites produit
+Le projet reste un template React/Vite statique (server et database désactivés pour le nouveau parcours). Les nouveaux formulaires sont une démonstration côté navigateur : ils ne créent pas de contrat, ne transmettent pas et ne conservent pas les données saisies. La page Épargne garde son dialogue local. Ne pas imiter un CAPTCHA opérationnel ni afficher une confirmation laissant croire qu’une vraie souscription a été soumise.
 
-The user supplied a desktop page capture and a long mobile capture for the Digiassur savings landing page. The original Figma viewer returned HTTP 403, but the supplied captures are the design source for this implementation. Add a dedicated `/epargne` route and preserve the existing `/` homepage.
-
-- **Desktop composition:** two-tier header (audience, language, client access, insurance navigation with Épargne active); split hero with the savings photo and blue piggy-bank watermark panel; centered welcome heading; introductory copy beside the savings photo; partner-logo strip; deep-blue multi-column footer; fixed contact shortcuts and Digibot action.
-- **Mobile composition:** compact audience/search/menu header and brand/account row; centered blue hero with a decorative piggy-bank motif; floating savings icon between hero and centered heading; full-width intro photo before body copy and CTA; horizontally browsable partner logos; stacked footer; accessible fixed assistance actions.
-- **Implementation:** add a dedicated React page and scoped styles, use locally cropped photo panels from the user-supplied desktop screenshot, implement the mobile menu, partner carousel and a no-backend simulation/contact dialog using the contact channels shown in the reference. Do not replace the current home page or invent a backend/data submission flow.
-- **Routing:** add `/epargne` and its page title to `client/public/manus-routes.json`; retain `/`, `/404`, and fallback behavior.
-
-## Official public-site assets and destinations
-
-Reference pages: [Digiassur homepage](https://digiassur.ma/) and [Épargne page](https://digiassur.ma/epargne). The live Épargne CTA leads to [https://digiassur.ma/epargne/obtenir-un-devis](https://digiassur.ma/epargne/obtenir-un-devis); the site also displays the monthly starting amount of 120 DHS TTC, while this implementation follows the supplied captures' visible copy and section order. Original locally copied assets: hero photo [https://digiassur.ma/assets/img-front/banner-epargne.jpg](https://digiassur.ma/assets/img-front/banner-epargne.jpg), introduction photo [https://digiassur.ma/assets/img-front/epargne-pic.jpg](https://digiassur.ma/assets/img-front/epargne-pic.jpg), savings watermark [https://digiassur.ma/assets/img/epargne-drawer.png](https://digiassur.ma/assets/img/epargne-drawer.png), Digiassur wordmark [https://digiassur.ma/assets/img/frame-4.svg](https://digiassur.ma/assets/img/frame-4.svg), and partner logos AXA, Allianz, Sanlam, RMA, Assur’Wi and AtlantaSanad from their `https://digiassur.ma/assets/img/` assets. Official visible contacts are `(+212) 522 36 81 82`, `contact@digiassur.ma`, and WhatsApp at [https://api.whatsapp.com/send/?phone=212711454567&text&type=phone_number&app_absent=0](https://api.whatsapp.com/send/?phone=212711454567&text&type=phone_number&app_absent=0). Official social/legal destinations are the Facebook, LinkedIn, Instagram, YouTube and legal links exposed in the live-page footer; use local copies of raster/vector design assets rather than hotlinking image files at runtime.
-
-Partner-logo source URLs retained for traceability: AXA `https://digiassur.ma/assets/img/axa-768-1-2.svg`; Allianz `https://digiassur.ma/assets/img/allianz-2-1-2.svg`; Sanlam `https://digiassur.ma/assets/img/groupe-2798@2x.png`; RMA `https://digiassur.ma/assets/img/rma-1-1.svg`; Assur’Wi `https://digiassur.ma/assets/img/group-138@2x.png`; AtlantaSanad `https://digiassur.ma/assets/img/rectangle-9@2x.png`. Navigation assets include `https://digiassur.ma/assets/img/fluent-vehicle-car-20-regular-4.svg`, `union-4.svg`, `fluent-building-home-20-regular-1.svg`, `vector.svg`, `frame-137-1.svg`, `frame-138-1.svg`, `fluent-money-hand-20-regular.svg`, `fluent-sport-24-regular-1.svg`, and `ri-search-line.svg` under the same `/assets/img/` directory. The header logo is `https://digiassur.ma/assets/img/frame-4.svg`; client/login destination observed in source is `http://new.digiassur.com/connexion`.
+## Référence Figma
+Le navigateur authentifié a permis d’inspecter le fichier et le frame `238:494`, mais son export PNG n’a pas été transféré dans le sandbox. Le rendu s’appuie donc sur le frame visible et les actifs publics Digiassur; une comparaison pixel par pixel reste à faire si l’export est fourni dans `design-reference/`.
