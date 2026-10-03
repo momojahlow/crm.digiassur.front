@@ -18,11 +18,11 @@ Intégrer dans le template React les catégories du fichier Figma `Digiassur-low
 
 ## Direction visuelle
 - **Mouvement :** insurtech marocaine accessible, inspirée de l’intégration Digiassur actuelle et des écrans Figma plutôt que d’un thème générique.
-- **Principes :** navigation immédiate entre produits; formulaires lisibles et guidés; hiérarchie éditoriale claire; mêmes repères sur bureau et mobile.
+- **Principes :** navigation immédiate et filtrable entre produits; formulaires lisibles et guidés; hiérarchie éditoriale claire; mêmes repères sur bureau et mobile.
 - **Couleurs :** bleu/teal pour la confiance, corail/orange pour les actions, blanc pour les formulaires et gris bleuté pour les champs et séparateurs.
-- **Mise en page :** navigation à deux niveaux, hero illustré, sections produits et réassurance, puis pied de page profond. Les devis utilisent une barre d’étapes, une zone de formulaire claire et un panneau de confiance.
-- **Signatures :** icônes circulaires, boutons corail arrondis, progression teal et widgets de contact sur grand écran.
-- **Interactions :** transitions discrètes, validation près du champ, focus clavier visible et respect de `prefers-reduced-motion`.
+- **Mise en page :** navigation compacte à deux niveaux avec un panneau de recherche/filtrage des produits; pages d’assurance structurées en hero, repères contractuels, éléments à préparer et prochaine étape. Les devis utilisent une barre d’étapes, une zone de formulaire claire et un panneau de confiance.
+- **Signatures :** icônes circulaires, surfaces arrondies et nuancées, filtres en pastilles, progression teal et panneaux d’information bien hiérarchisés.
+- **Interactions :** recherche tolérante aux accents, filtres clavier accessibles, menus refermables, états actifs visibles, transitions discrètes, validation près du champ, focus clavier visible et respect de `prefers-reduced-motion`.
 - **Typographie :** sans-serif nette et compacte, titres robustes, labels courts.
 - **Essence de marque :** courtier numérique qui rend les assurances plus accessibles aux particuliers au Maroc; personnalité claire, chaleureuse et réactive.
 - **Voix :** rassurante, directe, sans jargon; exemples : « Assurer votre voiture à partir de 153 DHS TTC/Mois » et « Recevez votre attestation à domicile ou au bureau ».

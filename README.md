@@ -18,8 +18,9 @@ pnpm check
 
 ## Pages
 
-- `/` : accueil et accès aux assurances.
-- `/assurance/:slug` : pages Auto, Moto, Accident, Habitation, Voyage, Santé/Prévoyance, Épargne et Loisir. La route Épargne ouvre la page détaillée existante.
+- `/` : accueil avec recherche et filtres par besoin, puis accès aux assurances.
+- Le menu « Nos assurances » propose la même recherche et les mêmes filtres, sur ordinateur et mobile; la navigation est partagée avec la page Épargne.
+- `/assurance/:slug` : pages Auto, Moto, Accident, Habitation, Voyage, Santé/Prévoyance, Épargne et Loisir, avec repères de comparaison et parcours de démonstration. La route Épargne ouvre la page détaillée existante.
 - `/epargne` : accès direct à la page Épargne héritée de la branche `work`.
 - `/devis/:slug` : parcours de simulation adapté à la catégorie.
 

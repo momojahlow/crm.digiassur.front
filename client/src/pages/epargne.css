@@ -1350,3 +1350,10 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+
+/* Plain-language context and shared site navigation support on Épargne. */
+.epargne-disclaimer { margin:16px 0 0 !important; padding:13px 15px; border-left:3px solid #e7967e; border-radius:0 9px 9px 0; color:#5f6e77; background:#fff8f4; font-size:11px; line-height:1.6; }
+.epargne-disclaimer strong { color:#2b5274; }
+.epargne-shell > .digi-header { position:relative; z-index:40; }
+.epargne-shell .digiassur-site { min-height:0; }
