@@ -10,20 +10,25 @@ const partners = [
 ];
 
 const promises = [
-  { title: "Des informations claires", text: "Des garanties présentées simplement, sans jargon.", icon: ShieldCheck },
-  { title: "Un accompagnement humain", text: "Une équipe à l’écoute pour vous guider à chaque étape.", icon: HeartHandshake },
+  { title: "Des repères lisibles", text: "Comprendre garanties, limites et exclusions avant de choisir.", icon: ShieldCheck },
+  { title: "Un accompagnement humain", text: "Une équipe à l’écoute pour vous guider dans vos démarches.", icon: HeartHandshake },
   { title: "Une relation de proximité", text: "Digiassur, courtier digital basé à Casablanca.", icon: Headphones },
 ];
 
 export default function TrustSection() {
   return (
     <>
-      <section className="partners-section" aria-label="Partenaires assureurs">
-        <div className="page-width"><div className="partners-heading"><span className="section-kicker">À vos côtés</span><h2>Nos partenaires</h2><p>Nous travaillons avec des compagnies d’assurance reconnues pour vous proposer des solutions adaptées.</p></div>
-          <div className="partners-row">{partners.map((partner) => <div className="partner-logo" key={partner.name}><img src={partner.src} alt={partner.name} decoding="async" /></div>)}</div>
+      <section className="partners-section" aria-label="Partenaires assureurs présentés par Digiassur">
+        <div className="page-width">
+          <div className="partners-heading">
+            <span className="section-kicker">À vos côtés</span>
+            <h2>Nos partenaires</h2>
+            <p>Les compagnies affichées par Digiassur. Le partenaire, les garanties et les conditions applicables dépendent de l’offre étudiée.</p>
+          </div>
+          <div className="partners-row">{partners.map((partner) => <div className="partner-logo" key={partner.name}><img src={partner.src} alt={partner.name} decoding="async" loading="lazy" /></div>)}</div>
         </div>
       </section>
-      <section className="promise-section" aria-label="Pourquoi choisir Digiassur">
+      <section className="promise-section" aria-label="Repères pour choisir son assurance">
         <div className="page-width promise-grid">{promises.map(({ title, text, icon: Icon }) => <article className="promise-card" key={title}><span className="promise-icon"><Icon size={22} /></span><h3>{title}</h3><p>{text}</p></article>)}</div>
       </section>
     </>

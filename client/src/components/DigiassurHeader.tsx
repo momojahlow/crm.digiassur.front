@@ -37,9 +37,9 @@ export default function DigiassurHeader() {
                 </Link>
               );
             })}
-            <Link className="mobile-quote-link" href="/devis/auto" onClick={closeMenu}>Obtenir un devis <ArrowRight size={16} /></Link>
+            <Link className="mobile-quote-link" href="/devis/auto" onClick={closeMenu}>Tester la simulation Auto <ArrowRight size={16} /></Link>
           </nav>
-          <Link className="nav-quote" href="/devis/auto">Obtenir mon tarif <ArrowRight size={15} /></Link>
+          <Link className="nav-quote" href="/devis/auto">Simulation Auto (démo) <ArrowRight size={15} /></Link>
           <button className="menu-toggle" type="button" aria-label={menuOpen ? "Fermer le menu" : "Ouvrir le menu"} aria-expanded={menuOpen} onClick={() => setMenuOpen((open) => !open)}>
             {menuOpen ? <X size={22} /> : <Menu size={22} />}
           </button>

@@ -24,8 +24,8 @@ export default function InsuranceProductPage() {
               <span className="product-hero-icon"><Icon size={25} /></span>
               <h1 id="product-title">{product.headline}</h1>
               <p>{product.description}</p>
-              {product.startingPrice && <span className="product-price-note">{product.startingPrice}</span>}
-              <Link className="button button-orange" href={`/devis/${product.slug}`}>Obtenir mon devis <ArrowRight size={16} /></Link>
+              {product.startingPrice && <><span className="product-price-note">{product.startingPrice}</span><p className="product-price-caption">Repère indicatif, à confirmer selon l’offre et votre situation.</p></>}
+              <Link className="button button-orange" href={`/devis/${product.slug}`}>Tester le parcours {product.name} <ArrowRight size={16} /></Link>
             </div>
             <div className="product-hero-art" aria-hidden="true"><div className="art-orbit orbit-one" /><div className="art-orbit orbit-two" /><Icon size={116} strokeWidth={1.1} /></div>
           </div>
@@ -33,11 +33,16 @@ export default function InsuranceProductPage() {
 
         <section className="product-intro page-width">
           <div className="product-intro-heading"><span className="section-kicker">L’assurance {product.name.toLowerCase()}</span><h2>{product.coverTitle}</h2></div>
-          <div className="product-intro-content"><p>{product.description}</p><ul className="coverage-list">{product.coverPoints.map((point) => <li key={point}><span><Check size={14} /></span>{point}</li>)}</ul><Link className="text-link" href={`/devis/${product.slug}`}>Démarrer une simulation <ArrowRight size={15} /></Link></div>
+          <div className="product-intro-content">
+            <p>{product.description}</p>
+            <p className="contract-terms-note">Les points suivants sont des repères de lecture, pas des garanties contractuelles. Vérifiez les garanties, exclusions, plafonds et franchises dans les documents de l’offre.</p>
+            <ul className="coverage-list">{product.coverPoints.map((point) => <li key={point}><span><Check size={14} /></span>{point}</li>)}</ul>
+            <Link className="text-link" href={`/devis/${product.slug}`}>Découvrir les étapes de démonstration <ArrowRight size={15} /></Link>
+          </div>
         </section>
 
         <section className="product-simulation">
-          <div className="page-width simulation-inner"><span className="simulation-icon"><ShieldCheck size={24} /></span><div><span className="section-kicker">Un parcours guidé</span><h2>Quelques questions, une simulation plus claire.</h2><p>Décrivez votre situation, explorez les formules et vérifiez vos réponses dans un parcours adapté à l’assurance {product.name.toLowerCase()}.</p></div><Link className="button button-orange" href={`/devis/${product.slug}`}>Obtenir un devis <ArrowRight size={16} /></Link></div>
+          <div className="page-width simulation-inner"><span className="simulation-icon"><ShieldCheck size={24} /></span><div><span className="section-kicker">Parcours de démonstration</span><h2>Préparez les informations utiles.</h2><p>Ce parcours illustre les questions possibles. Il ne calcule aucun tarif, ne soumet pas de demande et ne crée pas de contrat.</p></div><Link className="button button-orange" href={`/devis/${product.slug}`}>Voir les étapes <ArrowRight size={16} /></Link></div>
         </section>
         <TrustSection />
       </main>

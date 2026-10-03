@@ -13,6 +13,7 @@ Intégrer dans le template React les catégories du fichier Figma `Digiassur-low
 - Formulaire multi-étapes adapté au produit, avec progression, validation, retour/continuer, réinitialisation, choix de formule, récapitulatif et fin de démonstration.
 - Préserver la page Épargne existante aux chemins `/epargne` et `/assurance/epargne`.
 - Routes statiques déclarées dans `client/public/manus-routes.json`.
+- Accueil à visée pédagogique : inviter à comparer garanties, exclusions, franchises, plafonds et modalités; contextualiser les prix indicatifs et identifier clairement les parcours comme des démonstrations locales.
 - Créer/pousser uniquement la branche `manus-work`; ne pas modifier `main` et ne pas publier le site.
 
 ## Direction visuelle
@@ -35,7 +36,7 @@ Intégrer dans le template React les catégories du fichier Figma `Digiassur-low
 - `client/src/pages/QuotePage.tsx` et `client/src/components/InsuranceWizard.tsx` : parcours de démonstration multi-étapes.
 - `client/src/pages/Epargne.tsx`, `client/src/pages/epargne.css`, `client/src/components/epargne/` : page Épargne originale et ses composants de menu, assistance et pied de page.
 - `client/public/images/epargne/` : photos, logos et ressources locales de la page Épargne.
-- `client/src/components/` : en-tête, hero, cartes de produits, réassurance et pied de page.
+- `client/src/components/` : en-tête, hero, cartes de produits, guide pratique pour lire un contrat, réassurance et pied de page.
 - `client/src/pages/digiassur.css` : styles du site et des parcours d’assurance.
 - `client/public/manus-routes.json` : routes `/`, `/epargne`, `/assurance/:slug`, `/devis/:slug` et `/404`.
 
