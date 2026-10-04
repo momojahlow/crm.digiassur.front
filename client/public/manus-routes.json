@@ -1,6 +1,7 @@
 {
   "routes": [
     { "path": "/", "title": "Digiassur — Votre assurance plus accessible" },
+    { "path": "/comparateur-auto", "title": "Simulation et comparaison Auto — Digiassur" },
     { "path": "/epargne", "title": "Épargne — Digiassur" },
     { "path": "/assurance/epargne", "title": "Épargne — Digiassur" },
     { "path": "/assurance/:slug", "title": "Digiassur — Nos assurances" },

@@ -323,3 +323,136 @@
   .client-nav-link { width:33px; height:33px; }
   .product-hero-modern .product-hero-copy h1 { font-size:30px; }
 }
+
+
+/* Auto comparator — editorial Digiassur style, based on the reference selected by the user. */
+.auto-comparator-page { --auto-paper:#faf9f6; --auto-peach:#fbefeb; }
+.auto-comparator-hero { position:relative; overflow:hidden; color:var(--blue-deep); background:#f8f8f4; }
+.auto-comparator-hero::after { position:absolute; right:-105px; bottom:-280px; width:570px; height:570px; border:1px solid rgba(27,89,116,.09); border-radius:50%; content:""; }
+.auto-comparator-hero-photo { position:absolute; inset:0 0 0 auto; width:min(68%,920px); background-image:linear-gradient(90deg,#f8f8f4 0%,rgba(248,248,244,.94) 16%,rgba(248,248,244,.56) 49%,rgba(248,248,244,.08) 100%),url('https://digiassur.ma/assets/img/rectangle-3-1.png'); background-position:center,right center; background-size:cover; background-repeat:no-repeat; opacity:.94; }
+.auto-comparator-hero-inner { min-height:420px; position:relative; z-index:1; padding-block:21px 43px; }
+.auto-comparator-hero .product-breadcrumb { margin:0 0 50px; color:#85969a; }
+.auto-comparator-hero .product-breadcrumb a { color:var(--blue); }
+.auto-comparator-hero-copy { position:relative; z-index:1; width:min(100%,620px); padding:0 0 17px; }
+.auto-comparator-icon { width:48px; height:48px; display:grid; place-items:center; margin-bottom:19px; border:1px solid #f0e3de; border-radius:50%; color:var(--orange-deep); background:#fff; }
+.auto-comparator-hero-copy .section-kicker { margin-bottom:10px; }
+.auto-comparator-hero-copy h1 { margin:0 0 15px; color:#173f55; font-family:Manrope,sans-serif; font-size:clamp(36px,5vw,59px); font-weight:800; line-height:1.06; letter-spacing:-2.4px; }
+.auto-comparator-hero-copy h1 em { color:var(--orange-deep); font-style:normal; }
+.auto-comparator-hero-copy > p { max-width:535px; margin:0; color:#71818a; font-size:15px; line-height:1.8; }
+.auto-comparator-trust { display:flex; align-items:flex-start; gap:8px; max-width:560px; margin-top:20px; color:#728890; font-size:11px; line-height:1.6; }
+.auto-comparator-trust svg { flex:0 0 auto; margin-top:1px; color:#7eaf96; }
+.auto-comparator-intro { display:grid; grid-template-columns:1fr .9fr; align-items:end; gap:65px; padding-block:68px 54px; }
+.auto-comparator-intro h2, .auto-comparator-section-heading h2 { margin:8px 0 0; color:#173f55; font-family:Manrope,sans-serif; font-size:clamp(25px,3.4vw,39px); line-height:1.12; letter-spacing:-1.25px; }
+.auto-comparator-intro p { margin:0; color:#71818a; font-size:13px; line-height:1.8; }
+.auto-comparator-form { margin:0; }
+.auto-comparator-section { padding-block:27px 50px; }
+.auto-offers-section { padding-block:54px 60px; background:var(--auto-paper); }
+.auto-comparator-section-heading { display:flex; align-items:flex-start; gap:16px; margin-bottom:27px; }
+.auto-step-number { width:42px; height:42px; display:grid; place-items:center; flex:0 0 auto; border:1px solid #f1e3de; border-radius:50%; color:var(--orange-deep); background:#fff; font-family:Manrope,sans-serif; font-size:14px; font-weight:800; }
+.auto-comparator-section-heading h2 { margin-top:5px; font-size:clamp(22px,3vw,31px); }
+.auto-comparator-section-heading p { margin:8px 0 0; color:#7a8a90; font-size:12px; line-height:1.7; }
+.auto-vehicle-fields { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:14px; padding:24px; border:1px solid #e8edeb; border-radius:18px; background:#fff; box-shadow:0 8px 24px rgba(26,68,86,.035); }
+.auto-vehicle-fields .field-control > span, .auto-offer-entry .field-control > span { color:#5c707a; font-size:11px; font-weight:700; }
+.auto-vehicle-fields .field-control input, .auto-vehicle-fields .field-control select, .auto-offer-entry .field-control input, .auto-offer-entry .field-control select, .auto-offer-entry .field-control textarea { width:100%; min-width:0; min-height:44px; padding:10px 12px; border:1px solid #e2e9eb; border-radius:9px; color:var(--ink); background:#fbfcfc; font:inherit; font-size:12px; }
+.auto-offer-entry .field-control textarea { min-height:76px; resize:vertical; line-height:1.55; }
+.auto-vehicle-fields .field-control input:focus, .auto-vehicle-fields .field-control select:focus, .auto-offer-entry .field-control input:focus, .auto-offer-entry .field-control select:focus, .auto-offer-entry .field-control textarea:focus { border-color:#86b2bf; box-shadow:0 0 0 3px rgba(134,178,191,.14); outline:0; }
+.auto-offer-entry-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); align-items:start; gap:16px; }
+.auto-offer-entry { min-width:0; padding:21px; border:1px solid #e7edeb; border-radius:18px; background:#fff; box-shadow:0 9px 24px rgba(26,68,86,.045); animation:rise-in .4s both; animation-delay:calc(var(--offer-index) * 55ms); transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease; }
+.auto-offer-entry:hover { transform:translateY(-3px); border-color:#ecd7cf; box-shadow:0 15px 28px rgba(26,68,86,.075); }
+.auto-offer-entry-heading { display:flex; align-items:center; gap:11px; margin-bottom:18px; }
+.auto-offer-entry-icon { width:39px; height:39px; display:grid; place-items:center; border-radius:50%; color:var(--orange-deep); background:var(--auto-peach); }
+.auto-offer-entry-heading .section-kicker { font-size:9px; }
+.auto-offer-entry-heading h3 { margin:3px 0 0; color:#173f55; font-family:Manrope,sans-serif; font-size:17px; }
+.auto-offer-entry > .field-control { margin-bottom:13px; }
+.auto-premium-row { display:grid; grid-template-columns:1.1fr .9fr; gap:9px; margin-bottom:14px; }
+.auto-coverage-fieldset { display:grid; gap:9px; margin:0 0 15px; padding:13px; border:1px solid #edf0ee; border-radius:12px; }
+.auto-coverage-fieldset legend { padding-inline:5px; color:#526b75; font-size:10px; font-weight:800; }
+.auto-coverage-check { display:flex; align-items:flex-start; gap:8px; color:#5d7078; font-size:10px; line-height:1.5; cursor:pointer; }
+.auto-coverage-check input { width:15px; height:15px; flex:0 0 auto; margin:0; accent-color:var(--orange-deep); }
+.auto-offer-notes { margin-top:1px; }
+.auto-offer-preview { margin:13px 0 0; padding:10px 12px; border-radius:9px; color:#59727c; background:#f1f7f6; font-size:10px; }
+.auto-offer-preview strong { color:var(--blue-deep); }
+.auto-coverage-legend { display:flex; align-items:flex-start; gap:9px; margin:17px 0 0; color:#77898f; font-size:10px; line-height:1.65; }
+.auto-coverage-legend svg { flex:0 0 auto; margin-top:1px; color:var(--orange-deep); }
+.auto-compare-action-row { display:flex; align-items:center; justify-content:space-between; gap:15px; margin-top:21px; }
+.auto-compare-error { color:#bf5948; font-size:12px; }
+.auto-compare-error:empty { display:none; }
+.auto-compare-submit { border-radius:999px; }
+.auto-comparison-results { scroll-margin-top:20px; padding-block:64px 68px; background:#eef5f3; animation:auto-result-enter .35s ease-out both; }
+.auto-result-disclaimer { display:flex; align-items:flex-start; gap:9px; margin:0 0 21px; color:#657b83; font-size:11px; line-height:1.65; }
+.auto-result-disclaimer svg { flex:0 0 auto; margin-top:1px; color:var(--orange-deep); }
+.auto-comparison-result-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr)); gap:14px; }
+.auto-comparison-result-card { position:relative; min-width:0; padding:21px; border:1px solid #e3eae7; border-radius:17px; background:#fff; box-shadow:0 9px 22px rgba(26,68,86,.04); animation:auto-result-enter .4s ease-out both; animation-delay:calc(var(--offer-index) * 45ms); }
+.auto-comparison-result-card.is-lowest { border-color:#8fb7a8; box-shadow:0 12px 28px rgba(67,124,102,.1); }
+.auto-result-card-topline { display:flex; align-items:flex-start; justify-content:space-between; gap:9px; }
+.auto-result-provider { color:#173f55; font-family:Manrope,sans-serif; font-size:16px; font-weight:800; overflow-wrap:anywhere; }
+.auto-lowest-badge { display:inline-flex; align-items:center; gap:4px; flex:0 0 auto; padding:5px 8px; border-radius:999px; color:#42755f; background:#e9f4ee; font-size:9px; font-weight:800; }
+.auto-result-price { display:block; margin-top:17px; color:var(--blue-deep); font-family:Manrope,sans-serif; font-size:clamp(26px,3vw,36px); font-weight:800; letter-spacing:-1px; }
+.auto-result-price small { font-size:12px; letter-spacing:0; }
+.auto-result-source { display:block; margin-top:2px; color:#8a989c; font-size:10px; }
+.auto-result-coverages { display:grid; gap:8px; margin-top:18px; padding-top:16px; border-top:1px solid #edf1ef; }
+.auto-result-coverages > strong { margin-bottom:2px; color:#526b75; font-size:10px; }
+.auto-result-coverages > span { display:grid; grid-template-columns:16px 1fr auto; align-items:center; gap:6px; color:#4e6d62; font-size:10px; }
+.auto-result-coverages > span.is-unverified { color:#8a9698; }
+.auto-result-coverages > span > svg { color:#65a084; }
+.auto-unverified-mark { width:14px; height:14px; display:grid; place-items:center; border:1px solid #bdc9c7; border-radius:50%; font-size:9px; }
+.auto-result-coverages small { color:#9ba7a8; font-size:8px; }
+.auto-result-notes { margin:16px 0 0; padding:11px 12px; border-radius:9px; color:#697d83; background:#f7f8f5; font-size:10px; line-height:1.6; overflow-wrap:anywhere; }
+.auto-result-notes strong { display:block; margin-bottom:2px; color:#536c75; }
+.auto-result-offer-id { position:absolute; top:-7px; left:18px; padding:3px 8px; border-radius:999px; color:#a56755; background:#fbefeb; font-size:8px; font-weight:800; text-transform:uppercase; letter-spacing:.5px; }
+.auto-result-next-step { display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:15px; margin-top:22px; padding:20px; border:1px solid rgba(130,169,155,.26); border-radius:15px; background:rgba(255,255,255,.78); }
+.auto-result-next-icon { width:40px; height:40px; display:grid; place-items:center; border-radius:50%; color:#5d9b7d; background:#e9f4ee; }
+.auto-result-next-step strong { color:#234d5e; font-size:12px; }
+.auto-result-next-step p { margin:4px 0 0; color:#70828a; font-size:10px; line-height:1.6; }
+.auto-result-next-step .button { min-height:40px; padding:0 14px; font-size:10px; white-space:nowrap; }
+.auto-comparator-footnote { padding-block:19px; color:#70838a; background:#f8f8f4; }
+.auto-comparator-footnote .page-width { display:flex; align-items:flex-start; gap:10px; }
+.auto-comparator-footnote svg { flex:0 0 auto; margin-top:2px; color:#79a88f; }
+.auto-comparator-footnote p { max-width:850px; margin:0; font-size:10px; line-height:1.7; }
+.auto-comparator-footnote strong { color:#496570; }
+.product-auto-actions { display:flex; align-items:flex-start; flex-direction:column; gap:13px; }
+.product-auto-actions .text-link { color:#fff; }
+.wizard-step-panel { min-width:0; animation:wizard-step-enter .32s cubic-bezier(.2,.7,.25,1) both; }
+@keyframes wizard-step-enter { from { opacity:0; transform:translateY(11px); } to { opacity:1; transform:translateY(0); } }
+@keyframes auto-result-enter { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+@media (max-width:1050px) {
+  .auto-vehicle-fields { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .auto-offer-entry-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .auto-offer-entry:last-child { grid-column:1 / -1; }
+}
+@media (max-width:760px) {
+  .offers-grid { grid-template-columns:1fr; }
+  .auto-comparator-hero-photo { inset:auto 0 0; width:100%; height:190px; background-image:linear-gradient(180deg,#f8f8f4 0%,rgba(248,248,244,.77) 33%,rgba(248,248,244,.15) 100%),url('https://digiassur.ma/assets/img/rectangle-3-1.png'); background-position:center 58%; opacity:.64; }
+  .auto-comparator-hero-inner { min-height:0; padding-block:21px 49px; }
+  .auto-comparator-hero .product-breadcrumb { margin:0 0 20px; }
+  .auto-comparator-hero-copy { padding:0; }
+  .auto-comparator-hero-copy h1 { font-size:clamp(34px,9vw,46px); letter-spacing:-1.5px; }
+  .auto-comparator-hero-copy > p { font-size:13px; }
+  .auto-comparator-intro { grid-template-columns:1fr; gap:13px; padding-block:43px 34px; }
+  .auto-comparator-intro h2 { font-size:29px; }
+  .auto-comparator-section { padding-block:23px 36px; }
+  .auto-offers-section { padding-block:38px 43px; }
+  .auto-comparator-section-heading { gap:11px; margin-bottom:19px; }
+  .auto-step-number { width:35px; height:35px; }
+  .auto-comparator-section-heading h2 { font-size:23px; }
+  .auto-vehicle-fields { grid-template-columns:1fr; gap:12px; padding:16px; border-radius:15px; }
+  .auto-offer-entry-grid { grid-template-columns:minmax(0,1fr); gap:12px; }
+  .auto-offer-entry:last-child { grid-column:auto; }
+  .auto-offer-entry { padding:17px; border-radius:15px; }
+  .auto-compare-action-row { align-items:stretch; flex-direction:column; }
+  .auto-compare-submit { width:100%; }
+  .auto-comparison-results { padding-block:43px; }
+  .auto-comparison-result-grid { grid-template-columns:minmax(0,1fr); }
+  .auto-comparison-result-card { padding:18px; }
+  .auto-result-next-step { grid-template-columns:auto 1fr; gap:10px; padding:16px; }
+  .auto-result-next-step .button { grid-column:1 / -1; width:100%; white-space:normal; }
+  .auto-comparator-footnote .page-width { align-items:flex-start; }
+  .product-auto-actions { gap:10px; }
+}
+@media (max-width:390px) {
+  .auto-comparator-hero-copy h1 { font-size:33px; }
+  .auto-premium-row { grid-template-columns:1fr 1fr; gap:7px; }
+  .auto-offer-entry { padding:14px; }
+  .auto-result-card-topline { flex-direction:column; }
+  .auto-lowest-badge { align-self:flex-start; }
+}

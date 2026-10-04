@@ -58,7 +58,7 @@ export default function DigiassurHeader() {
             <span>Nos assurances</span>
             <ChevronDown className="insurance-menu-chevron" size={16} aria-hidden="true" />
           </button>
-          <Link className="nav-quote" href="/devis/auto">Découvrir la simulation Auto <ArrowRight size={15} /></Link>
+          <Link className="nav-quote" href="/comparateur-auto">Comparer les offres Auto <ArrowRight size={15} /></Link>
           <a className="client-nav-link" href="https://fr.digiassur.ma/connexion" aria-label="Espace client"><UserRound size={18} aria-hidden="true" /><span>Espace client</span></a>
         </div>
         {menuOpen && (

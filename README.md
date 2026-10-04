@@ -19,12 +19,15 @@ pnpm check
 ## Pages
 
 - `/` : accueil avec recherche et filtres par besoin, puis accès aux assurances.
+- `/comparateur-auto` : profil de véhicule et comparaison côte à côte de jusqu’à trois propositions saisies par l’utilisateur; les primes mensuelles peuvent être ramenées à un équivalent annuel pour la lecture.
 - Le menu « Nos assurances » propose la même recherche et les mêmes filtres, sur ordinateur et mobile; la navigation est partagée avec la page Épargne.
 - `/assurance/:slug` : pages Auto, Moto, Accident, Habitation, Voyage, Santé/Prévoyance, Épargne et Loisir, avec repères de comparaison et parcours de démonstration. La route Épargne ouvre la page détaillée existante.
 - `/epargne` : accès direct à la page Épargne héritée de la branche `work`.
 - `/devis/:slug` : parcours de simulation adapté à la catégorie.
 
 Les simulations comportent quatre étapes — Assuré, détails du produit, Formule, Confirmation — avec validation, progression, retour, réinitialisation et récapitulatif. Elles restent des démonstrations front-end : aucun tarif réel n’est calculé, aucune demande n’est envoyée à Digiassur ou à un assureur et les réponses ne sont pas enregistrées. La boîte de dialogue de simulation de la page Épargne est également locale.
+
+Le comparateur Auto ne génère aucun tarif et ne consulte pas d’assureur. Il compare uniquement les prix et les protections saisis depuis les documents reçus, sans considérer le prix le plus bas comme une recommandation. Ses données disparaissent au rechargement ou à la fermeture de la page.
 
 ## Architecture
 

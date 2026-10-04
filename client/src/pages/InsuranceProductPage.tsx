@@ -34,7 +34,7 @@ export default function InsuranceProductPage() {
               <h1 id="product-title">{productHeadline}</h1>
               <p>{product.description}</p>
               {product.startingPrice && <div className="product-price-block"><span>{product.startingPrice}</span><small>Prix d’appel indicatif. Vérifiez l’éligibilité, les garanties et les conditions applicables.</small></div>}
-              <Link className="button button-orange" href={`/devis/${product.slug}`}>Découvrir le parcours démo <ArrowRight size={16} /></Link>
+              {product.slug === "auto" ? <div className="product-auto-actions"><Link className="button button-orange" href="/comparateur-auto">Simuler &amp; comparer les offres <ArrowRight size={16} /></Link><Link className="text-link" href="/devis/auto">Voir la démo du parcours de souscription</Link></div> : <Link className="button button-orange" href={`/devis/${product.slug}`}>Découvrir le parcours démo <ArrowRight size={16} /></Link>}
               <span className="product-hero-disclaimer"><ShieldCheck size={15} aria-hidden="true" /> Aucune demande ni donnée personnelle n’est transmise par cette démonstration.</span>
             </div>
             <aside className="product-hero-aside" aria-label="Repères pour comparer une assurance">
@@ -77,7 +77,7 @@ export default function InsuranceProductPage() {
         </section>
 
         <section className="product-simulation">
-          <div className="page-width simulation-inner"><span className="simulation-icon"><ShieldCheck size={24} /></span><div><span className="section-kicker">Démonstration locale</span><h2>Découvrez les étapes, à votre rythme.</h2><p>Ce parcours ne calcule aucun tarif, ne soumet pas de demande et ne crée pas de contrat.</p></div><Link className="button button-orange" href={`/devis/${product.slug}`}>Voir les étapes <ArrowRight size={16} /></Link></div>
+            <div className="page-width simulation-inner"><span className="simulation-icon"><ShieldCheck size={24} /></span><div><span className="section-kicker">Démonstration locale</span><h2>{product.slug === "auto" ? "Comparez les offres reçues, à votre rythme." : "Découvrez les étapes, à votre rythme."}</h2><p>{product.slug === "auto" ? "La comparaison reprend uniquement les montants et garanties que vous saisissez." : "Ce parcours ne calcule aucun tarif, ne soumet pas de demande et ne crée pas de contrat."}</p></div><Link className="button button-orange" href={product.slug === "auto" ? "/comparateur-auto" : `/devis/${product.slug}`}>{product.slug === "auto" ? "Comparer les offres" : "Voir les étapes"} <ArrowRight size={16} /></Link></div>
         </section>
         <TrustSection />
       </main>

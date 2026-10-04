@@ -97,6 +97,7 @@ export default function InsuranceWizard({ product }: InsuranceWizardProps) {
           <form className="wizard-form" onSubmit={goNext} noValidate>
             {!confirmed ? (
               <>
+                <div key={step} className={`wizard-step-panel wizard-step-panel-${step}`}>
                 <div className="wizard-heading">
                   <span className="wizard-product-mark"><product.icon size={19} /></span>
                   <div><span className="section-kicker">Simulation {product.name}</span><h1 id="wizard-title">{title}</h1></div>
@@ -144,6 +145,7 @@ export default function InsuranceWizard({ product }: InsuranceWizardProps) {
                   {errors.accuracy && <p className="field-error consent-error" role="alert">{errors.accuracy}</p>}
                   <p className="privacy-note"><CircleHelp size={16} /> Cette étape ne crée aucun contrat et ne transmet pas de demande à un assureur.</p>
                 </>}
+                </div>
 
                 <div className="wizard-actions">
                   <div className="wizard-action-left">
