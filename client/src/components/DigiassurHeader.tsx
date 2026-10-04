@@ -1,4 +1,4 @@
-import { ArrowRight, ChevronDown, Globe2, Search, ShieldCheck, UserRound, X } from "lucide-react";
+import { ArrowRight, ChevronDown, Headphones, Search, ShieldCheck, UserRound, X } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Link, useLocation } from "wouter";
 import { INSURANCES } from "@/lib/insurance-products";
@@ -34,15 +34,13 @@ export default function DigiassurHeader() {
     <header className="digi-header">
       <div className="topbar">
         <div className="topbar-inner page-width">
-          <nav className="topbar-links" aria-label="Navigation secondaire">
-            <Link href="/" className="topbar-active">Particuliers</Link>
-            <a href="https://digiassur.ma/entreprise">Entreprises</a>
-            <a href="https://digiassur.ma/demande-affiliation">Affiliation</a>
-          </nav>
-          <div className="topbar-actions">
-            <span className="language-button"><Globe2 size={15} aria-hidden="true" /> Français <span aria-hidden="true">⌄</span></span>
-            <a className="client-button" href="https://fr.digiassur.ma/connexion"><UserRound size={16} aria-hidden="true" /> Espace client</a>
+          <div className="topbar-help">
+            <Headphones size={19} aria-hidden="true" />
+            <span>Un conseil ? Nos équipes sont là pour vous.</span>
           </div>
+          <a className="topbar-project-link" href="https://digiassur.ma/contactez-nous">
+            Parlons de votre projet <ArrowRight size={17} aria-hidden="true" />
+          </a>
         </div>
       </div>
       <div className="nav-shell">
@@ -61,7 +59,7 @@ export default function DigiassurHeader() {
             <ChevronDown className="insurance-menu-chevron" size={16} aria-hidden="true" />
           </button>
           <Link className="nav-quote" href="/devis/auto">Découvrir la simulation Auto <ArrowRight size={15} /></Link>
-          <a className="mobile-client-link" href="https://fr.digiassur.ma/connexion" aria-label="Espace client"><UserRound size={18} /></a>
+          <a className="client-nav-link" href="https://fr.digiassur.ma/connexion" aria-label="Espace client"><UserRound size={18} aria-hidden="true" /><span>Espace client</span></a>
         </div>
         {menuOpen && (
           <div className="insurance-menu-backdrop" onClick={closeMenu} aria-hidden="true" />
