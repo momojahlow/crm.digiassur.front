@@ -17,6 +17,32 @@ export default function DigiassurHeader({ onSimulate }: DigiassurHeaderProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [location] = useLocation();
 
+  const topCategories = [
+    {
+      name: "Particuliers",
+      href: "/",
+      isActive: (loc: string) => 
+        !loc.startsWith("/entreprise") && 
+        !loc.startsWith("/marocains-etranger") && 
+        !loc.startsWith("/affiliation"),
+    },
+    {
+      name: "Entreprises",
+      href: "/entreprise",
+      isActive: (loc: string) => loc.startsWith("/entreprise"),
+    },
+    {
+      name: "Marocains de l'étranger",
+      href: "/marocains-etranger",
+      isActive: (loc: string) => loc.startsWith("/marocains-etranger"),
+    },
+    {
+      name: "Affiliation",
+      href: "/affiliation",
+      isActive: (loc: string) => loc.startsWith("/affiliation"),
+    },
+  ];
+
   const products = [
     { name: "Auto", icon: "/images/icon-car.svg", href: "/auto" },
     { name: "Moto", icon: "/images/icon-moto.svg", href: "/moto" },
@@ -24,9 +50,15 @@ export default function DigiassurHeader({ onSimulate }: DigiassurHeaderProps) {
     { name: "Habitation", icon: "/images/icon-habitation.svg", href: "/habitation" },
     { name: "Voyage", icon: "/images/icon-voyage.svg", href: "/voyage" },
     { name: "Santé/Prévoyance", icon: "/images/icon-sante.svg", href: "/sante" },
-    { name: "Epargne", icon: "/images/icon-epargne.svg", href: "/epargne", defaultActive: true },
+    { name: "Epargne", icon: "/images/icon-epargne.svg", href: "/epargne" },
     { name: "Loisir", icon: "/images/icon-loisir.svg", href: "/loisir" },
   ];
+
+  const isProductActive = (href: string) => {
+    if (location === "/" && href === "/auto") return true;
+    if (location !== "/" && location.startsWith(href)) return true;
+    return false;
+  };
 
   return (
     <header className="fixed top-0 left-0 right-0 bg-white z-50 shadow-xs border-b border-slate-100">
@@ -35,34 +67,22 @@ export default function DigiassurHeader({ onSimulate }: DigiassurHeaderProps) {
         <div className="max-w-[1440px] mx-auto px-6 h-[46px] flex items-center justify-between text-[13px]">
           {/* Left Categories */}
           <div className="flex items-center gap-2">
-            <Link 
-              href="/" 
-              className={`font-semibold px-4 py-1.5 rounded-md shadow-xs transition ${
-                location === "/" || location === "/epargne" || location === "/auto" || location === "/moto"
-                  ? "bg-[#f48161] text-white" 
-                  : "bg-slate-100 text-slate-700 hover:bg-slate-200"
-              }`}
-            >
-              Particuliers
-            </Link>
-            <Link 
-              href="/entreprise" 
-              className="text-slate-600 hover:text-[#1d4b75] font-medium px-3 py-1.5 rounded-md transition hover:bg-slate-50"
-            >
-              Entreprises
-            </Link>
-            <Link 
-              href="/marocains-etranger" 
-              className="text-slate-600 hover:text-[#1d4b75] font-medium px-3 py-1.5 rounded-md transition hover:bg-slate-50"
-            >
-              Marocains de l'étranger
-            </Link>
-            <Link 
-              href="/affiliation" 
-              className="text-slate-600 hover:text-[#1d4b75] font-medium px-3 py-1.5 rounded-md transition hover:bg-slate-50"
-            >
-              Affiliation
-            </Link>
+            {topCategories.map((cat) => {
+              const active = cat.isActive(location);
+              return (
+                <Link 
+                  key={cat.name}
+                  href={cat.href} 
+                  className={`font-semibold px-4 py-1.5 rounded-md transition shadow-xs ${
+                    active
+                      ? "bg-[#f48161] text-white ring-2 ring-[#f48161]/30" 
+                      : "text-slate-600 hover:text-[#1d4b75] font-medium hover:bg-slate-100"
+                  }`}
+                >
+                  {cat.name}
+                </Link>
+              );
+            })}
           </div>
 
           {/* Right utilities: Language + Espace Client */}
@@ -97,14 +117,14 @@ export default function DigiassurHeader({ onSimulate }: DigiassurHeaderProps) {
         {/* Desktop Product Navigation Links with Figma SVGs */}
         <nav className="hidden lg:flex items-center gap-1 xl:gap-2">
           {products.map((item) => {
-            const isActive = location === item.href || (location === "/" && item.defaultActive);
+            const isActive = isProductActive(item.href);
             return (
               <Link
                 key={item.name}
                 href={item.href}
                 className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-semibold transition ${
                   isActive
-                    ? "text-[#f48161] bg-orange-50 border-b-2 border-[#f48161]"
+                    ? "text-[#f48161] bg-orange-50 border-b-2 border-[#f48161] shadow-2xs"
                     : "text-slate-700 hover:text-[#1d4b75] hover:bg-slate-50"
                 }`}
               >
@@ -183,21 +203,24 @@ export default function DigiassurHeader({ onSimulate }: DigiassurHeaderProps) {
       {mobileMenuOpen && (
         <div className="lg:hidden border-t border-slate-200 bg-white shadow-xl animate-in slide-in-from-top-2 duration-200">
           <div className="p-4 space-y-4 max-h-[calc(100vh-80px)] overflow-y-auto">
-            <div className="flex gap-2">
-              <Link 
-                href="/"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex-1 text-center bg-[#f48161] text-white font-semibold py-2 rounded-md text-xs"
-              >
-                Particuliers
-              </Link>
-              <Link 
-                href="/entreprise" 
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex-1 text-center bg-slate-100 text-slate-700 font-semibold py-2 rounded-md text-xs"
-              >
-                Entreprises
-              </Link>
+            <div className="grid grid-cols-2 gap-2">
+              {topCategories.map((cat) => {
+                const active = cat.isActive(location);
+                return (
+                  <Link 
+                    key={cat.name}
+                    href={cat.href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`text-center font-semibold py-2 px-2 rounded-md text-xs transition ${
+                      active
+                        ? "bg-[#f48161] text-white shadow-xs"
+                        : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                    }`}
+                  >
+                    {cat.name}
+                  </Link>
+                );
+              })}
             </div>
 
             <div className="space-y-1">
@@ -205,7 +228,7 @@ export default function DigiassurHeader({ onSimulate }: DigiassurHeaderProps) {
                 Nos assurances
               </p>
               {products.map((item) => {
-                const isActive = location === item.href || (location === "/" && item.defaultActive);
+                const isActive = isProductActive(item.href);
                 return (
                   <Link
                     key={item.name}
