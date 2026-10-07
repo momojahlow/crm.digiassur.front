@@ -8,28 +8,18 @@ export function NumerisBrand({ footer = false }: NumerisBrandProps) {
     <a
       className={`numeris-brand${footer ? " numeris-brand-footer" : ""}`}
       href="/"
-      aria-label="Smart Print — application Numeris, accueil"
+      aria-label="Smart Print — espace documentaire Numeris, accueil"
     >
-      <svg className="numeris-mark" viewBox="0 0 44 44" aria-hidden="true">
-        <rect x="1" y="1" width="42" height="42" rx="14" fill="currentColor" />
-        <path
-          d="M14 13.5h10.8a6.7 6.7 0 0 1 4.7 11.4l-9.2 9.2a4.5 4.5 0 0 1-6.4-6.4l8.8-8.8"
-          fill="none"
-          stroke="#111316"
-          strokeWidth="4.4"
-          strokeLinecap="round"
-        />
-        <path
-          d="M30 30.5H19.2a6.7 6.7 0 0 1-4.7-11.4l9.2-9.2a4.5 4.5 0 0 1 6.4 6.4l-8.8 8.8"
-          fill="none"
-          stroke="#1678b9"
-          strokeWidth="4.4"
-          strokeLinecap="round"
-        />
-      </svg>
+      <img
+        className="numeris-mark"
+        src="/numeris-logo.png"
+        alt=""
+        aria-hidden="true"
+        decoding="async"
+      />
       <span className="numeris-brand-copy">
         <span className="numeris-brand-company">Smart Print</span>
-        <span className="numeris-brand-product">APPLICATION NUMERIS</span>
+        <span className="numeris-brand-product">ESPACE DOCUMENTAIRE</span>
       </span>
     </a>
   );

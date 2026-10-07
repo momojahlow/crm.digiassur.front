@@ -126,7 +126,7 @@ export default function LoginPage() {
           </div>
         </section>
         <p className="login-footnote">
-          Smart Print · Application Numeris · Maquette de démonstration
+          Smart Print · Espace documentaire Numeris · Maquette de démonstration
         </p>
       </main>
     </div>

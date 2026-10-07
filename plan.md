@@ -8,15 +8,15 @@ Créer dans l’application React existante une landing page française pour Num
 
 - **Mouvement :** SaaS éditorial contemporain, avec une interface documentaire sobre et des touches de visualisation produit.
 - **Principes :** clarté, traçabilité, confiance et maîtrise des usages métiers.
-- **Palette :** couleurs du logo fourni : bleu, noir et blanc. Le bleu signature `#1678b9` identifie la technologie, les actions et les sélections; le bleu nuit ancre les barres d’espace de travail; le noir, le blanc et les gris bleutés préservent contraste et lisibilité. Les couleurs de statut restent sémantiques; aucun turquoise décoratif n’est repris de l’image de référence.
+- **Palette :** couleurs du logo officiel fourni : bleu `#0067bb`, noir et blanc. Le bleu identifie la technologie, les actions et les sélections; le bleu nuit ancre les barres d’espace de travail; le noir, le blanc et les gris bleutés préservent contraste et lisibilité. Les couleurs de statut restent sémantiques; aucun turquoise décoratif n’est repris de l’image de référence.
 - **Mise en page :** grand hero bleu nuit, titre éditorial à gauche et visualisation du document traité à droite; sections claires et asymétriques pour le flux de traitement, la technologie, la démonstration, la confiance et la FAQ. Une barre de contact bleu nuit défile hors de l’écran, tandis que la navigation blanche reste sticky en haut avec une ombre légère au scroll.
 - **Signatures :** marque documentaire compacte, faisceau de scan animé et panneau RAG affichant ses sources.
 - **Interactions et animations :** navigation mobile repliable, liens d’ancrage, démonstration locale interactive, cartes au survol et mouvement discret du faisceau/illustrations; respecter `prefers-reduced-motion`.
 - **Typographie :** Manrope pour les titres et le logotype, DM Sans pour le corps, en cohérence avec la référence Digiassur fournie.
 - **Essence de marque :** rendre les documents d’entreprise consultables et compréhensibles, de la page numérisée à la réponse sourcée. Personnalité : claire, précise, rassurante.
 - **Voix :** directe et concrète. Exemples : « Donnez une seconde vie à vos documents. » et « La bonne réponse. Et le bon document. »
-- **Logo :** monogramme géométrique évoquant des pages qui se rejoignent, en bleu et noir sur un fond blanc.
-- **Couleur signature :** bleu du logo `#1678b9`, accompagné du noir `#111316` et du blanc.
+- **Logo :** logo officiel fourni par Smart Print, en bleu `#0067bb` et noir avec fond transparent; conserver ses proportions, sa transparence et son contraste dans l’en-tête, le workspace, le footer et le favicon.
+- **Couleur signature :** bleu du logo `#0067bb`, accompagné du noir `#111316` et du blanc.
 
 ## Parcours de devis
 

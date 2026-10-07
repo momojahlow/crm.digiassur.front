@@ -33,7 +33,7 @@ const metrics: {
     detail: "+ 12 % ce mois-ci",
     icon: FileText,
     tone: "bg-[#eaf4fb] text-[#126aa7]",
-    accent: "border-l-[#1678b9]",
+    accent: "border-l-[#0067bb]",
   },
   {
     label: "Précision OCR",
@@ -343,7 +343,7 @@ export default function DemoDashboard() {
         >
           <label className="block text-[10px] font-bold text-slate-500">
             <span className="mb-1.5 flex items-center gap-1.5">
-              <CalendarDays size={12} className="text-[#1678b9]" /> Date de
+              <CalendarDays size={12} className="text-[#0067bb]" /> Date de
               début
             </span>
             <input
@@ -351,25 +351,25 @@ export default function DemoDashboard() {
               value={startDate}
               max={endDate}
               onChange={event => setStartDate(event.target.value)}
-              className="h-9 w-full rounded-md border border-slate-200 bg-white px-2.5 text-[11px] font-medium text-slate-700 outline-none transition focus:border-[#1678b9] focus:ring-2 focus:ring-[#1678b9]/15"
+              className="h-9 w-full rounded-md border border-slate-200 bg-white px-2.5 text-[11px] font-medium text-slate-700 outline-none transition focus:border-[#0067bb] focus:ring-2 focus:ring-[#0067bb]/15"
             />
           </label>
           <label className="block text-[10px] font-bold text-slate-500">
             <span className="mb-1.5 flex items-center gap-1.5">
-              <CalendarDays size={12} className="text-[#1678b9]" /> Date de fin
+              <CalendarDays size={12} className="text-[#0067bb]" /> Date de fin
             </span>
             <input
               type="date"
               value={endDate}
               min={startDate}
               onChange={event => setEndDate(event.target.value)}
-              className="h-9 w-full rounded-md border border-slate-200 bg-white px-2.5 text-[11px] font-medium text-slate-700 outline-none transition focus:border-[#1678b9] focus:ring-2 focus:ring-[#1678b9]/15"
+              className="h-9 w-full rounded-md border border-slate-200 bg-white px-2.5 text-[11px] font-medium text-slate-700 outline-none transition focus:border-[#0067bb] focus:ring-2 focus:ring-[#0067bb]/15"
             />
           </label>
           <button
             type="button"
             onClick={applyDateRange}
-            className="inline-flex h-9 items-center justify-center gap-2 rounded-md border border-[#1678b9] bg-white px-4 text-[11px] font-bold text-[#105f96] transition hover:bg-[#eaf4fb] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1678b9]"
+            className="inline-flex h-9 items-center justify-center gap-2 rounded-md border border-[#0067bb] bg-white px-4 text-[11px] font-bold text-[#105f96] transition hover:bg-[#eaf4fb] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0067bb]"
           >
             <SlidersHorizontal size={14} /> Filtrer
           </button>
@@ -438,7 +438,7 @@ export default function DemoDashboard() {
                   searchOpen ? "Fermer la recherche" : "Rechercher un document"
                 }
                 aria-expanded={searchOpen}
-                className="grid h-8 w-8 place-items-center rounded-md border border-slate-200 text-slate-500 transition hover:border-[#1678b9] hover:text-[#105f96] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1678b9]"
+                className="grid h-8 w-8 place-items-center rounded-md border border-slate-200 text-slate-500 transition hover:border-[#0067bb] hover:text-[#105f96] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0067bb]"
               >
                 <Search size={15} />
               </button>
@@ -453,7 +453,7 @@ export default function DemoDashboard() {
                   value={documentQuery}
                   onChange={event => setDocumentQuery(event.target.value)}
                   placeholder="Nom ou type de document"
-                  className="h-9 w-full rounded-md border border-slate-200 px-3 text-[11px] outline-none focus:border-[#1678b9] focus:ring-2 focus:ring-[#1678b9]/15"
+                  className="h-9 w-full rounded-md border border-slate-200 px-3 text-[11px] outline-none focus:border-[#0067bb] focus:ring-2 focus:ring-[#0067bb]/15"
                 />
               </div>
             )}
@@ -547,12 +547,12 @@ export default function DemoDashboard() {
                 value={question}
                 onChange={event => setQuestion(event.target.value)}
                 placeholder="Posez une question…"
-                className="h-9 min-w-0 flex-1 rounded-md border border-slate-200 px-3 text-[11px] outline-none transition placeholder:text-slate-400 focus:border-[#1678b9] focus:ring-2 focus:ring-[#1678b9]/15"
+                className="h-9 min-w-0 flex-1 rounded-md border border-slate-200 px-3 text-[11px] outline-none transition placeholder:text-slate-400 focus:border-[#0067bb] focus:ring-2 focus:ring-[#0067bb]/15"
               />
               <button
                 type="submit"
                 aria-label="Envoyer la question de démonstration"
-                className="grid h-9 w-9 shrink-0 place-items-center rounded-md bg-[#1678b9] text-white transition hover:bg-[#105f96] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1678b9]"
+                className="grid h-9 w-9 shrink-0 place-items-center rounded-md bg-[#0067bb] text-white transition hover:bg-[#105f96] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0067bb]"
               >
                 <ArrowRight size={15} />
               </button>
@@ -570,11 +570,11 @@ export default function DemoDashboard() {
               </p>
               <div className="flex flex-wrap gap-2">
                 <span className="inline-flex items-center gap-1.5 rounded bg-white px-2 py-1 text-[9px] font-semibold text-slate-600 ring-1 ring-slate-200">
-                  <FileText size={11} className="text-[#1678b9]" /> Contrat
+                  <FileText size={11} className="text-[#0067bb]" /> Contrat
                   fournisseur · p. 12
                 </span>
                 <span className="inline-flex items-center gap-1.5 rounded bg-white px-2 py-1 text-[9px] font-semibold text-slate-600 ring-1 ring-slate-200">
-                  <FileText size={11} className="text-[#1678b9]" /> Guide de
+                  <FileText size={11} className="text-[#0067bb]" /> Guide de
                   procédures · p. 4
                 </span>
               </div>
@@ -595,7 +595,7 @@ export default function DemoDashboard() {
                 Événements illustratifs · aucun traitement réel
               </p>
             </div>
-            <Activity size={16} className="text-[#1678b9]" />
+            <Activity size={16} className="text-[#0067bb]" />
           </div>
           <div className="grid divide-y divide-slate-100 sm:grid-cols-3 sm:divide-x sm:divide-y-0">
             {visibleActivityEntries.map(({ label, detail, icon: Icon }) => (

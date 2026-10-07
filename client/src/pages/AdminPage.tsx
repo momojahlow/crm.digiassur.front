@@ -345,7 +345,7 @@ export default function AdminPage() {
                   value: counts.total,
                   icon: FileText,
                   tone: "bg-blue-50 text-blue-700",
-                  accent: "border-l-[#1678b9]",
+                  accent: "border-l-[#0067bb]",
                   note: "Toutes périodes",
                 },
                 {
@@ -353,7 +353,7 @@ export default function AdminPage() {
                   value: counts.new,
                   icon: Activity,
                   tone: "bg-indigo-50 text-indigo-700",
-                  accent: "border-l-[#1678b9]",
+                  accent: "border-l-[#0067bb]",
                   note: "Nouvelles demandes",
                 },
                 {

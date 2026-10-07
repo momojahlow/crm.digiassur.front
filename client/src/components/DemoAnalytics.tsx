@@ -52,8 +52,8 @@ export default function DemoAnalytics({ period }: { period: string }) {
                 y1="0"
                 y2="1"
               >
-                <stop offset="0%" stopColor="#1678b9" stopOpacity="0.2" />
-                <stop offset="100%" stopColor="#1678b9" stopOpacity="0.015" />
+                <stop offset="0%" stopColor="#0067bb" stopOpacity="0.2" />
+                <stop offset="100%" stopColor="#0067bb" stopOpacity="0.015" />
               </linearGradient>
             </defs>
             {[35, 72, 109, 146, 183].map(y => (
@@ -82,7 +82,7 @@ export default function DemoAnalytics({ period }: { period: string }) {
             <path
               d={linePath}
               fill="none"
-              stroke="#1678b9"
+              stroke="#0067bb"
               strokeWidth="3"
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -94,7 +94,7 @@ export default function DemoAnalytics({ period }: { period: string }) {
                 cy={y}
                 r="4"
                 fill="#fff"
-                stroke="#1678b9"
+                stroke="#0067bb"
                 strokeWidth="2.5"
                 aria-label={`Point ${index + 1}`}
               />
@@ -139,7 +139,7 @@ export default function DemoAnalytics({ period }: { period: string }) {
             className="relative grid h-36 w-36 shrink-0 place-items-center rounded-full"
             style={{
               background:
-                "conic-gradient(#1678b9 0deg 132deg, #6184a5 132deg 223deg, #ed9b61 223deg 276deg, #7b8ea0 276deg 327deg, #d9e2e7 327deg 360deg)",
+                "conic-gradient(#0067bb 0deg 132deg, #6184a5 132deg 223deg, #ed9b61 223deg 276deg, #7b8ea0 276deg 327deg, #d9e2e7 327deg 360deg)",
             }}
             role="img"
             aria-label="Graphique circulaire simulé des types de documents"
@@ -157,7 +157,7 @@ export default function DemoAnalytics({ period }: { period: string }) {
           </div>
           <ul className="m-0 grid w-full max-w-[210px] list-none gap-2 p-0 text-[10px] text-slate-600">
             {[
-              ["#1678b9", "Contrats", "38 %"],
+              ["#0067bb", "Contrats", "38 %"],
               ["#6184a5", "Factures", "25 %"],
               ["#ed9b61", "Dossiers", "15 %"],
               ["#7b8ea0", "Procédures", "14 %"],

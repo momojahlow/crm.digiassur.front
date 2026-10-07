@@ -74,7 +74,7 @@ export default function NumerisWorkspace({
     const Icon = item.icon;
     const selected = item.id === activeItem;
     const highlighted = containsActiveItem(item);
-    const className = `group flex ${depth === 0 ? "min-h-11 rounded-r-xl border-l-[3px] px-3 text-[13px]" : "min-h-9 rounded-lg px-3 text-[11px]"} w-full items-center gap-3 text-left transition-colors ${highlighted ? "border-[#1678b9] bg-[#eaf4fb] font-semibold text-[#126aa7]" : "border-transparent font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-950"}`;
+    const className = `group flex ${depth === 0 ? "min-h-11 rounded-r-xl border-l-[3px] px-3 text-[13px]" : "min-h-9 rounded-lg px-3 text-[11px]"} w-full items-center gap-3 text-left transition-colors ${highlighted ? "border-[#0067bb] bg-[#eaf4fb] font-semibold text-[#126aa7]" : "border-transparent font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-950"}`;
     const content = (
       <>
         <Icon
@@ -82,7 +82,7 @@ export default function NumerisWorkspace({
           strokeWidth={highlighted ? 2.2 : 1.9}
           className={
             highlighted
-              ? "text-[#1678b9]"
+              ? "text-[#0067bb]"
               : "text-slate-400 group-hover:text-slate-600"
           }
         />
@@ -192,13 +192,19 @@ export default function NumerisWorkspace({
           className="flex h-[76px] shrink-0 items-center gap-3 border-b border-slate-100 px-5"
           aria-label="Smart Print Numeris — accueil"
         >
-          <img src="/numeris-mark.svg" alt="" className="h-10 w-10 shrink-0" />
+          <img
+            src="/numeris-logo.png"
+            alt=""
+            aria-hidden="true"
+            className="h-10 w-10 shrink-0 object-contain"
+            decoding="async"
+          />
           <span className="min-w-0">
             <strong className="block text-[15px] font-extrabold tracking-tight text-[#173d56]">
               Smart Print
             </strong>
             <small className="mt-0.5 block text-[9px] font-bold tracking-[0.13em] text-slate-400">
-              APPLICATION NUMERIS
+              ESPACE DOCUMENTAIRE
             </small>
           </span>
         </a>
