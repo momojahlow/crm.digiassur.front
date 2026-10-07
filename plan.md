@@ -1,31 +1,51 @@
-# Digiassur React — implementation plan
+# Smart Print · Numeris — Landing page OCR & RAG
 
-## Scope
-Convert the supplied Figma file `Digiassur low-fidelity-wireframe`, linked at node `115:73`, into a reusable React template. The confirmed requirements are a faithful reproduction of the visible layout, hierarchy and content; maintainable React components; responsive behavior; Figma-derived graphic resources and styles; and implementation of the interactions shown or explicitly specified.
+## Objectif
 
-## Source observation and working assumption
-The file opens in a read-only Figma view with several desktop and iPhone frames. The supplied node URL does not focus a single canvas object in the available viewer. The first implementation therefore follows the visible Digiassur desktop screen structure: white navigation, a wide lifestyle hero, service/insurance choices, coral calls to action and a deep-blue footer. Exact node-level text and assets remain subject to correction if the selected frame is different.
+Créer dans l’application React existante une landing page française pour Numeris, l’application de Smart Print dédiée à la numérisation et à la dématérialisation documentaire augmentée par l’IA : présentation du parcours OCR, extraction/structuration des informations, recherche documentaire par RAG et réponses reliées aux sources. La page doit être moderne, responsive et animée, en s’inspirant des références visuelles partagées par l’utilisateur.
 
-## Design direction
-- **Design movement:** contemporary French insurtech with an editorial, human-centered service interface.
-- **Core principles:** reassuring, clear, warm, and action-oriented.
-- **Color philosophy:** deep navy conveys reliability; coral highlights the next helpful action; white and pale blue-gray keep dense insurance content calm and legible.
-- **Layout paradigm:** full-width image-led hero with content anchored to a centered service-selector panel, followed by asymmetric editorial sections and a substantial navy footer.
-- **Signature elements:** coral pill-shaped CTA; soft-radius white service cards with small icon badges; a navy footer band with grouped contact and help links.
-- **Interaction philosophy:** simple, reversible selection states; navigation stays obvious; key CTAs scroll users to relevant insurance choices; mobile navigation expands and closes with accessible controls.
-- **Animation:** short 160–220 ms opacity/transform transitions for menu and card states; respect `prefers-reduced-motion`; no distracting looping effects.
-- **Typography system:** Inter (if already supplied by the project/runtime) or a clean system sans fallback; generous display sizing, compact labels, strong contrast and readable French body copy.
-- **Brand essence:** insurance for everyday life made easier to understand and compare; personality: reassuring, straightforward, human.
-- **Brand voice:** direct and helpful, never alarmist. Examples: “Votre quotidien, bien protégé.” and “Choisissez une protection qui vous ressemble.”
-- **Wordmark & logo:** a compact shield/house-line icon paired with the Digiassur wordmark; authored as inline SVG so it remains crisp and reusable.
-- **Signature brand color:** coral `#F28E7F`, paired with navy `#123B5A` and pale blue `#EAF4F7`.
+## Direction de conception
 
-## Project structure
-- `client/src/pages/Home.tsx`: page composition and lightweight local interactions.
-- `client/src/components/`: reusable header, hero, insurance selector, feature sections and footer.
-- `client/src/index.css`: responsive design tokens, typography, layout and interaction states.
-- `client/public/images/hero-home.jpg`: original hero photograph used only in the hero.
-- `client/public/manus-routes.json`: static route manifest for the current `/` page.
+- **Mouvement :** SaaS éditorial contemporain, avec une interface documentaire sobre et des touches de visualisation produit.
+- **Principes :** clarté, traçabilité, confiance et maîtrise des usages métiers.
+- **Palette :** couleurs du logo fourni : bleu, noir et blanc. Le bleu signature `#1678b9` identifie la technologie, les actions et les sélections; le bleu nuit ancre les barres d’espace de travail; le noir, le blanc et les gris bleutés préservent contraste et lisibilité. Les couleurs de statut restent sémantiques; aucun turquoise décoratif n’est repris de l’image de référence.
+- **Mise en page :** grand hero bleu nuit, titre éditorial à gauche et visualisation du document traité à droite; sections claires et asymétriques pour le flux de traitement, la technologie, la démonstration, la confiance et la FAQ. Une barre de contact bleu nuit défile hors de l’écran, tandis que la navigation blanche reste sticky en haut avec une ombre légère au scroll.
+- **Signatures :** marque documentaire compacte, faisceau de scan animé et panneau RAG affichant ses sources.
+- **Interactions et animations :** navigation mobile repliable, liens d’ancrage, démonstration locale interactive, cartes au survol et mouvement discret du faisceau/illustrations; respecter `prefers-reduced-motion`.
+- **Typographie :** Manrope pour les titres et le logotype, DM Sans pour le corps, en cohérence avec la référence Digiassur fournie.
+- **Essence de marque :** rendre les documents d’entreprise consultables et compréhensibles, de la page numérisée à la réponse sourcée. Personnalité : claire, précise, rassurante.
+- **Voix :** directe et concrète. Exemples : « Donnez une seconde vie à vos documents. » et « La bonne réponse. Et le bon document. »
+- **Logo :** monogramme géométrique évoquant des pages qui se rejoignent, en bleu et noir sur un fond blanc.
+- **Couleur signature :** bleu du logo `#1678b9`, accompagné du noir `#111316` et du blanc.
 
-## Runtime
-The initialized project is a React/TypeScript WebDev starter with server and database disabled. Use its static Vite development command on the configured port 3000; no authentication, private API, or persistent data is needed for this template.
+## Parcours de devis
+
+La page `/devis` permet de choisir une prestation (numérisation, OCR/extraction, RAG ou projet global), d’estimer le volume documentaire et de décrire le besoin. Les coordonnées sont validées côté client et serveur; un honeypot réduit le spam; la demande est enregistrée côté serveur avec une référence de suivi. Aucun fichier n’est demandé ni téléversé.
+
+## Connexion
+
+Pour cette simulation, le bouton de `/connexion` ouvre `/dashboard`, un tableau de bord de démonstration utilisant uniquement des données fictives côté client. Aucun compte, document, service IA ou stockage réel n’est sollicité. La route `/admin` reste distincte et conserve sa protection par authentification et rôle admin.
+
+## Espace admin
+
+Les espaces de travail partagent `NumerisWorkspace` : navigation latérale claire avec groupes à sous-menus repliables, barre supérieure bleu nuit, bleu Numeris pour l’état actif, menus de compte et notifications, et navigation clavier/mobile accessible. `/dashboard#overview` reste une simulation isolée, avec filtres locaux, indicateurs et graphiques explicitement fictifs, documents d’exemple et assistant RAG pré-écrit. `/admin` reprend le même cadre visuel mais affiche uniquement les demandes et indicateurs issus de la base, sans graphiques inventés; les sous-menus filtrent les demandes par statut. Les lectures et changements de statut restent protégés côté serveur par `adminProcedure`; l’interface distingue la connexion requise d’un compte sans rôle admin.
+
+## Structure du projet
+
+- `client/src/pages/Home.tsx` : point d’entrée de la page d’accueil.
+- `client/src/pages/NumerisHome.tsx` : contenu React de la landing page.
+- `client/src/components/NumerisHeader.tsx` : navigation et identité Numeris partagées.
+- `client/src/components/NumerisWorkspace.tsx` : shell responsive partagé par la démo et l’espace admin protégé.
+- `client/src/components/DemoAnalytics.tsx` : graphiques de démonstration, sans dépendance à une source réelle.
+- `client/src/pages/QuoteRequest.tsx` et `quote-page.css` : formulaire de devis.
+- `client/src/pages/LoginPage.tsx` et `login-page.css` : entrée en mode démonstration.
+- `client/src/pages/DemoDashboard.tsx` : tableau de bord de simulation, isolé des API réelles.
+- `client/src/pages/AdminPage.tsx` : espace admin Tailwind 4 et suivi des demandes.
+- `server/adminRouter.ts` : endpoints de gestion accessibles au rôle admin uniquement.
+- `client/src/pages/numeris.css` : palette, mise en page responsive et animations de la landing page.
+- `client/public/manus-routes.json` : manifeste des routes publiques.
+- `drizzle/schema.ts` et `server/quoteRouter.ts` : validation et stockage des demandes de devis.
+
+## Comportement des démonstrations
+
+La démo RAG d’accueil est autonome côté client et ne transmet ni document ni question à un service externe. Les exemples de réponses et de sources sont fictifs. La demande de devis requiert une base de données configurée et une migration appliquée pour être enregistrée côté serveur.

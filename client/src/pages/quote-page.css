@@ -1,0 +1,513 @@
+.quote-site {
+  min-height: 100vh;
+}
+.quote-page {
+  min-height: calc(100vh - 124px);
+  background: #f6f9fc;
+}
+.quote-hero {
+  position: relative;
+  overflow: hidden;
+  padding: 62px 32px 59px;
+  color: #fff;
+  background:
+    radial-gradient(
+      ellipse at 88% 10%,
+      rgba(49, 132, 190, 0.38),
+      transparent 39%
+    ),
+    linear-gradient(116deg, #082b50 0%, #0a3e6b 58%, #0d4d80 100%);
+}
+.quote-hero::after {
+  position: absolute;
+  right: 9%;
+  bottom: -165px;
+  width: 330px;
+  height: 330px;
+  border: 1px solid rgba(210, 232, 248, 0.12);
+  border-radius: 50%;
+  content: "";
+  box-shadow:
+    0 0 0 36px rgba(210, 232, 248, 0.035),
+    0 0 0 72px rgba(210, 232, 248, 0.025);
+  pointer-events: none;
+}
+.quote-hero-inner {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 1240px);
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 40px;
+  margin: 0 auto;
+}
+.quote-hero-inner > div:first-child {
+  max-width: 730px;
+}
+.quote-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  color: rgba(226, 241, 252, 0.75);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+.quote-kicker > span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #81bced;
+  box-shadow: 0 0 0 4px rgba(129, 188, 237, 0.12);
+}
+.quote-hero h1 {
+  max-width: 690px;
+  margin: 17px 0 13px;
+  color: #fff;
+  font:
+    800 clamp(38px, 5vw, 62px) / 1.08 "Manrope",
+    sans-serif;
+  letter-spacing: -0.06em;
+}
+.quote-hero h1 em {
+  color: #bdddf6;
+  font-style: normal;
+}
+.quote-hero-inner > div:first-child > p {
+  max-width: 630px;
+  margin: 0;
+  color: rgba(231, 242, 251, 0.76);
+  font-size: 15px;
+  line-height: 1.75;
+}
+.quote-hero-note {
+  width: 264px;
+  display: flex;
+  flex: 0 0 auto;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 17px;
+  border: 1px solid rgba(220, 238, 251, 0.18);
+  border-radius: 15px;
+  background: rgba(255, 255, 255, 0.075);
+  color: #d9ecf9;
+  font-size: 11px;
+  line-height: 1.5;
+}
+.quote-hero-note > svg {
+  flex: 0 0 auto;
+  color: #a6d0ef;
+}
+.quote-hero-note span,
+.quote-hero-note strong {
+  display: block;
+}
+.quote-hero-note strong {
+  margin-bottom: 3px;
+  color: #fff;
+  font-size: 12px;
+}
+.quote-content {
+  padding: 74px 32px 88px;
+}
+.quote-content-inner {
+  width: min(100%, 1160px);
+  display: grid;
+  grid-template-columns: minmax(260px, 0.76fr) minmax(0, 1.24fr);
+  align-items: start;
+  gap: 70px;
+  margin: 0 auto;
+}
+.quote-aside {
+  padding-top: 13px;
+}
+.quote-aside h2 {
+  margin: 16px 0 14px;
+  color: var(--num-ink);
+  font:
+    800 clamp(30px, 3.4vw, 43px) / 1.13 "Manrope",
+    sans-serif;
+  letter-spacing: -0.055em;
+}
+.quote-aside h2 em {
+  color: #2167a0;
+  font-style: normal;
+}
+.quote-aside > p {
+  max-width: 405px;
+  margin: 0;
+  color: #6a7f90;
+  font-size: 14px;
+  line-height: 1.8;
+}
+.quote-steps {
+  display: grid;
+  gap: 22px;
+  margin-top: 34px;
+}
+.quote-steps > div {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+.quote-steps > div > span {
+  width: 30px;
+  height: 30px;
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #dce8f1;
+  border-radius: 10px;
+  background: #fff;
+  color: #246696;
+  font:
+    800 10px/1 "Manrope",
+    sans-serif;
+}
+.quote-steps p,
+.quote-steps strong {
+  display: block;
+}
+.quote-steps p {
+  margin: 0;
+  color: #75899a;
+  font-size: 11px;
+  line-height: 1.55;
+}
+.quote-steps strong {
+  margin-bottom: 3px;
+  color: #173c59;
+  font-size: 12px;
+}
+.quote-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 33px;
+  color: #175d91 !important;
+  font-size: 12px;
+  font-weight: 700;
+}
+.quote-back-link svg {
+  transition: transform 0.2s ease;
+}
+.quote-back-link:hover svg {
+  transform: translateX(3px);
+}
+.quote-form-card {
+  min-width: 0;
+  scroll-margin-top: 88px;
+  padding: 34px;
+  border: 1px solid #e5ebf0;
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 18px 50px rgba(15, 48, 76, 0.07);
+}
+.quote-form-heading {
+  margin-bottom: 24px;
+}
+.quote-form-eyebrow {
+  color: #28648e;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+}
+.quote-form-heading h2,
+.quote-success h2 {
+  margin: 7px 0 4px;
+  color: #143954;
+  font:
+    800 23px/1.25 "Manrope",
+    sans-serif;
+  letter-spacing: -0.04em;
+}
+.quote-form-heading p {
+  margin: 0;
+  color: #7a8c9b;
+  font-size: 11px;
+}
+.quote-fields-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 17px 14px;
+}
+.quote-field {
+  min-width: 0;
+  display: grid;
+  gap: 6px;
+  color: #29485f;
+  font-size: 12px;
+  font-weight: 700;
+}
+.quote-field > span > i,
+.quote-consent i {
+  color: #17679f;
+  font-style: normal;
+}
+.quote-field small {
+  margin-left: 5px;
+  color: #8a9aa7;
+  font-size: 9px;
+  font-weight: 500;
+}
+.quote-field-wide {
+  grid-column: 1 / -1;
+}
+.quote-field input,
+.quote-field select,
+.quote-field textarea {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid #dce5ec;
+  border-radius: 9px;
+  outline: none;
+  background: #fff;
+  color: #193b54;
+  font-size: 13px;
+  font-weight: 400;
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+.quote-field input::placeholder,
+.quote-field textarea::placeholder {
+  color: #a3b0ba;
+}
+.quote-field textarea {
+  resize: vertical;
+}
+.quote-field input:focus,
+.quote-field select:focus,
+.quote-field textarea:focus {
+  border-color: #4c8ab6;
+  box-shadow: 0 0 0 3px rgba(58, 126, 174, 0.11);
+}
+.quote-honeypot {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+.quote-consent {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  margin-top: 19px;
+  color: #687e8e;
+  font-size: 11px;
+  line-height: 1.55;
+}
+.quote-consent input {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+  margin: 1px 0 0;
+  accent-color: #12659e;
+}
+.quote-privacy-note {
+  margin: 9px 0 17px 25px;
+  color: #8494a0;
+  font-size: 10px;
+  line-height: 1.55;
+}
+.quote-site .quote-submit {
+  width: 100%;
+  min-height: 56px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 0 24px;
+  border: 1px solid #0d5c98;
+  border-radius: 999px;
+  background: #0d5c98;
+  color: #fff;
+  box-shadow: 0 8px 20px rgba(13, 92, 152, 0.16);
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 800;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+.quote-submit:hover:not(:disabled) {
+  transform: translateY(-1px);
+  background: #0a4d81;
+  box-shadow: 0 10px 24px rgba(13, 92, 152, 0.22);
+}
+.quote-submit:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+.quote-submit:focus-visible,
+.quote-secondary-button:focus-visible {
+  outline: 3px solid #78b8e3;
+  outline-offset: 3px;
+}
+.quote-required-note {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 12px 0 0;
+  color: #8093a1;
+  font-size: 10px;
+}
+.quote-required-note svg {
+  color: #3576a4;
+}
+.quote-error {
+  margin: 0 0 14px;
+  padding: 11px 13px;
+  border: 1px solid #ead6d6;
+  border-radius: 9px;
+  background: #fff8f8;
+  color: #8a3939;
+  font-size: 11px;
+  line-height: 1.55;
+}
+.quote-success {
+  min-height: 420px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+}
+.quote-success-icon {
+  width: 52px;
+  height: 52px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  border-radius: 16px;
+  background: #e8f3fa;
+  color: #12659e;
+}
+.quote-success h2 {
+  margin-top: 8px;
+  font-size: 28px;
+}
+.quote-success > p {
+  max-width: 410px;
+  margin: 8px 0 18px;
+  color: #708494;
+  font-size: 13px;
+  line-height: 1.7;
+}
+.quote-reference {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px;
+  border: 1px solid #e2eaf0;
+  border-radius: 10px;
+  background: #f7fafc;
+  color: #62798a;
+  font-size: 11px;
+}
+.quote-reference strong {
+  color: #124f7c;
+  font:
+    800 13px/1 "Manrope",
+    sans-serif;
+  letter-spacing: 0.03em;
+}
+.quote-secondary-button {
+  margin-top: 24px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #175d91;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 700;
+}
+@media (max-width: 900px) {
+  .quote-content-inner {
+    grid-template-columns: minmax(220px, 0.65fr) minmax(0, 1.35fr);
+    gap: 34px;
+  }
+  .quote-form-card {
+    padding: 27px;
+  }
+  .quote-hero-inner {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 22px;
+  }
+  .quote-hero-note {
+    width: min(100%, 420px);
+  }
+}
+@media (max-width: 720px) {
+  .quote-content {
+    padding: 54px 22px 66px;
+  }
+  .quote-content-inner {
+    grid-template-columns: 1fr;
+    gap: 34px;
+  }
+  .quote-aside {
+    padding-top: 0;
+  }
+  .quote-steps {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 11px;
+  }
+  .quote-steps > div {
+    flex-direction: column;
+    gap: 9px;
+  }
+  .quote-steps p {
+    font-size: 10px;
+  }
+  .quote-back-link {
+    margin-top: 22px;
+  }
+}
+@media (max-width: 480px) {
+  .quote-hero {
+    padding: 45px 20px 42px;
+  }
+  .quote-hero h1 {
+    font-size: clamp(36px, 10vw, 47px);
+  }
+  .quote-hero-inner > div:first-child > p {
+    font-size: 13px;
+  }
+  .quote-content {
+    padding: 42px 16px 54px;
+  }
+  .quote-form-card {
+    padding: 21px 17px;
+    border-radius: 15px;
+  }
+  .quote-fields-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .quote-field-wide {
+    grid-column: auto;
+  }
+  .quote-steps {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .quote-steps > div {
+    flex-direction: row;
+  }
+  .quote-hero-note {
+    width: 100%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .quote-submit,
+  .quote-back-link svg {
+    transition: none;
+  }
+}

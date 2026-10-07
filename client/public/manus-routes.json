@@ -1,1 +1,28 @@
-{"routes":[{"path":"/","title":"Digiassur — Votre quotidien, bien protégé"},{"path":"/404","title":"Page introuvable"}]}
+{
+  "routes": [
+    {
+      "path": "/",
+      "title": "Numeris — Smart Print · Donnez une seconde vie à vos documents"
+    },
+    {
+      "path": "/devis",
+      "title": "Demander un devis — Numeris | Smart Print"
+    },
+    {
+      "path": "/connexion",
+      "title": "Connexion — Numeris | Smart Print"
+    },
+    {
+      "path": "/dashboard",
+      "title": "Tableau de bord démo — Numeris | Smart Print"
+    },
+    {
+      "path": "/admin",
+      "title": "Administration — Numeris | Smart Print"
+    },
+    {
+      "path": "/404",
+      "title": "Page introuvable"
+    }
+  ]
+}
