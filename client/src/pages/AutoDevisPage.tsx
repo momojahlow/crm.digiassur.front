@@ -2106,23 +2106,23 @@ export default function AutoDevisPage() {
 
             {/* Right Summary Sidebar (Matching digiassur.ma) */}
             <div className="w-full lg:w-80 shrink-0">
-              <div className="bg-[#f5cbbe]/30 rounded-2xl p-4 border border-[#f5cbbe] sticky top-32 shadow-sm">
+              <div className="bg-[#f5cbbe]/30 rounded-2xl px-3.5 py-3 border border-[#f5cbbe] sticky top-32 shadow-sm">
                 
-                {/* Header Icon */}
-                <div className="w-14 h-14 rounded-full bg-[#153954] text-white flex items-center justify-center mx-auto -mt-10 shadow-md border-4 border-white mb-3">
-                  <Phone className="w-6 h-6 text-[#f48161]" />
+                {/* Header Icon Compact */}
+                <div className="w-9 h-9 rounded-full bg-[#153954] text-white flex items-center justify-center mx-auto -mt-7 shadow-xs border-2 border-white mb-1">
+                  <Phone className="w-3.5 h-3.5 text-[#f48161]" />
                 </div>
 
-                {/* Assistance Box */}
-                <div className="text-center mb-6 border-b border-orange-200/60 pb-4">
-                  <p className="text-xs uppercase font-extrabold text-slate-500 tracking-wider">Besoin d'aide ?</p>
+                {/* Assistance Box Compact */}
+                <div className="text-center mb-2.5 border-b border-orange-200/50 pb-2">
+                  <p className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">Besoin d'aide ?</p>
                   <a
                     href="tel:0522368182"
-                    className="text-lg md:text-xl font-black text-[#153954] hover:text-[#f48161] transition"
+                    className="text-base font-black text-[#153954] hover:text-[#f48161] transition block leading-tight mt-0.5"
                   >
                     05 22 36 81 82
                   </a>
-                  <p className="text-[11px] text-slate-500 mt-0.5">Conseiller disponible du Lun au Ven 9h-18h</p>
+                  <p className="text-[10px] text-slate-500 mt-0.5">Conseiller disponible du Lun au Ven 9h-18h</p>
                 </div>
 
                 {/* Realtime Summary Data */}

@@ -685,82 +685,125 @@ export default function MotoDevisPage() {
                  ======================================================== */}
               {step === 3 && (
                 <div className="space-y-6 animate-in fade-in duration-300">
-                  <h2 className="text-xl md:text-2xl font-bold text-slate-800">
-                    Pendant combien de temps souhaitez-vous assurer votre Moto ?
-                  </h2>
+                  {/* Top Filters: Durée & Prise d'effet */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1.5 pl-1">
+                        Périodicité / Durée de garantie *
+                      </label>
+                      <div className="grid grid-cols-3 gap-2">
+                        <button
+                          type="button"
+                          onClick={() => setDuree("1 an*")}
+                          className={`h-11 px-2 rounded-xl text-xs sm:text-sm font-bold transition flex items-center justify-center border text-center cursor-pointer ${
+                            duree === "1 an*"
+                              ? "bg-[#153954] text-white border-[#153954] shadow-sm"
+                              : "bg-white text-slate-700 border-slate-200 hover:border-slate-300"
+                          }`}
+                        >
+                          <span>Annuelle (1 an)</span>
+                        </button>
 
-                  {/* Duration Selector */}
-                  <div className="max-w-md">
-                    <div className="bg-[#f3f4f6] rounded-full p-1.5 flex items-center shadow-inner">
-                      <div className="w-10 h-10 rounded-full bg-[#f48161] text-white flex items-center justify-center shrink-0">
-                        <Clock className="w-5 h-5" />
+                        <button
+                          type="button"
+                          onClick={() => setDuree("6 mois")}
+                          className={`h-11 px-2 rounded-xl text-xs sm:text-sm font-bold transition flex items-center justify-center border text-center cursor-pointer ${
+                            duree === "6 mois"
+                              ? "bg-[#153954] text-white border-[#153954] shadow-sm"
+                              : "bg-white text-slate-700 border-slate-200 hover:border-slate-300"
+                          }`}
+                        >
+                          <span>6 Mois</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => setDuree("3 mois")}
+                          className={`h-11 px-2 rounded-xl text-xs sm:text-sm font-bold transition flex items-center justify-center border text-center cursor-pointer ${
+                            duree === "3 mois"
+                              ? "bg-[#153954] text-white border-[#153954] shadow-sm"
+                              : "bg-white text-slate-700 border-slate-200 hover:border-slate-300"
+                          }`}
+                        >
+                          <span>3 Mois</span>
+                        </button>
                       </div>
-                      <select
-                        value={duree}
-                        onChange={e => setDuree(e.target.value as any)}
-                        className="w-full bg-transparent px-4 text-slate-800 font-bold outline-none text-sm cursor-pointer"
-                      >
-                        <option value="1 an*">1 an* (Annuelle — Tarif officiel recommandé)</option>
-                        <option value="6 mois">6 mois (Semestrielle — Ratio 54%)</option>
-                        <option value="3 mois">3 mois (Trimestrielle — Ratio 27%)</option>
-                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1.5 pl-1">
+                        Date de prise d'effet du contrat *
+                      </label>
+                      <div className="h-11 bg-white rounded-xl px-2.5 flex items-center border border-slate-200 shadow-2xs">
+                        <div className="w-7 h-7 rounded-lg bg-[#f48161] text-white flex items-center justify-center shrink-0">
+                          <Calendar className="w-4 h-4" />
+                        </div>
+                        <input
+                          type="date"
+                          value={moto.date_debut}
+                          onChange={e => setMoto({ ...moto, date_debut: e.target.value })}
+                          className="w-full bg-transparent px-3 text-slate-800 font-bold outline-none text-xs sm:text-sm cursor-pointer"
+                        />
+                      </div>
                     </div>
                   </div>
 
-                  {/* Formula Card "Moto Run" (Exclusivement RC + DR 0 DH) */}
-                  <div className="max-w-md mx-auto pt-4">
-                    <div className="rounded-2xl overflow-hidden shadow-xl border border-slate-200 relative bg-[#205680] text-white text-center">
+                  {/* Formula Card "Moto Run" (Exclusivement RC + DR 0 DH) — Version Compacte */}
+                  <div className="max-w-[380px] mx-auto pt-1">
+                    <div className="rounded-2xl overflow-hidden shadow-lg border border-slate-200 relative bg-[#205680] text-white text-center">
                       
                       {/* Top Circular Emblem */}
-                      <div className="pt-8 pb-4">
-                        <div className="w-16 h-16 rounded-full bg-[#f48161] text-white flex items-center justify-center mx-auto shadow-md border-2 border-white">
-                          <Bike className="w-8 h-8" />
+                      <div className="pt-5 pb-3">
+                        <div className="w-12 h-12 rounded-full bg-[#f48161] text-white flex items-center justify-center mx-auto shadow-sm border-2 border-white/90">
+                          <Bike className="w-6 h-6" />
                         </div>
-                        <h3 className="text-3xl font-black mt-3 tracking-wide">
+                        <h3 className="text-2xl font-black mt-2 tracking-wide leading-none">
                           Moto Run
                         </h3>
-                        <p className="text-xs text-orange-200 mt-1 uppercase font-semibold">
+                        <p className="text-[10px] text-orange-200 mt-1 uppercase tracking-wider font-semibold">
                           Formule Standard Complète ACAPS
                         </p>
                       </div>
 
-                      {/* Guarantees List (Strictement RC + Défense & Recours 0 DH) */}
-                      <div className="bg-[#174669] px-6 py-4 border-t border-white/10 space-y-2.5 text-sm font-semibold">
-                        <div className="flex items-center justify-center gap-2">
-                          <Check className="w-5 h-5 text-emerald-400 shrink-0" />
-                          <span>Responsabilité Civile (Obligatoire)</span>
-                        </div>
-                        <div className="flex items-center justify-center gap-2 text-cyan-100 text-xs">
-                          <Check className="w-4 h-4 text-emerald-400 shrink-0" />
-                          <span>Défense et Recours (Inclus 0 DH)</span>
+                      {/* Guarantees List (Strictement RC + Défense & Recours 0 DH) — ALIGNÉES & COMPACTES */}
+                      <div className="bg-[#174669] px-5 py-2.5 border-t border-white/10">
+                        <div className="max-w-[270px] mx-auto space-y-2 text-left text-xs font-semibold">
+                          <div className="flex items-center gap-2">
+                            <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                            <span>Responsabilité Civile <span className="text-[11px] font-normal text-emerald-300">(Obligatoire)</span></span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                            <span>Défense et Recours <span className="text-[11px] font-normal text-cyan-200">(Inclus)</span></span>
+                          </div>
                         </div>
                       </div>
 
-                      {/* Price Section */}
-                      <div className="bg-white text-slate-800 py-6 px-4 border-t border-slate-100">
-                        <div className="text-3xl md:text-4xl font-black text-slate-900">
-                          {pricingBreakdown.totalTtc.toLocaleString()} <span className="text-base font-bold text-slate-500">DHS TTC</span>
+                      {/* Price Section : Orange pour le montant, couleur du bg du card (#205680) pour DHS TTC */}
+                      <div className="bg-white py-3.5 px-4 border-t border-slate-100">
+                        <div className="text-2xl md:text-3xl font-black text-[#f48161]">
+                          {pricingBreakdown.totalTtc.toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} <span className="text-sm font-bold text-[#205680]">DHS TTC</span>
                         </div>
-                        <p className="text-xs font-semibold text-slate-500 mt-1">
-                          Périodicité : {duree === "1 an*" ? "Annuelle (12 mois)" : duree}
+                        <p className="text-[11px] font-medium text-slate-400 mt-0.5">
+                          Périodicité : {duree === "1 an*" ? "Annuelle (12 mois)" : duree === "6 mois" ? "Semestrielle (6 mois)" : "Trimestrielle (3 mois)"}
                         </p>
                       </div>
 
                       {/* Commander Button */}
-                      <div className="p-6 bg-[#205680]">
+                      <div className="p-4 bg-[#205680]">
                         <button
                           type="button"
                           onClick={() => setStep(4)}
-                          className="w-full py-3.5 px-6 rounded-full bg-[#f48161] hover:bg-[#e46e4e] text-white font-bold text-sm uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg transition transform hover:-translate-y-0.5 cursor-pointer"
+                          className="w-full py-2.5 px-5 rounded-full bg-[#f48161] hover:bg-[#e46e4e] text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-md transition transform hover:-translate-y-0.5 cursor-pointer"
                         >
-                          <Check className="w-5 h-5" />
+                          <Check className="w-4 h-4" />
                           <span>Commander cette formule</span>
                         </button>
                       </div>
                     </div>
 
                     {/* Accordéon détail calcul & taxes */}
-                    <div className="mt-4 bg-slate-50 rounded-xl p-3 border border-slate-200 text-xs text-slate-600">
+                    <div className="mt-2.5 bg-slate-50 rounded-xl p-2.5 border border-slate-200 text-xs text-slate-600">
                       <button
                         type="button"
                         onClick={() => setShowTaxDetails(!showTaxDetails)}
@@ -1007,22 +1050,23 @@ export default function MotoDevisPage() {
 
             {/* Right Summary Sidebar */}
             <div className="w-full lg:w-80 shrink-0">
-              <div className="bg-[#fef6f3] rounded-2xl p-6 border border-[#f5cbbe] sticky top-28 shadow-sm">
+              <div className="bg-[#fef6f3] rounded-2xl px-3.5 py-3 border border-[#f5cbbe] sticky top-28 shadow-sm">
                 
-                {/* Header Icon */}
-                <div className="w-14 h-14 rounded-full bg-[#153954] text-white flex items-center justify-center mx-auto -mt-12 shadow-md border-4 border-white mb-4">
-                  <Phone className="w-6 h-6 text-[#f48161]" />
+                {/* Header Icon Compact */}
+                <div className="w-9 h-9 rounded-full bg-[#153954] text-white flex items-center justify-center mx-auto -mt-7 shadow-xs border-2 border-white mb-1">
+                  <Phone className="w-3.5 h-3.5 text-[#f48161]" />
                 </div>
 
-                {/* Assistance Box */}
-                <div className="text-center mb-6 border-b border-orange-200/60 pb-4">
-                  <p className="text-xs uppercase font-extrabold text-slate-500 tracking-wider">Besoin d'aide ?</p>
+                {/* Assistance Box Compact */}
+                <div className="text-center mb-2.5 border-b border-orange-200/50 pb-2">
+                  <p className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">Besoin d'aide ?</p>
                   <a
                     href="tel:0522368182"
-                    className="text-lg md:text-xl font-black text-[#153954] hover:text-[#f48161] transition"
+                    className="text-base font-black text-[#153954] hover:text-[#f48161] transition block leading-tight mt-0.5"
                   >
                     05 22 36 81 82
                   </a>
+                  <p className="text-[10px] text-slate-400 mt-0.5">Conseiller disponible du Lun au Ven 9h-18h</p>
                 </div>
 
                 {/* Step 1 Legal text */}
@@ -1036,17 +1080,17 @@ export default function MotoDevisPage() {
                     </p>
                   </div>
                 ) : (
-                  <div className="space-y-4 text-xs">
+                  <div className="space-y-2.5 text-xs">
                     {/* Section Assuré */}
-                    <div className="bg-white rounded-xl p-3.5 shadow-2xs border border-orange-100">
-                      <div className="flex justify-between items-center mb-2">
+                    <div className="bg-white rounded-xl px-2.5 py-2.5 shadow-2xs border border-orange-100">
+                      <div className="flex justify-between items-center mb-1.5">
                         <span className="font-bold text-[#153954] uppercase text-[11px] tracking-wider">Informations de l'assuré</span>
                         <button
                           type="button"
                           onClick={() => setStep(1)}
-                          className="w-7 h-7 rounded-full bg-[#f48161] text-white flex items-center justify-center hover:bg-[#e46e4e] transition cursor-pointer"
+                          className="w-6 h-6 rounded-full bg-[#f48161] text-white flex items-center justify-center hover:bg-[#e46e4e] transition cursor-pointer"
                         >
-                          <Pencil className="w-3.5 h-3.5" />
+                          <Pencil className="w-3 h-3" />
                         </button>
                       </div>
                       <p className="text-slate-700"><strong>Nom :</strong> {prospect.nom || "—"}</p>
@@ -1058,20 +1102,29 @@ export default function MotoDevisPage() {
 
                     {/* Section Moto (visible on step 2, 3 and 4) */}
                     {step >= 2 && (
-                      <div className="bg-white rounded-xl p-3.5 shadow-2xs border border-orange-100">
-                        <div className="flex justify-between items-center mb-2">
+                      <div className="bg-white rounded-xl px-2.5 py-2.5 shadow-2xs border border-orange-100">
+                        <div className="flex justify-between items-center mb-1.5">
                           <span className="font-bold text-[#153954] uppercase text-[11px] tracking-wider">Informations de la Moto</span>
                           <button
                             type="button"
                             onClick={() => setStep(2)}
-                            className="w-7 h-7 rounded-full bg-[#f48161] text-white flex items-center justify-center hover:bg-[#e46e4e] transition cursor-pointer"
+                            className="w-6 h-6 rounded-full bg-[#f48161] text-white flex items-center justify-center hover:bg-[#e46e4e] transition cursor-pointer"
                           >
-                            <Pencil className="w-3.5 h-3.5" />
+                            <Pencil className="w-3 h-3" />
                           </button>
                         </div>
                         <p className="text-slate-700"><strong>Marque :</strong> {moto.marque} {moto.modele}</p>
                         <p className="text-slate-700 line-clamp-2"><strong>Catégorie :</strong> {selectedCategory.shortLabel}</p>
-                        <p className="text-slate-700"><strong>Immatriculation :</strong> {immNum} | {immCode} | {immPref}</p>
+                        <p className="text-slate-700">
+                          <strong>Immatriculation :</strong>{" "}
+                          <span dir="ltr" className="inline-flex items-center gap-1 font-mono font-medium">
+                            <span>{immNum}</span>
+                            <span>|</span>
+                            <bdi className="font-sans font-bold">{immCode}</bdi>
+                            <span>|</span>
+                            <span>{immPref}</span>
+                          </span>
+                        </p>
                         <p className="text-slate-700"><strong>Date d'effet :</strong> {moto.date_debut}</p>
                         <p className="text-slate-700"><strong>Mise en circulation :</strong> {moto.date_mec}</p>
                         <p className="text-slate-700"><strong>Valeur à neuf :</strong> {moto.van.toLocaleString()} DHS</p>
@@ -1080,15 +1133,15 @@ export default function MotoDevisPage() {
 
                     {/* Section Contrat & Prime (visible on step 3 and 4) */}
                     {step >= 3 && (
-                      <div className="bg-white rounded-xl p-3.5 shadow-2xs border border-orange-100">
-                        <div className="flex justify-between items-center mb-2">
+                      <div className="bg-white rounded-xl px-2.5 py-2.5 shadow-2xs border border-orange-100">
+                        <div className="flex justify-between items-center mb-1.5">
                           <span className="font-bold text-[#153954] uppercase text-[11px] tracking-wider">Formule & Prime</span>
                           <button
                             type="button"
                             onClick={() => setStep(3)}
-                            className="w-7 h-7 rounded-full bg-[#f48161] text-white flex items-center justify-center hover:bg-[#e46e4e] transition cursor-pointer"
+                            className="w-6 h-6 rounded-full bg-[#f48161] text-white flex items-center justify-center hover:bg-[#e46e4e] transition cursor-pointer"
                           >
-                            <Pencil className="w-3.5 h-3.5" />
+                            <Pencil className="w-3 h-3" />
                           </button>
                         </div>
                         <p className="text-slate-700"><strong>Formule :</strong> Moto Run</p>
@@ -1098,13 +1151,13 @@ export default function MotoDevisPage() {
                             Responsabilité Civile
                           </span>
                           <span className="px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 text-[10px] font-bold border border-emerald-200">
-                            Défense & Recours (0 DH)
+                            Défense & Recours
                           </span>
                         </div>
                         <div className="mt-3 pt-2.5 border-t border-slate-200">
                           <p className="text-[11px] uppercase font-bold text-slate-500">Prime Totale TTC :</p>
-                          <p className="text-lg font-black text-[#153954]">
-                            {pricingBreakdown.totalTtc.toLocaleString()} <span className="text-xs font-semibold">DHS</span>
+                          <p className="text-lg font-black text-[#f48161]">
+                            {pricingBreakdown.totalTtc.toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} <span className="text-xs font-bold text-[#205680]">DHS TTC</span>
                           </p>
                         </div>
                       </div>
