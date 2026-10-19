@@ -1,14 +1,14 @@
 /**
  * Moteur de Tarification & Simulation de Devis Auto - Digiassur Maroc
- * Conforme aux règles ACAPS / FMSAR et fiscalité marocaine en vigueur.
+ * Conforme aux formules exactes de l'application Digiassur et barème ACAPS / FMSAR.
  */
 
 export type EnergieType = "Diesel" | "Essence" | "Electrique" | "Hybrid";
 export type DureeType = "Annuelle" | "Semestrielle" | "Trimestrielle";
 
 export interface DevisAutoOptions {
-  pta?: boolean;          // Personnes Transportées (200 DH)
-  inc_vol_bdg?: boolean;  // Incendie, Vol, Bris de Glace (400 DH)
+  pta?: boolean;          // Personnes Transportées
+  inc_vol_bdg?: boolean;  // Incendie, Vol, Bris de Glace
   dc?: boolean;           // Dommages Collision (350 ou 500 DH)
   tc?: boolean;           // Tierce Complète (par paliers ou 0.7%)
 }
@@ -92,24 +92,116 @@ export function calculateValeurVenale(valeurNeuf: number, dateMec?: string | Dat
  * 3. Barème Dommages Collision (DC)
  */
 export function calculateDommagesCollision(valeurNeuf: number): number {
-  return valeurNeuf <= 200000 ? 350 : 500;
+  return Number(valeurNeuf) <= 200000 ? 350 : 500;
 }
 
 /**
  * 4. Barème Tierce Complète (TC)
  */
 export function calculateTierce(valeurNeuf: number): number {
-  if (valeurNeuf <= 100000) return 800;
-  if (valeurNeuf <= 150000) return 950;
-  if (valeurNeuf <= 200000) return 1275;
-  if (valeurNeuf <= 300000) return 1750;
-  if (valeurNeuf <= 400000) return 2450;
-  if (valeurNeuf <= 500000) return 3150;
-  return Math.round((valeurNeuf * 0.7) / 100);
+  const vn = Number(valeurNeuf) || 0;
+  if (vn <= 100000) return 800;
+  if (vn <= 150000) return 950;
+  if (vn <= 200000) return 1275;
+  if (vn <= 300000) return 1750;
+  if (vn <= 400000) return 2450;
+  if (vn <= 500000) return 3150;
+  return Math.round((vn * 0.7) / 100);
 }
 
 /**
- * 5. Moteur de calcul global d'un devis unitaire
+ * ============================================================================
+ * FONCTIONS OFFICIELLES DE L'ANCIENNE APPLICATION DIGIASSUR
+ * ============================================================================
+ */
+
+export function devis_provisoire_start(duree: string, RC: number): number {
+  let rc = Number(RC) || 0;
+  const DR = 0;
+  const PTA = 0; // PTA = 0 dans la formule Start (uniquement RC + DR à 0 DH)
+  let GA = DR + PTA;
+
+  const d = duree.toLowerCase();
+  if (d.includes("semestri")) {
+    rc = rc * 0.54;
+    GA = GA * 0.54;
+  } else if (d.includes("trimestri")) {
+    rc = rc * 0.27;
+    GA = GA * 0.27;
+  }
+
+  const Taxe_RC = (rc * 16.5) / 100;
+  const Taxe_GA = (GA * 15) / 100; 
+  const EVCAT = ((rc * 4.5) / 100) + ((GA * 2.5) / 100);
+  const CNPAC = 17;
+  const prime_totale = Number((rc + Taxe_RC + GA + Taxe_GA + EVCAT + CNPAC).toFixed(2));
+  return prime_totale;
+}
+
+export function devis_provisoire_go(duree: string, RC: number, valeur_neuf: number): number {
+  let rc = Number(RC) || 0;
+  const DR = 0;
+  const PTA = 125;
+  const INC_VOL_BDG = 400;
+  let DC = 0;
+  if (parseFloat(String(valeur_neuf)) <= 200000) DC = 350;
+  else DC = 500;
+  let GA = DR + PTA + INC_VOL_BDG + DC;
+
+  const d = duree.toLowerCase();
+  if (d.includes("semestri")) {
+    rc = rc * 0.54;
+    GA = GA * 0.54;
+  } else if (d.includes("trimestri")) {
+    rc = rc * 0.27;
+    GA = GA * 0.27;
+  }
+
+  const Taxe_RC = (rc * 16.5) / 100;
+  const Taxe_GA = (GA * 15) / 100; 
+  const EVCAT = ((rc * 4.5) / 100) + ((GA * 2.5) / 100);
+  const CNPAC = 17;
+  const prime_totale = Number((rc + Taxe_RC + GA + Taxe_GA + EVCAT + CNPAC).toFixed(2));
+  return prime_totale;
+}
+
+export function devis_provisoire_fast(duree: string, RC: number, valeur_neuf: number): number {
+  let rc = Number(RC) || 0;
+  const DR = 0;
+  const PTA = 200;
+  const INC_VOL_BDG = 400;
+  let TC = 0;
+  const vn = parseFloat(String(valeur_neuf)) || 0;
+
+  if (vn <= 100000) TC = 800;
+  else if (vn <= 150000) TC = 950;
+  else if (vn <= 200000) TC = 1275;
+  else if (vn <= 300000) TC = 1750;
+  else if (vn <= 400000) TC = 2450;
+  else if (vn <= 500000) TC = 3150;
+  else TC = (vn * 0.7) / 100;
+
+  let GA = DR + PTA + INC_VOL_BDG + TC;
+
+  const d = duree.toLowerCase();
+  if (d.includes("semestri")) {
+    rc = rc * 0.54;
+    GA = GA * 0.54;
+  } else if (d.includes("trimestri")) {
+    rc = rc * 0.27;
+    GA = GA * 0.27;
+  }
+
+  const Taxe_RC = (rc * 16.5) / 100;
+  const Taxe_GA = (GA * 15) / 100; 
+  const EVCAT = ((rc * 4.5) / 100) + ((GA * 2.5) / 100);
+  const CNPAC = 17;
+  const prime_totale = Number((rc + Taxe_RC + GA + Taxe_GA + EVCAT + CNPAC).toFixed(2));
+  return prime_totale;
+}
+
+/**
+ * 5. Moteur de calcul global d'un devis unitaire (mode modulaire sur-mesure)
  */
 export function calculateDevisAuto(params: DevisAutoParams): DevisAutoResult {
   const vn = Number(params.valeurNeuf) || 150000;
@@ -124,12 +216,38 @@ export function calculateDevisAuto(params: DevisAutoParams): DevisAutoResult {
   // Calcul Valeur Vénale
   const valeurVenale = calculateValeurVenale(vn, params.dateMec);
 
-  // Garanties Annexes
+  // Garanties Annexes selon les conventions officielles
   const dr = 0; // Défense & Recours incluse d'office (0 DH)
-  const pta = options.pta ? 200 : 0;
-  const inc_vol_bdg = options.inc_vol_bdg ? 400 : 0;
-  const dc = options.dc ? calculateDommagesCollision(vn) : 0;
-  const tc = options.tc ? calculateTierce(vn) : 0;
+  
+  let pta = 0;
+  let inc_vol_bdg = 0;
+  let dc = 0;
+  let tc = 0;
+
+  if (options.tc) {
+    // Si Tierce Complète (Tous Risques) :
+    // Conformément à devis_provisoire_fast :
+    // GA = DR(0) + PTA(200) + INC_VOL_BDG(400) + TC
+    // Pas de Dommages Collision (DC = 0) car remplacé par TC
+    tc = calculateTierce(vn);
+    pta = 200;
+    inc_vol_bdg = 400;
+    dc = 0;
+  } else if (options.dc) {
+    // Si Dommages Collision :
+    // Conformément à devis_provisoire_go :
+    // Même comportement que Tierce : inclut d'office PTA (125) et INC_VOL_BDG (400)
+    // GA = DR(0) + PTA(125) + INC_VOL_BDG(400) + DC(350 ou 500)
+    tc = 0;
+    dc = calculateDommagesCollision(vn);
+    pta = 125;
+    inc_vol_bdg = 400;
+  } else {
+    tc = 0;
+    dc = 0;
+    inc_vol_bdg = options.inc_vol_bdg ? 400 : 0;
+    pta = options.pta ? 200 : 0;
+  }
 
   let GA = dr + pta + inc_vol_bdg + dc + tc;
 
@@ -167,6 +285,7 @@ export function calculateDevisAuto(params: DevisAutoParams): DevisAutoResult {
 
 /**
  * 6. Calcul des 3 formules de référence (Start, Go, Fast)
+ * Utilise strictement devis_provisoire_start, devis_provisoire_go et devis_provisoire_fast
  */
 export function calculateFormules(params: {
   energie: EnergieType;
@@ -177,84 +296,26 @@ export function calculateFormules(params: {
   duree: DureeType;
   ptaForStart?: boolean;
 }) {
-  const { energie, puissanceFiscale, valeurNeuf, dateMec, crm = 1.0, duree, ptaForStart = false } = params;
+  const { energie, puissanceFiscale, valeurNeuf, crm = 1.0, duree } = params;
+  const rcBase = calculateRcBase(energie, puissanceFiscale);
+  const rcNette = rcBase * crm;
 
-  // Formule Start : RC + DR (DR=0), PTA si cochée
-  const startRes = calculateDevisAuto({
-    energie,
-    puissanceFiscale,
-    valeurNeuf,
-    dateMec,
-    crm,
-    duree,
-    options: { pta: ptaForStart }
-  });
+  const startTtc = devis_provisoire_start(duree, rcNette);
+  const goTtc = devis_provisoire_go(duree, rcNette, valeurNeuf);
+  const fastTtc = devis_provisoire_fast(duree, rcNette, valeurNeuf);
 
-  const startAnnual = calculateDevisAuto({
-    energie,
-    puissanceFiscale,
-    valeurNeuf,
-    dateMec,
-    crm,
-    duree: "Annuelle",
-    options: { pta: ptaForStart }
-  });
-
-  // Formule Go : RC + DR + PTA(200) + INC_VOL_BDG(400) + DC(350 ou 500)
-  const goRes = calculateDevisAuto({
-    energie,
-    puissanceFiscale,
-    valeurNeuf,
-    dateMec,
-    crm,
-    duree,
-    options: { pta: true, inc_vol_bdg: true, dc: true }
-  });
-
-  const goAnnual = calculateDevisAuto({
-    energie,
-    puissanceFiscale,
-    valeurNeuf,
-    dateMec,
-    crm,
-    duree: "Annuelle",
-    options: { pta: true, inc_vol_bdg: true, dc: true }
-  });
-
-  // Formule Fast (Tous Risques) : Go + Tierce Complète (TC)
-  const fastRes = calculateDevisAuto({
-    energie,
-    puissanceFiscale,
-    valeurNeuf,
-    dateMec,
-    crm,
-    duree,
-    options: { pta: true, inc_vol_bdg: true, dc: true, tc: true }
-  });
-
-  const fastAnnual = calculateDevisAuto({
-    energie,
-    puissanceFiscale,
-    valeurNeuf,
-    dateMec,
-    crm,
-    duree: "Annuelle",
-    options: { pta: true, inc_vol_bdg: true, dc: true, tc: true }
-  });
+  const startAnnual = devis_provisoire_start("Annuelle", rcNette);
+  const goAnnual = devis_provisoire_go("Annuelle", rcNette, valeurNeuf);
+  const fastAnnual = devis_provisoire_fast("Annuelle", rcNette, valeurNeuf);
 
   return {
-    Start: startRes.primeTotale,
-    Go: goRes.primeTotale,
-    Fast: fastRes.primeTotale,
+    Start: startTtc,
+    Go: goTtc,
+    Fast: fastTtc,
     annual: {
-      Start: startAnnual.primeTotale,
-      Go: goAnnual.primeTotale,
-      Fast: fastAnnual.primeTotale
-    },
-    details: {
-      Start: startRes,
-      Go: goRes,
-      Fast: fastRes
+      Start: startAnnual,
+      Go: goAnnual,
+      Fast: fastAnnual
     }
   };
 }

@@ -3,7 +3,8 @@ import {
   X, 
   Send, 
   Bot,
-  User
+  User,
+  MessageSquare
 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
@@ -18,7 +19,6 @@ export default function FloatingWidgets() {
   ]);
   const [inputValue, setInputValue] = useState("");
 
-  // Update greeting when language changes if only default bot greeting is present
   useEffect(() => {
     setMessages((prev) => {
       if (prev.length === 1 && prev[0].sender === "bot") {
@@ -94,19 +94,18 @@ export default function FloatingWidgets() {
         </a>
       </div>
 
-      {/* Floating Bottom Pill: Digibot à l'écoute */}
-      <div className={`fixed ${isRTL ? "left-2" : "right-2"} bottom-[15px] z-50`}>
+      {/* Floating Circular Chat Button without text */}
+      <div className={`fixed ${isRTL ? "left-4" : "right-4"} bottom-5 z-50`}>
         <button
           type="button"
           onClick={() => setChatOpen(!chatOpen)}
-          className="flex items-center gap-[12px] bg-[#f48161] hover:bg-[#e46e4e] rounded-[40px] p-[7px] w-auto min-w-[190px] px-3 h-[58px] shadow-2xl transition transform hover:scale-102 cursor-pointer"
+          className="w-14 h-14 rounded-full bg-[#f48161] hover:bg-[#e46e4e] flex items-center justify-center shadow-2xl transition transform hover:scale-105 cursor-pointer border-2 border-white ring-4 ring-[#f48161]/20"
+          title="Discuter avec notre conseiller"
+          aria-label="Ouvrir le chat"
         >
-          <div className="bg-[#fef1eb] flex justify-center items-center rounded-[22px] py-[10px] w-[44px] h-[44px] shrink-0">
-            <img src="/images/icon-digibot.svg" alt="" className="w-6 h-6" />
+          <div className="w-10 h-10 rounded-full bg-[#fef1eb] flex items-center justify-center shadow-inner">
+            <img src="/images/icon-digibot.svg" alt="Chat" className="w-6 h-6 object-contain" />
           </div>
-          <span className="font-semibold text-white text-[14px] whitespace-nowrap px-1">
-            {t("floating.botPill", "Digibot à l'écoute")}
-          </span>
         </button>
       </div>
 
@@ -183,3 +182,4 @@ export default function FloatingWidgets() {
     </>
   );
 }
+

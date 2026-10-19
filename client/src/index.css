@@ -37,14 +37,31 @@
   --color-sidebar-primary: var(--sidebar-primary);
   --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
   --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Palette Officielle Digiassur */
+  --color-primary-digi: #153954;
+  --color-secondary-digi: #f48161;
+  
+  --color-digi-navy: #153954;
+  --color-digi-navy-dark: #0d273a;
+  --color-digi-navy-light: #1b4363;
+
+  --color-digi-orange: #f48161;
+  --color-digi-orange-dark: #e46e4e;
+  --color-digi-orange-light: #fbebe6;
+  --color-digi-orange-pale: #f5cbbe;
+
+  --color-digi-gold: #ffc55c;
+  --color-digi-blue: #4b7f9c;
 }
 
 :root {
-  --primary: var(--color-blue-700);
-  --primary-foreground: var(--color-blue-50);
+  --primary: #153954;
+  --primary-foreground: #ffffff;
+  --secondary: #f48161;
+  --secondary-foreground: #ffffff;
   --sidebar-primary: var(--color-blue-600);
   --sidebar-primary-foreground: var(--color-blue-50);
   --chart-1: var(--color-blue-300);
@@ -185,4 +202,34 @@ html[dir="rtl"] select,
 html[dir="rtl"] textarea,
 html[dir="rtl"] button {
   font-family: 'Cairo', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+}
+
+input[type="checkbox"] {
+  accent-color: #f48161;
+}
+
+@keyframes zoom-pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.animate-zoom-pulse {
+  animation: zoom-pulse 2.2s ease-in-out infinite;
+}
+
+@keyframes slow-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-slow-spin {
+  animation: slow-spin 5s linear infinite;
 }

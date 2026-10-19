@@ -187,4 +187,38 @@ export const MOROCCAN_PREFECTURES = [
   { code: "78", label: "78 - Beni Mellal" }
 ];
 
-export const ARABIC_LETTERS = ["أ", "ب", "د", "و", "هـ", "ج", "ز", "ح", "ط", "ي", "ك", "ل", "م", "ن", "س", "ع", "ف", "ص", "ق", "ر", "ش", "ت", "ث", "خ", "ذ", "ض", "ظ", "غ"];
+export const MOROCCAN_SERIES_LETTERS = [
+  { ar: "أ", fr: "A", label: "أ | A" },
+  { ar: "ب", fr: "B", label: "ب | B" },
+  { ar: "د", fr: "D", label: "د | D" },
+  { ar: "هـ", fr: "H", label: "هـ | H" },
+  { ar: "و", fr: "W", label: "و | W" },
+  { ar: "ج", fr: "J", label: "ج | J" },
+  { ar: "ز", fr: "Z", label: "ز | Z" },
+  { ar: "ح", fr: "H", label: "ح | H" },
+  { ar: "ط", fr: "T", label: "ط | T" },
+  { ar: "ي", fr: "Y", label: "ي | Y" },
+  { ar: "ك", fr: "K", label: "ك | K" },
+  { ar: "ل", fr: "L", label: "ل | L" },
+  { ar: "م", fr: "M", label: "م | M" },
+  { ar: "ن", fr: "N", label: "ن | N" },
+  { ar: "س", fr: "S", label: "س | S" },
+  { ar: "ع", fr: "A", label: "ع | A" },
+  { ar: "ف", fr: "F", label: "ف | F" },
+  { ar: "ص", fr: "S", label: "ص | S" },
+  { ar: "ق", fr: "Q", label: "ق | Q" },
+  { ar: "ر", fr: "R", label: "ر | R" },
+  { ar: "ش", fr: "CH", label: "ش | CH" },
+  { ar: "ت", fr: "T", label: "ت | T" },
+  { ar: "ث", fr: "TH", label: "ث | TH" },
+  { ar: "خ", fr: "KH", label: "خ | KH" },
+  { ar: "ذ", fr: "DH", label: "ذ | DH" },
+  { ar: "ض", fr: "D", label: "ض | D" },
+  { ar: "ظ", fr: "Z", label: "ظ | Z" },
+  { ar: "غ", fr: "GH", label: "غ | GH" }
+];
+
+export const ARABIC_LETTERS = MOROCCAN_SERIES_LETTERS.map(l => l.ar);
+
+// Numéros de préfectures et provinces marocaines pour les plaques d'immatriculation (1 jusqu'à 99)
+export const MOROCCAN_PLATE_NUMBERS = Array.from({ length: 99 }, (_, i) => String(i + 1));

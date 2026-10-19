@@ -3,8 +3,14 @@ import DigiassurHeader from "@/components/DigiassurHeader";
 import DigiassurFooter from "@/components/DigiassurFooter";
 import FloatingWidgets from "@/components/FloatingWidgets";
 import PartnersSection from "@/components/PartnersSection";
-import { CAR_BRANDS, MOROCCAN_PREFECTURES, ARABIC_LETTERS } from "@/data/carBrands";
-import { calculateValeurVenale, calculateFormules } from "@/lib/pricingEngine";
+import { CAR_BRANDS, MOROCCAN_PREFECTURES, ARABIC_LETTERS, MOROCCAN_SERIES_LETTERS, MOROCCAN_PLATE_NUMBERS } from "@/data/carBrands";
+import { 
+  calculateValeurVenale, 
+  calculateDevisAuto, 
+  calculateDommagesCollision, 
+  calculateTierce,
+  calculateFormules 
+} from "@/lib/pricingEngine";
 import { 
   UserCheck, 
   Car, 
@@ -26,6 +32,7 @@ import {
   Gauge, 
   Fuel, 
   Shield, 
+  ShieldCheck,
   Clock, 
   FileCheck, 
   Smartphone, 
@@ -35,7 +42,10 @@ import {
   CreditCard, 
   HeartHandshake, 
   Wrench,
-  Pencil
+  Pencil,
+  Plus,
+  Sparkles,
+  Globe
 } from "lucide-react";
 import { Link } from "wouter";
 
@@ -60,11 +70,19 @@ interface VehiculeState {
   custom_plafond_bg: string;
 }
 
+interface ContratGaranties {
+  pta: boolean;
+  inc_vol_bdg: boolean;
+  dc: boolean;
+  tc: boolean;
+  assistance_vip: boolean;
+}
+
 interface ContratState {
   duree: "Annuelle" | "Semestrielle" | "Trimestrielle";
   debut: string;
-  formule: "Start" | "Go" | "Fast";
-  pta: boolean;
+  formule: string;
+  garanties: ContratGaranties;
   servicing: number;
   assistance: number;
   carte_verte: number;
@@ -102,16 +120,25 @@ export default function AutoDevisPage() {
   const [immCode, setImmCode] = useState<string>("أ");
   const [immChiffre, setImmChiffre] = useState<string>("6");
 
-  // Step 3 & 4: Contrat
+  // Step 3 & 4: Contrat avec sélection modulaire des garanties
   const [contrat, setContrat] = useState<ContratState>({
     duree: "Annuelle",
     debut: new Date().toISOString().split("T")[0],
-    formule: "Go",
-    pta: false,
+    formule: "Sur-Mesure",
+    garanties: {
+      pta: false,
+      inc_vol_bdg: false,
+      dc: false,
+      tc: false,
+      assistance_vip: false
+    },
     servicing: 0,
-    assistance: 85,
+    assistance: 0,
     carte_verte: 0
   });
+
+  // Mode d'affichage de l'Étape 3 : 'sur-mesure' (carte unique interactive) ou '3-formules' (Start, Go, Fast)
+  const [viewMode, setViewMode] = useState<"sur-mesure" | "3-formules">("sur-mesure");
 
   // Step 5: Document toggles & uploads
   const [showDocuments, setShowDocuments] = useState<boolean>(false);
@@ -136,7 +163,67 @@ export default function AutoDevisPage() {
     return brand ? brand.modeles : ["Modèle standard"];
   }, [vehicule.marque]);
 
-  // Pricing Calculation Engine powered by pricingEngine.ts
+  // Toggle intelligent des garanties (décochage auto de DC si TC est cochée et vice-versa, inclusion auto si DC ou TC actif)
+  const handleToggleGuarantee = (key: keyof ContratGaranties) => {
+    setContrat(prev => {
+      const nextGaranties = { ...prev.garanties };
+      if (key === "tc") {
+        if (prev.garanties.dc) return prev; // Inactif / désactivé si Dommages Collision est coché
+        nextGaranties.tc = !nextGaranties.tc;
+      } else if (key === "dc") {
+        if (prev.garanties.tc) return prev; // Inactif / désactivé si Tierce Complète est cochée
+        nextGaranties.dc = !nextGaranties.dc;
+      } else {
+        if (prev.garanties.tc || prev.garanties.dc) return prev; // Inclus d'office si TC ou DC est actif
+        nextGaranties[key] = !nextGaranties[key];
+      }
+      return {
+        ...prev,
+        garanties: nextGaranties
+      };
+    });
+  };
+
+  // 1. Calcul du prix de départ (Socle Formule Start = RC + DR 0 DH)
+  const baseStartQuote = useMemo(() => {
+    const cv = Number(vehicule.p_fiscale) || 6;
+    const van = Number(vehicule.van) || 150000;
+    const crm = Number(vehicule.crm) || 1.0;
+
+    return calculateDevisAuto({
+      energie: vehicule.energie,
+      puissanceFiscale: cv,
+      valeurNeuf: van,
+      dateMec: vehicule.date_mec,
+      crm,
+      duree: contrat.duree,
+      options: {}
+    });
+  }, [vehicule.p_fiscale, vehicule.energie, vehicule.van, vehicule.crm, vehicule.date_mec, contrat.duree]);
+
+  // 2. Calcul du devis personnalisé complet selon les garanties cochées
+  const activeQuote = useMemo(() => {
+    const cv = Number(vehicule.p_fiscale) || 6;
+    const van = Number(vehicule.van) || 150000;
+    const crm = Number(vehicule.crm) || 1.0;
+
+    return calculateDevisAuto({
+      energie: vehicule.energie,
+      puissanceFiscale: cv,
+      valeurNeuf: van,
+      dateMec: vehicule.date_mec,
+      crm,
+      duree: contrat.duree,
+      options: {
+        pta: contrat.garanties.pta,
+        inc_vol_bdg: contrat.garanties.inc_vol_bdg,
+        dc: contrat.garanties.dc,
+        tc: contrat.garanties.tc
+      }
+    });
+  }, [vehicule.p_fiscale, vehicule.energie, vehicule.van, vehicule.crm, vehicule.date_mec, contrat.duree, contrat.garanties]);
+
+  // 3. Calcul comparatif des 3 formules (Start, Go, Fast) pour le mode comparateur
   const formuleResults = useMemo(() => {
     const cv = Number(vehicule.p_fiscale) || 6;
     const van = Number(vehicule.van) || 150000;
@@ -149,15 +236,38 @@ export default function AutoDevisPage() {
       dateMec: vehicule.date_mec,
       crm,
       duree: contrat.duree,
-      ptaForStart: contrat.pta
+      ptaForStart: contrat.garanties.pta
     });
-  }, [vehicule.p_fiscale, vehicule.energie, vehicule.van, vehicule.crm, vehicule.date_mec, contrat.duree, contrat.pta]);
+  }, [vehicule.p_fiscale, vehicule.energie, vehicule.van, vehicule.crm, vehicule.date_mec, contrat.duree, contrat.garanties.pta]);
 
   const prices = formuleResults;
-  const activeBreakdown = formuleResults.details[contrat.formule] || formuleResults.details.Go;
-  const activeFormulaPrice = prices[contrat.formule] || prices.Go;
 
-  // Calcul dynamique de la Valeur Vénale via le moteur de règles
+  // 4. Coûts marginaux TTC par garantie selon la durée
+  const incrementalPrices = useMemo(() => {
+    const d = contrat.duree.toLowerCase();
+    const ratio = d.includes("semestri") ? 0.54 : d.includes("trimestri") ? 0.27 : 1.0;
+    const taxFactor = 1.175; // 15% Taxe GA + 2.5% EVCAT
+
+    const van = Number(vehicule.van) || 150000;
+    const dcBase = calculateDommagesCollision(van);
+    const tcBase = calculateTierce(van);
+
+    const dcPackBase = 125 + 400 + dcBase;
+    const tcPackBase = 200 + 400 + tcBase;
+
+    return {
+      pta: Number((200 * ratio * taxFactor).toFixed(2)),
+      inc_vol_bdg: Number((400 * ratio * taxFactor).toFixed(2)),
+      dc: Number((dcPackBase * ratio * taxFactor).toFixed(2)),
+      tc: Number((tcPackBase * ratio * taxFactor).toFixed(2)),
+      assistance_vip: 85
+    };
+  }, [contrat.duree, vehicule.van]);
+
+  const activeBreakdown = activeQuote;
+  const activeFormulaPrice = activeQuote.primeTotale;
+
+  // Calcul dynamique de la Valeur Vénale via le moteur officiel
   const estimatedValeurVenale = useMemo(() => {
     return calculateValeurVenale(Number(vehicule.van) || 0, vehicule.date_mec);
   }, [vehicule.van, vehicule.date_mec]);
@@ -234,10 +344,16 @@ export default function AutoDevisPage() {
     setContrat({
       duree: "Annuelle",
       debut: new Date().toISOString().split("T")[0],
-      formule: "Go",
-      pta: false,
+      formule: "Sur-Mesure",
+      garanties: {
+        pta: false,
+        inc_vol_bdg: false,
+        dc: false,
+        tc: false,
+        assistance_vip: false
+      },
       servicing: 0,
-      assistance: 85,
+      assistance: 0,
       carte_verte: 0
     });
     setUploadedFiles({});
@@ -275,7 +391,7 @@ export default function AutoDevisPage() {
         </section>
 
         {/* 5-Step Stepper Header */}
-        <section className="bg-slate-50 border-b border-slate-200 py-6 px-4">
+        <section className="bg-slate-50 border-b border-slate-200 py-4 px-4">
           <div className="max-w-5xl mx-auto relative">
             <div className="hidden md:block absolute top-[26px] left-[60px] right-[60px] h-1 bg-slate-200 -z-0" />
             
@@ -373,10 +489,10 @@ export default function AutoDevisPage() {
         </section>
 
         {/* Funnel Body + Sidebar */}
-        <section className="py-10 px-4 md:px-8 max-w-7xl mx-auto">
-          <div className="flex flex-col lg:flex-row gap-8">
+        <section className="py-4 px-4 max-w-7xl mx-auto">
+          <div className="flex flex-col lg:flex-row gap-6">
             {/* Left Main Form Container */}
-            <div className="flex-1 bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-100">
+            <div className="flex-1 bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
 
               {/* STEP 1: INFORMATIONS ASSURÉ */}
               {step === 1 && (
@@ -632,8 +748,8 @@ export default function AutoDevisPage() {
                       </label>
                       <div className="flex gap-2 items-center">
                         {/* Numéro */}
-                        <div className="flex-1 bg-slate-100 rounded-full p-1.5 flex items-center shadow-inner">
-                          <div className="w-8 h-8 rounded-full bg-[#f48161] text-white flex items-center justify-center shrink-0 text-xs font-bold">
+                        <div className="flex-1 bg-slate-100 rounded-full p-1.5 flex items-center shadow-inner h-[52px]">
+                          <div className="w-10 h-10 rounded-full bg-[#f48161] text-white flex items-center justify-center shrink-0 text-xs font-bold shadow-xs">
                             N°
                           </div>
                           <input
@@ -641,37 +757,39 @@ export default function AutoDevisPage() {
                             placeholder="12345"
                             value={immNum}
                             onChange={e => setImmNum(e.target.value)}
-                            className="w-full bg-transparent px-3 text-slate-700 outline-none text-sm font-bold text-center"
+                            className="w-full bg-transparent px-3 text-slate-700 outline-none text-base font-bold text-center"
                           />
                         </div>
 
-                        {/* Lettre arabe */}
-                        <div className="w-20 bg-slate-100 rounded-full p-1.5 flex items-center shadow-inner">
+                        {/* Lettre bilingue arabe et française */}
+                        <div className="w-32 bg-slate-100 rounded-full px-2 flex items-center justify-center shadow-inner h-[52px]">
                           <select
                             value={immCode}
                             onChange={e => setImmCode(e.target.value)}
-                            className="w-full bg-transparent text-center font-bold text-slate-700 outline-none text-base cursor-pointer"
+                            className="w-full bg-transparent text-center font-bold text-slate-700 outline-none text-sm cursor-pointer h-full"
                           >
-                            {ARABIC_LETTERS.map(lettre => (
-                              <option key={lettre} value={lettre}>{lettre}</option>
+                            {MOROCCAN_SERIES_LETTERS.map(lettre => (
+                              <option key={lettre.ar} value={lettre.ar}>
+                                {lettre.label}
+                              </option>
                             ))}
                           </select>
                         </div>
 
-                        {/* Préfecture chiffre */}
-                        <div className="w-24 bg-slate-100 rounded-full p-1.5 flex items-center shadow-inner">
+                        {/* Préfecture chiffre (1 jusqu'à 99) */}
+                        <div className="w-24 sm:w-28 bg-slate-100 rounded-full px-2 flex items-center justify-center shadow-inner h-[52px]">
                           <select
                             value={immChiffre}
                             onChange={e => setImmChiffre(e.target.value)}
-                            className="w-full bg-transparent text-center font-bold text-slate-700 outline-none text-sm cursor-pointer"
+                            className="w-full bg-transparent text-center font-bold text-slate-700 outline-none text-sm cursor-pointer h-full"
                           >
-                            {MOROCCAN_PREFECTURES.map(pref => (
-                              <option key={pref.code} value={pref.code}>{pref.code}</option>
+                            {MOROCCAN_PLATE_NUMBERS.map(num => (
+                              <option key={num} value={num}>{num}</option>
                             ))}
                           </select>
                         </div>
                       </div>
-                      <p className="text-[11px] text-slate-400 pl-2 mt-1">Ex: 12345 | أ | 6 (Casablanca Anfa)</p>
+                      <p className="text-[11px] text-slate-400 pl-2 mt-1">Ex: 12345 | أ | A | 6 (Casablanca Anfa)</p>
                     </div>
 
                     {/* Date mise en circulation */}
@@ -789,526 +907,994 @@ export default function AutoDevisPage() {
                 </div>
               )}
 
-              {/* STEP 3: COMPARATEUR FORMULES & TARIFS */}
+              {/* STEP 3: DEVIS AUTO - BASCULEMENT SUR-MESURE OU 3 FORMULES */}
               {step === 3 && (
                 <div className="space-y-6 animate-in fade-in duration-300">
+                  {/* Top Bar: Badge + Toggle Button at top right */}
+                  <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-4">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-100/70 text-[#f48161] text-xs font-black uppercase tracking-wider">
+                      <Sparkles className="w-3.5 h-3.5" />
+                      <span>{viewMode === "sur-mesure" ? "Offre Modulaire & Sur-Mesure" : "Comparatif 3 Formules"}</span>
+                    </div>
+
+                    {/* Bouton de basculement positionné tout en haut à droite */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setViewMode(prev => {
+                          const nextMode = prev === "sur-mesure" ? "3-formules" : "sur-mesure";
+                          if (nextMode === "3-formules" && contrat.formule === "Sur-Mesure") {
+                            setContrat(c => ({
+                              ...c,
+                              formule: "Go",
+                              garanties: {
+                                pta: true,
+                                inc_vol_bdg: true,
+                                dc: true,
+                                tc: false,
+                                assistance_vip: false
+                              }
+                            }));
+                          } else if (nextMode === "sur-mesure") {
+                            setContrat(c => ({
+                              ...c,
+                              formule: "Sur-Mesure"
+                            }));
+                          }
+                          return nextMode;
+                        });
+                      }}
+                      className={`inline-flex items-center gap-2 text-xs font-bold px-4 py-2 rounded-full transition-all shrink-0 cursor-pointer shadow-md border ${
+                        viewMode === "sur-mesure"
+                          ? "animate-zoom-pulse bg-gradient-to-r from-orange-50 via-white to-orange-50 border-[#f48161] text-[#153954] hover:shadow-lg hover:border-[#e46e4e]"
+                          : "bg-slate-100 hover:bg-slate-200 text-[#153954] border-slate-200 hover:text-[#f48161]"
+                      }`}
+                    >
+                      <SlidersHorizontal className={`w-3.5 h-3.5 shrink-0 ${viewMode === "sur-mesure" ? "animate-slow-spin text-[#f48161]" : "text-[#153954]"}`} />
+                      <span>{viewMode === "sur-mesure" ? "Voir la version 3 formules classiques" : "Revenir à l'offre personnalisée sur-mesure"}</span>
+                    </button>
+                  </div>
+
+                  {/* Header Title & Subtitle */}
                   <div>
-                    <h2 className="text-xl md:text-2xl font-bold text-slate-700 mb-1">
-                      Choisissez la formule adaptée à vos besoins
+                    <h2 className="text-xl md:text-2xl font-black text-slate-800">
+                      {viewMode === "sur-mesure" ? "Votre Couverture Auto Personnalisée" : "Choisissez votre formule Digiassur"}
                     </h2>
-                    <p className="text-slate-500 text-sm">
-                      Tarifs indicatifs calculés pour votre {vehicule.marque} {vehicule.modele} ({vehicule.p_fiscale} CV {vehicule.energie}).
+                    <p className="text-slate-500 text-xs md:text-sm mt-0.5">
+                      {viewMode === "sur-mesure" 
+                        ? "Démarrez avec le prix de base Start et cochez / décochez vos garanties pour suivre l'évolution de votre tarif en direct."
+                        : "Comparez nos formules Start, Go et Fast pour votre véhicule."}
                     </p>
                   </div>
 
                   {/* Top Filters: Durée & Prise d'effet */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-200">
                     <div>
-                      <label className="block text-xs font-bold text-slate-600 mb-1 pl-2">
-                        Durée du contrat *
+                      <label className="block text-xs font-bold text-slate-700 mb-1.5 pl-1">
+                        Périodicité / Durée de garantie *
                       </label>
-                      <div className="bg-white rounded-full p-1.5 flex items-center border border-slate-200">
-                        <div className="w-8 h-8 rounded-full bg-[#f48161] text-white flex items-center justify-center shrink-0">
-                          <Clock className="w-4 h-4" />
-                        </div>
-                        <select
-                          value={contrat.duree}
-                          onChange={e => setContrat({ ...contrat, duree: e.target.value as any })}
-                          className="w-full bg-transparent px-3 text-slate-700 font-bold outline-none text-sm cursor-pointer"
+                      <div className="grid grid-cols-3 gap-2">
+                        <button
+                          type="button"
+                          onClick={() => setContrat({ ...contrat, duree: "Annuelle" })}
+                          className={`h-11 px-2 rounded-xl text-xs sm:text-sm font-bold transition flex items-center justify-center border text-center ${
+                            contrat.duree === "Annuelle"
+                              ? "bg-[#153954] text-white border-[#153954] shadow-sm"
+                              : "bg-white text-slate-700 border-slate-200 hover:border-slate-300"
+                          }`}
                         >
-                          <option value="Annuelle">Annuelle (1 an — Meilleur tarif)</option>
-                          <option value="Semestrielle">Semestrielle (6 mois)</option>
-                          <option value="Trimestrielle">Trimestrielle (3 mois)</option>
-                        </select>
+                          <span>Annuelle (1 an)</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => setContrat({ ...contrat, duree: "Semestrielle" })}
+                          className={`h-11 px-2 rounded-xl text-xs sm:text-sm font-bold transition flex items-center justify-center border text-center ${
+                            contrat.duree === "Semestrielle"
+                              ? "bg-[#153954] text-white border-[#153954] shadow-sm"
+                              : "bg-white text-slate-700 border-slate-200 hover:border-slate-300"
+                          }`}
+                        >
+                          <span>6 Mois</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => setContrat({ ...contrat, duree: "Trimestrielle" })}
+                          className={`h-11 px-2 rounded-xl text-xs sm:text-sm font-bold transition flex items-center justify-center border text-center ${
+                            contrat.duree === "Trimestrielle"
+                              ? "bg-[#153954] text-white border-[#153954] shadow-sm"
+                              : "bg-white text-slate-700 border-slate-200 hover:border-slate-300"
+                          }`}
+                        >
+                          <span>3 Mois</span>
+                        </button>
                       </div>
                     </div>
 
                     <div>
-                      <label className="block text-xs font-bold text-slate-600 mb-1 pl-2">
-                        Date de prise d'effet souhaitée *
+                      <label className="block text-xs font-bold text-slate-700 mb-1.5 pl-1">
+                        Date de prise d'effet du contrat *
                       </label>
-                      <div className="bg-white rounded-full p-1.5 flex items-center border border-slate-200">
-                        <div className="w-8 h-8 rounded-full bg-[#f48161] text-white flex items-center justify-center shrink-0">
-                          <Calendar className="w-4 h-4" />
+                      <div className="h-11 bg-white rounded-xl px-2.5 flex items-center border border-slate-200 shadow-2xs">
+                        <div className="w-7 h-7 rounded-lg bg-[#f48161] text-white flex items-center justify-center shrink-0">
+                          <Calendar className="w-3.5 h-3.5" />
                         </div>
                         <input
                           type="date"
                           value={contrat.debut}
                           onChange={e => setContrat({ ...contrat, debut: e.target.value })}
-                          className="w-full bg-transparent px-3 text-slate-700 font-bold outline-none text-sm"
+                          className="w-full bg-transparent px-3 text-slate-700 font-bold outline-none text-xs sm:text-sm"
                         />
                       </div>
                     </div>
                   </div>
 
-                  {/* 3 Formula Comparison Cards */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4">
+                  {/* VUE 1: CARTE UNIQUE INTERACTIVE SUR-MESURE */}
+                  {viewMode === "sur-mesure" ? (
+                    <div className="rounded-2xl border-2 border-slate-200 shadow-md bg-white transition-all relative">
+                      {/* Header de la carte : Titre et Prix en temps réel (Fixé sous le menu au scroll) */}
+                      <div className="sticky top-[70px] lg:top-[116px] z-30 bg-[#153954] text-white py-2.5 px-4 md:py-3 md:px-5 flex flex-col md:flex-row md:items-center justify-between gap-2.5 md:gap-3 rounded-t-[14px] shadow-md border-b border-white/10 transition-all backdrop-blur-md">
+                        <div className="absolute right-0 top-0 bottom-0 w-64 bg-gradient-to-l from-white/5 to-transparent pointer-events-none rounded-tr-[14px]" />
+                        
+                        <div className="space-y-1 z-10">
+                          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#f48161] text-white text-[10px] font-black uppercase tracking-wider">
+                            <Shield className="w-3 h-3" />
+                            <span>Formule Unique Sur-Mesure</span>
+                          </div>
+                          <p className="text-xs text-cyan-200">
+                            Tarif officiel garanti • Taxes FMSAR & ACAPS incluses
+                          </p>
+                        </div>
 
-                    {/* FORMULE START */}
-                    <div className={`rounded-2xl overflow-hidden border-2 flex flex-col justify-between transition-all duration-300 ${
-                      contrat.formule === "Start" 
-                        ? "border-[#f48161] shadow-xl ring-2 ring-[#f48161]/30 transform -translate-y-1" 
-                        : "border-slate-200 hover:border-slate-300 shadow-sm"
-                    }`}>
-                      <div className="bg-[#153954] text-white p-5 text-center relative">
-                        <div className="w-12 h-12 rounded-full bg-[#ffc55c] text-slate-800 flex items-center justify-center mx-auto mb-2 shadow-md">
-                          <Car className="w-6 h-6 text-[#153954]" />
-                        </div>
-                        <h3 className="text-2xl font-black uppercase tracking-wider">Start</h3>
-                        <p className="text-xs text-cyan-200">L'essentiel pour rouler en règle</p>
-                      </div>
-
-                      <div className="p-5 flex-1 bg-white space-y-2.5 text-xs">
-                        <div className="flex items-center gap-2 font-medium text-slate-700">
-                          <Check className="w-4 h-4 text-emerald-500 shrink-0" />
-                          <span>Responsabilité Civile (Obligatoire)</span>
-                        </div>
-                        <div className="flex items-center gap-2 font-medium text-slate-700">
-                          <Check className="w-4 h-4 text-emerald-500 shrink-0" />
-                          <span>Défense et Recours</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-slate-400">
-                          <X className="w-4 h-4 text-red-400 shrink-0" />
-                          <span className="line-through">Personnes transportées (PTA)</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-slate-400">
-                          <X className="w-4 h-4 text-red-400 shrink-0" />
-                          <span className="line-through">Protection conducteur</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-slate-400">
-                          <X className="w-4 h-4 text-red-400 shrink-0" />
-                          <span className="line-through">Incendie & Explosion</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-slate-400">
-                          <X className="w-4 h-4 text-red-400 shrink-0" />
-                          <span className="line-through">Vol du véhicule</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-slate-400">
-                          <X className="w-4 h-4 text-red-400 shrink-0" />
-                          <span className="line-through">Bris de glace</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-slate-400">
-                          <X className="w-4 h-4 text-red-400 shrink-0" />
-                          <span className="line-through">Inondations & Cat. Naturelles</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-slate-400">
-                          <X className="w-4 h-4 text-red-400 shrink-0" />
-                          <span className="line-through">Dommages Collision</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-slate-400">
-                          <X className="w-4 h-4 text-red-400 shrink-0" />
-                          <span className="line-through">Tierce complète Tous Risques</span>
+                        {/* Boîte Prix Live */}
+                        <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl py-2 px-3 text-right shrink-0 z-10">
+                          <span className="text-[10px] uppercase tracking-wider text-cyan-200 block font-bold">
+                            Prime totale ({contrat.duree.toLowerCase()})
+                          </span>
+                          <div className="text-xl md:text-2xl font-black text-white tracking-tight leading-tight flex items-baseline gap-1.5 justify-end">
+                            <span>{activeQuote.primeTotale.toLocaleString()}</span>
+                            <span className="text-xs font-bold text-[#f48161]">DHS TTC</span>
+                          </div>
                         </div>
                       </div>
 
-                      <div className="p-5 bg-slate-50 border-t border-slate-100 text-center">
-                        <div className="text-2xl font-black text-slate-800">
-                          {prices.Start.toLocaleString()} <span className="text-sm font-semibold text-slate-500">DHS TTC</span>
-                        </div>
-                        <p className="text-[11px] text-slate-400 mb-3">{contrat.duree.toLowerCase()}</p>
+                      <div className="p-3 sm:p-4 space-y-3">
+                        {/* 2. AVANTAGES & GARANTIES OPTIONNELS COCHABLES */}
+                        <div className="space-y-2.5">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <h4 className="text-xs sm:text-sm font-black text-slate-800 uppercase tracking-wider">
+                                Personnalisez votre couverture
+                              </h4>
+                              <p className="text-[11px] text-slate-500">
+                                Cochez ou décochez les garanties souhaitées pour observer l'évolution de votre tarif.
+                              </p>
+                            </div>
+                            <span className="text-[11px] font-bold text-[#f48161] hidden sm:inline">
+                              Taxes et frais légaux inclus
+                            </span>
+                          </div>
 
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setContrat({ ...contrat, formule: "Start" });
-                            setStep(4);
-                          }}
-                          className={`w-full py-3 rounded-full font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition ${
-                            contrat.formule === "Start"
-                              ? "bg-[#153954] text-white shadow-md"
-                              : "bg-white text-slate-700 border border-slate-300 hover:bg-slate-100"
-                          }`}
-                        >
-                          <Check className="w-4 h-4" />
-                          <span>Commander Start</span>
-                        </button>
-                      </div>
-                    </div>
+                          <div className="space-y-2">
 
-                    {/* FORMULE GO (LE PLUS CHOISI) */}
-                    <div className={`rounded-2xl overflow-hidden border-2 flex flex-col justify-between relative transition-all duration-300 ${
-                      contrat.formule === "Go" 
-                        ? "border-[#f48161] shadow-2xl ring-4 ring-[#f48161]/30 transform -translate-y-2" 
-                        : "border-[#f48161]/60 shadow-lg"
-                    }`}>
-                      <div className="absolute top-0 right-0 bg-[#f48161] text-white text-[10px] font-black uppercase px-3 py-1 rounded-bl-lg tracking-wider z-10">
-                        Le plus populaire
-                      </div>
+                            {/* OPTION 1: PERSONNES TRANSPORTÉES (PTA) */}
+                            <div
+                              onClick={() => !contrat.garanties.tc && !contrat.garanties.dc && handleToggleGuarantee("pta")}
+                              className={`p-3 sm:p-3.5 rounded-xl border-2 transition-all cursor-pointer ${
+                                contrat.garanties.tc || contrat.garanties.dc
+                                  ? "border-emerald-200 bg-emerald-50/20 shadow-2xs cursor-default"
+                                  : contrat.garanties.pta
+                                  ? "border-[#f48161] bg-orange-50/30 shadow-xs ring-1 ring-[#f48161]/20"
+                                  : "border-slate-200 bg-white hover:border-slate-300"
+                              }`}
+                            >
+                              <div className="flex items-start gap-3">
+                                <div className="pt-0.5">
+                                  <input
+                                    type="checkbox"
+                                    checked={contrat.garanties.tc || contrat.garanties.dc || contrat.garanties.pta}
+                                    disabled={contrat.garanties.tc || contrat.garanties.dc}
+                                    onChange={() => {}}
+                                    style={{ accentColor: '#f48161' }}
+                                    className={`w-4.5 h-4.5 rounded text-[#f48161] accent-[#f48161] focus:ring-[#f48161] border-slate-300 ${contrat.garanties.tc || contrat.garanties.dc ? "cursor-default opacity-80" : "cursor-pointer"}`}
+                                  />
+                                </div>
+                                <div className="flex-1">
+                                  <div className="flex items-center gap-2 flex-wrap">
+                                    <span className="font-black text-xs sm:text-sm text-slate-800">
+                                      Personnes Transportées (PTA) — Protection Conducteur & Famille
+                                    </span>
+                                    {(contrat.garanties.tc || contrat.garanties.dc) && (
+                                      <span className="text-[9px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full">
+                                        Inclus dans {contrat.garanties.tc ? "Tierce Complète" : "Dommages Collision"}
+                                      </span>
+                                    )}
+                                  </div>
+                                  <p className="text-[11px] leading-snug text-slate-500 mt-0.5">
+                                    Indemnisation corporelle du conducteur et des passagers en cas d'accident de la circulation (frais médicaux, invalidité, décès).
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
 
-                      <div className="bg-[#1d4b75] text-white p-5 text-center relative">
-                        <div className="w-12 h-12 rounded-full bg-[#f48161] text-white flex items-center justify-center mx-auto mb-2 shadow-md">
-                          <Shield className="w-6 h-6" />
-                        </div>
-                        <h3 className="text-2xl font-black uppercase tracking-wider">Go</h3>
-                        <p className="text-xs text-cyan-200">Protection complète équilibrée</p>
-                      </div>
+                            {/* OPTION 2: INCENDIE, VOL & BRIS DE GLACE */}
+                            <div
+                              onClick={() => !contrat.garanties.tc && !contrat.garanties.dc && handleToggleGuarantee("inc_vol_bdg")}
+                              className={`p-3 sm:p-3.5 rounded-xl border-2 transition-all cursor-pointer ${
+                                contrat.garanties.tc || contrat.garanties.dc
+                                  ? "border-emerald-200 bg-emerald-50/20 shadow-2xs cursor-default"
+                                  : contrat.garanties.inc_vol_bdg
+                                  ? "border-[#f48161] bg-orange-50/30 shadow-xs ring-1 ring-[#f48161]/20"
+                                  : "border-slate-200 bg-white hover:border-slate-300"
+                              }`}
+                            >
+                              <div className="flex items-start gap-3">
+                                <div className="pt-0.5">
+                                  <input
+                                    type="checkbox"
+                                    checked={contrat.garanties.tc || contrat.garanties.dc || contrat.garanties.inc_vol_bdg}
+                                    disabled={contrat.garanties.tc || contrat.garanties.dc}
+                                    onChange={() => {}}
+                                    style={{ accentColor: '#f48161' }}
+                                    className={`w-4.5 h-4.5 rounded text-[#f48161] accent-[#f48161] focus:ring-[#f48161] border-slate-300 ${contrat.garanties.tc || contrat.garanties.dc ? "cursor-default opacity-80" : "cursor-pointer"}`}
+                                  />
+                                </div>
+                                <div className="flex-1">
+                                  <div className="flex items-center gap-2 flex-wrap">
+                                    <span className="font-black text-xs sm:text-sm text-slate-800">
+                                      Incendie, Vol & Bris de Glace
+                                    </span>
+                                    <span className="text-[9px] bg-blue-100 text-[#153954] font-bold px-2 py-0.5 rounded-full">
+                                      Plafond BDG : {vehicule.plafond_bg.toLocaleString()} DH
+                                    </span>
+                                    {(contrat.garanties.tc || contrat.garanties.dc) && (
+                                      <span className="text-[9px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full">
+                                        Inclus dans {contrat.garanties.tc ? "Tierce Complète" : "Dommages Collision"}
+                                      </span>
+                                    )}
+                                  </div>
+                                  <p className="text-[11px] leading-snug text-slate-500 mt-0.5">
+                                    Prise en charge financière en cas de vol du véhicule, incendie, explosion ou bris de pare-brise et vitres latérales.
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
 
-                      <div className="p-5 flex-1 bg-white space-y-2.5 text-xs">
-                        <div className="flex items-center gap-2 font-medium text-slate-700">
-                          <Check className="w-4 h-4 text-emerald-500 shrink-0" />
-                          <span>Responsabilité Civile</span>
-                        </div>
-                        <div className="flex items-center gap-2 font-medium text-slate-700">
-                          <Check className="w-4 h-4 text-emerald-500 shrink-0" />
-                          <span>Défense et Recours</span>
-                        </div>
-                        <div className="flex items-center gap-2 font-medium text-slate-700">
-                          <Check className="w-4 h-4 text-emerald-500 shrink-0" />
-                          <span>Personnes transportées</span>
-                        </div>
-                        <div className="flex items-center gap-2 font-medium text-slate-700">
-                          <Check className="w-4 h-4 text-emerald-500 shrink-0" />
-                          <span>Protection conducteur</span>
-                        </div>
-                        <div className="flex items-center gap-2 font-medium text-slate-700">
-                          <Check className="w-4 h-4 text-emerald-500 shrink-0" />
-                          <span>Assistance 24h/24 Maroc</span>
-                        </div>
-                        <div className="flex items-center gap-2 font-medium text-slate-700">
-                          <Check className="w-4 h-4 text-emerald-500 shrink-0" />
-                          <span className="font-bold text-slate-800">Incendie & Explosion</span>
-                        </div>
-                        <div className="flex items-center gap-2 font-medium text-slate-700">
-                          <Check className="w-4 h-4 text-emerald-500 shrink-0" />
-                          <span className="font-bold text-slate-800">Vol du véhicule</span>
-                        </div>
-                        <div className="flex items-center gap-2 font-medium text-slate-700">
-                          <Check className="w-4 h-4 text-emerald-500 shrink-0" />
-                          <span className="font-bold text-slate-800">Bris de glace ({vehicule.plafond_bg.toLocaleString()} DH)</span>
-                        </div>
-                        <div className="flex items-center gap-2 font-medium text-slate-700">
-                          <Check className="w-4 h-4 text-emerald-500 shrink-0" />
-                          <span>Inondations & Risques climatiques</span>
-                        </div>
-                        <div className="flex items-center gap-2 font-medium text-slate-700">
-                          <Check className="w-4 h-4 text-emerald-500 shrink-0" />
-                          <span>Dommages Collision</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-slate-400">
-                          <X className="w-4 h-4 text-red-400 shrink-0" />
-                          <span className="line-through">Tierce complète Tous Risques</span>
-                        </div>
-                      </div>
+                            {/* OPTION 3: DOMMAGES COLLISION (DC) */}
+                            <div
+                              onClick={() => !contrat.garanties.tc && handleToggleGuarantee("dc")}
+                              className={`p-3 sm:p-3.5 rounded-xl border-2 transition-all ${
+                                contrat.garanties.dc
+                                  ? "border-[#f48161] bg-orange-50/30 shadow-xs ring-1 ring-[#f48161]/20 cursor-pointer"
+                                  : contrat.garanties.tc
+                                  ? "border-slate-200 bg-slate-100/70 opacity-60 cursor-not-allowed select-none"
+                                  : "border-slate-200 bg-white hover:border-slate-300 cursor-pointer"
+                              }`}
+                            >
+                              <div className="flex items-start gap-3">
+                                <div className="pt-0.5">
+                                  <input
+                                    type="checkbox"
+                                    checked={contrat.garanties.dc}
+                                    disabled={contrat.garanties.tc}
+                                    onChange={() => {}}
+                                    style={{ accentColor: '#f48161' }}
+                                    className={`w-4.5 h-4.5 rounded text-[#f48161] accent-[#f48161] focus:ring-[#f48161] border-slate-300 ${contrat.garanties.tc ? "cursor-not-allowed opacity-50" : "cursor-pointer"}`}
+                                  />
+                                </div>
+                                <div className="flex-1">
+                                  <div className="flex items-center gap-2 flex-wrap">
+                                    <span className={`font-black text-xs sm:text-sm ${contrat.garanties.tc ? "text-slate-400" : "text-slate-800"}`}>
+                                      Dommages Collision (DC)
+                                    </span>
+                                    {contrat.garanties.tc ? (
+                                      <span className="text-[9px] bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded-full">
+                                        Désactivé (Déjà couvert par Tierce Complète)
+                                      </span>
+                                    ) : (
+                                      <span className="text-[9px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full">
+                                        Formule Complète (Inclut PTA, Vol, Incendie & BDG)
+                                      </span>
+                                    )}
+                                  </div>
+                                  <p className="text-[11px] leading-snug text-slate-500 mt-0.5">
+                                    Remboursement des dégâts subis par votre véhicule en cas de collision avec un tiers identifié, incluant d'office la protection passagers (PTA), le Vol, l'Incendie et le Bris de Glace.
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
 
-                      <div className="p-5 bg-orange-50/50 border-t border-orange-100 text-center">
-                        <div className="text-2xl font-black text-[#f48161]">
-                          {prices.Go.toLocaleString()} <span className="text-sm font-semibold text-slate-600">DHS TTC</span>
-                        </div>
-                        <p className="text-[11px] text-slate-400 mb-3">{contrat.duree.toLowerCase()}</p>
+                            {/* OPTION 4: TIERCE COMPLÈTE (TC - TOUS RISQUES) */}
+                            <div
+                              onClick={() => !contrat.garanties.dc && handleToggleGuarantee("tc")}
+                              className={`p-3 sm:p-3.5 rounded-xl border-2 transition-all ${
+                                contrat.garanties.tc
+                                  ? "border-[#153954] bg-blue-50/50 shadow-xs ring-1 ring-[#153954]/20 cursor-pointer"
+                                  : contrat.garanties.dc
+                                  ? "border-slate-200 bg-slate-100/70 opacity-50 cursor-not-allowed select-none"
+                                  : "border-slate-200 bg-white hover:border-slate-300 cursor-pointer"
+                              }`}
+                            >
+                              <div className="flex items-start gap-3">
+                                <div className="pt-0.5">
+                                  <input
+                                    type="checkbox"
+                                    checked={contrat.garanties.tc}
+                                    disabled={contrat.garanties.dc}
+                                    onChange={() => {}}
+                                    style={{ accentColor: '#f48161' }}
+                                    className={`w-4.5 h-4.5 rounded text-[#f48161] accent-[#f48161] focus:ring-[#f48161] border-slate-300 ${contrat.garanties.dc ? "cursor-not-allowed opacity-50" : "cursor-pointer"}`}
+                                  />
+                                </div>
+                                <div className="flex-1">
+                                  <div className="flex items-center gap-2 flex-wrap">
+                                    <span className={`font-black text-xs sm:text-sm ${contrat.garanties.dc ? "text-slate-400" : "text-[#153954]"}`}>
+                                      Tierce Complète (Tous Risques - TC)
+                                    </span>
+                                    {contrat.garanties.dc ? (
+                                      <span className="text-[9px] bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded-full">
+                                        Désactivé (Dommages Collision actif)
+                                      </span>
+                                    ) : (
+                                      <span className="text-[9px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full">
+                                        Protection Maximale (Tous Risques)
+                                      </span>
+                                    )}
+                                  </div>
+                                  <p className="text-[11px] leading-snug text-slate-500 mt-0.5">
+                                    Couverture tous dégâts matériels (chocs avec/sans tiers, renversement, vandalisme) incluant d'office le Vol, l'Incendie, le Bris de Glace et la PTA.
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
 
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setContrat({ ...contrat, formule: "Go" });
-                            setStep(4);
-                          }}
-                          className="w-full py-3 rounded-full font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 bg-[#f48161] hover:bg-[#e46e4e] text-white shadow-lg transition"
-                        >
-                          <Check className="w-4 h-4" />
-                          <span>Commander Go</span>
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* FORMULE FAST (TOUS RISQUES) */}
-                    <div className={`rounded-2xl overflow-hidden border-2 flex flex-col justify-between transition-all duration-300 ${
-                      contrat.formule === "Fast" 
-                        ? "border-[#f48161] shadow-xl ring-2 ring-[#f48161]/30 transform -translate-y-1" 
-                        : "border-slate-200 hover:border-slate-300 shadow-sm"
-                    }`}>
-                      <div className="bg-[#153954] text-white p-5 text-center relative">
-                        <div className="w-12 h-12 rounded-full bg-[#f48161] text-white flex items-center justify-center mx-auto mb-2 shadow-md">
-                          <Car className="w-6 h-6" />
+                          </div>
                         </div>
-                        <h3 className="text-2xl font-black uppercase tracking-wider">Fast</h3>
-                        <p className="text-xs text-cyan-200">Tierce Complète Tous Risques</p>
-                      </div>
-
-                      <div className="p-5 flex-1 bg-white space-y-2.5 text-xs">
-                        <div className="flex items-center gap-2 font-medium text-slate-700">
-                          <Check className="w-4 h-4 text-emerald-500 shrink-0" />
-                          <span>Toutes les garanties de la formule Go</span>
-                        </div>
-                        <div className="flex items-center gap-2 font-medium text-slate-700">
-                          <Check className="w-4 h-4 text-emerald-500 shrink-0" />
-                          <span>Responsabilité Civile & Défense</span>
-                        </div>
-                        <div className="flex items-center gap-2 font-medium text-slate-700">
-                          <Check className="w-4 h-4 text-emerald-500 shrink-0" />
-                          <span>Protection conducteur & passagers</span>
-                        </div>
-                        <div className="flex items-center gap-2 font-medium text-slate-700">
-                          <Check className="w-4 h-4 text-emerald-500 shrink-0" />
-                          <span>Vol, Incendie, Bris de glace</span>
-                        </div>
-                        <div className="flex items-center gap-2 font-medium text-slate-700">
-                          <Check className="w-4 h-4 text-emerald-500 shrink-0" />
-                          <span>Inondations & Phénomènes météo</span>
-                        </div>
-                        <div className="flex items-center gap-2 font-medium text-slate-700">
-                          <Check className="w-4 h-4 text-emerald-500 shrink-0" />
-                          <span>Dommages collision tous tiers</span>
-                        </div>
-                        <div className="flex items-center gap-2 font-bold text-[#153954] bg-blue-50 p-2 rounded-lg">
-                          <Check className="w-4 h-4 text-emerald-500 shrink-0" />
-                          <span>TIERCE INTÉGRALE TOUS RISQUES</span>
-                        </div>
-                        <p className="text-[11px] text-slate-500 pl-6 italic">
-                          Indemnisation même en cas de choc sans tiers ou responsabilité totale.
-                        </p>
-                      </div>
-
-                      <div className="p-5 bg-slate-50 border-t border-slate-100 text-center">
-                        <div className="text-2xl font-black text-slate-800">
-                          {prices.Fast.toLocaleString()} <span className="text-sm font-semibold text-slate-500">DHS TTC</span>
-                        </div>
-                        <p className="text-[11px] text-slate-400 mb-3">{contrat.duree.toLowerCase()}</p>
-
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setContrat({ ...contrat, formule: "Fast" });
-                            setStep(4);
-                          }}
-                          className={`w-full py-3 rounded-full font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition ${
-                            contrat.formule === "Fast"
-                              ? "bg-[#153954] text-white shadow-md"
-                              : "bg-white text-slate-700 border border-slate-300 hover:bg-slate-100"
-                          }`}
-                        >
-                          <Check className="w-4 h-4" />
-                          <span>Commander Fast</span>
-                        </button>
                       </div>
                     </div>
+                  ) : (
+                    /* VUE 2: COMPARATIF 3 FORMULES CLASSIQUES (START, GO, FAST) */
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2 animate-in fade-in duration-300">
+                      {/* FORMULE START */}
+                      <div 
+                        onClick={() => {
+                          setContrat(prev => ({
+                            ...prev,
+                            formule: "Start",
+                            garanties: {
+                              pta: false,
+                              inc_vol_bdg: false,
+                              dc: false,
+                              tc: false,
+                              assistance_vip: false
+                            }
+                          }));
+                        }}
+                        className={`rounded-2xl overflow-hidden border-2 flex flex-col justify-between group transition-all duration-300 ease-out hover:shadow-2xl hover:-translate-y-2 hover:border-[#153954] cursor-pointer ${
+                          contrat.formule === "Start" 
+                            ? "border-[#f48161] shadow-xl ring-2 ring-[#f48161]/30 -translate-y-1" 
+                            : "border-slate-200 shadow-sm"
+                        }`}
+                      >
+                        <div className="bg-[#153954] text-white py-2.5 px-3 text-center relative transition-colors duration-300 group-hover:bg-[#102c42]">
+                          <div className="w-8 h-8 rounded-full bg-[#ffc55c] text-slate-800 flex items-center justify-center mx-auto mb-1 shadow-xs transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6">
+                            <Car className="w-4 h-4 text-[#153954]" />
+                          </div>
+                          <h3 className="text-lg font-black uppercase tracking-wider leading-none">Start</h3>
+                          <p className="text-[11px] text-cyan-200 mt-0.5">L'essentiel pour rouler en règle</p>
+                        </div>
 
-                  </div>
+                        <div className="p-4 flex-1 bg-white space-y-2 text-xs">
+                          <div className="flex items-center gap-2 font-medium text-slate-700">
+                            <Check className="w-4 h-4 text-emerald-500 shrink-0" />
+                            <span>Responsabilité civile</span>
+                          </div>
+                          <div className="flex items-center gap-2 font-medium text-slate-700">
+                            <Check className="w-4 h-4 text-emerald-500 shrink-0" />
+                            <span>Défense et Recours</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-slate-400">
+                            <X className="w-4 h-4 text-red-400 shrink-0" />
+                            <span className="line-through">Personnes transportées</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-slate-400">
+                            <X className="w-4 h-4 text-red-400 shrink-0" />
+                            <span className="line-through">Protection conducteur</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-slate-400">
+                            <X className="w-4 h-4 text-red-400 shrink-0" />
+                            <span className="line-through">Assistance 24h/24 Maroc</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-slate-400">
+                            <X className="w-4 h-4 text-red-400 shrink-0" />
+                            <span className="line-through">Incendie, vol, inondation</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-slate-400">
+                            <X className="w-4 h-4 text-red-400 shrink-0" />
+                            <span className="line-through">Bris de glace</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-slate-400">
+                            <X className="w-4 h-4 text-red-400 shrink-0" />
+                            <span className="line-through">Dommages collision</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-slate-400">
+                            <X className="w-4 h-4 text-red-400 shrink-0" />
+                            <span className="line-through">Tierce</span>
+                          </div>
+                        </div>
+
+                        <div className="p-4 bg-slate-50 border-t border-slate-100 text-center">
+                          <div className="text-2xl font-black text-slate-800 transition-transform duration-200 group-hover:scale-105">
+                            {prices.Start.toLocaleString()} <span className="text-sm font-semibold text-slate-500">DHS TTC</span>
+                          </div>
+                          <p className="text-[11px] text-slate-400 mb-3">{contrat.duree.toLowerCase()}</p>
+
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setContrat(prev => ({
+                                ...prev,
+                                formule: "Start",
+                                garanties: {
+                                  pta: false,
+                                  inc_vol_bdg: false,
+                                  dc: false,
+                                  tc: false,
+                                  assistance_vip: false
+                                }
+                              }));
+                              setStep(4);
+                            }}
+                            className={`w-full py-3 rounded-full font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all duration-200 transform group-hover:scale-[1.02] cursor-pointer ${
+                              contrat.formule === "Start"
+                                ? "bg-[#153954] text-white shadow-md hover:bg-[#102c42]"
+                                : "bg-white text-[#153954] border border-[#153954]/30 hover:bg-[#153954] hover:text-white hover:border-[#153954] shadow-xs"
+                            }`}
+                          >
+                            <Check className="w-4 h-4" />
+                            <span>Commander Start</span>
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* FORMULE GO */}
+                      <div 
+                        onClick={() => {
+                          setContrat(prev => ({
+                            ...prev,
+                            formule: "Go",
+                            garanties: {
+                              pta: true,
+                              inc_vol_bdg: true,
+                              dc: true,
+                              tc: false,
+                              assistance_vip: false
+                            }
+                          }));
+                        }}
+                        className={`rounded-2xl overflow-hidden border-2 flex flex-col justify-between relative group transition-all duration-300 ease-out hover:shadow-2xl hover:-translate-y-2 hover:border-[#f48161] cursor-pointer ${
+                          contrat.formule === "Go" 
+                            ? "border-[#f48161] shadow-2xl ring-4 ring-[#f48161]/30 -translate-y-2" 
+                            : "border-[#f48161]/60 shadow-lg"
+                        }`}
+                      >
+                        <div className="absolute top-0 right-0 bg-[#f48161] text-white text-[9px] font-black uppercase px-2.5 py-0.5 rounded-bl-md tracking-wider z-10 transition-transform duration-300 group-hover:scale-105">
+                          Le plus populaire
+                        </div>
+
+                        <div className="bg-[#1d4b75] text-white py-2.5 px-3 text-center relative transition-colors duration-300 group-hover:bg-[#163b5c]">
+                          <div className="w-8 h-8 rounded-full bg-[#f48161] text-white flex items-center justify-center mx-auto mb-1 shadow-xs transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6">
+                            <Shield className="w-4 h-4" />
+                          </div>
+                          <h3 className="text-lg font-black uppercase tracking-wider leading-none">Go</h3>
+                          <p className="text-[11px] text-cyan-200 mt-0.5">Protection complète équilibrée</p>
+                        </div>
+
+                        <div className="p-4 flex-1 bg-white space-y-2 text-xs">
+                          <div className="flex items-center gap-2 font-medium text-slate-700">
+                            <Check className="w-4 h-4 text-emerald-500 shrink-0" />
+                            <span>Responsabilité civile</span>
+                          </div>
+                          <div className="flex items-center gap-2 font-medium text-slate-700">
+                            <Check className="w-4 h-4 text-emerald-500 shrink-0" />
+                            <span>Défense et Recours</span>
+                          </div>
+                          <div className="flex items-center gap-2 font-medium text-slate-700">
+                            <Check className="w-4 h-4 text-emerald-500 shrink-0" />
+                            <span>Personnes transportées</span>
+                          </div>
+                          <div className="flex items-center gap-2 font-medium text-slate-700">
+                            <Check className="w-4 h-4 text-emerald-500 shrink-0" />
+                            <span>Protection conducteur</span>
+                          </div>
+                          <div className="flex items-center gap-2 font-medium text-slate-700">
+                            <Check className="w-4 h-4 text-emerald-500 shrink-0" />
+                            <span>Assistance 24h/24 Maroc</span>
+                          </div>
+                          <div className="flex items-center gap-2 font-medium text-slate-700">
+                            <Check className="w-4 h-4 text-emerald-500 shrink-0" />
+                            <span>Incendie, vol, inondation</span>
+                          </div>
+                          <div className="flex items-center gap-2 font-medium text-slate-700">
+                            <Check className="w-4 h-4 text-emerald-500 shrink-0" />
+                            <span>Bris de glace</span>
+                          </div>
+                          <div className="flex items-center gap-2 font-medium text-slate-700">
+                            <Check className="w-4 h-4 text-emerald-500 shrink-0" />
+                            <span>Dommages collision</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-slate-400">
+                            <X className="w-4 h-4 text-red-400 shrink-0" />
+                            <span className="line-through">Tierce</span>
+                          </div>
+                        </div>
+
+                        <div className="p-4 bg-orange-50/50 border-t border-orange-100 text-center">
+                          <div className="text-2xl font-black text-[#f48161] transition-transform duration-200 group-hover:scale-105">
+                            {prices.Go.toLocaleString()} <span className="text-sm font-semibold text-slate-600">DHS TTC</span>
+                          </div>
+                          <p className="text-[11px] text-slate-400 mb-3">{contrat.duree.toLowerCase()}</p>
+
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setContrat(prev => ({
+                                ...prev,
+                                formule: "Go",
+                                garanties: {
+                                  pta: true,
+                                  inc_vol_bdg: true,
+                                  dc: true,
+                                  tc: false,
+                                  assistance_vip: false
+                                }
+                              }));
+                              setStep(4);
+                            }}
+                            className="w-full py-3 rounded-full font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 bg-[#f48161] hover:bg-[#e46e4e] text-white shadow-lg transition-all duration-200 transform group-hover:scale-[1.02] cursor-pointer"
+                          >
+                            <Check className="w-4 h-4" />
+                            <span>Commander Go</span>
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* FORMULE FAST */}
+                      <div 
+                        onClick={() => {
+                          setContrat(prev => ({
+                            ...prev,
+                            formule: "Fast",
+                            garanties: {
+                              pta: true,
+                              inc_vol_bdg: true,
+                              dc: false,
+                              tc: true,
+                              assistance_vip: false
+                            }
+                          }));
+                        }}
+                        className={`rounded-2xl overflow-hidden border-2 flex flex-col justify-between group transition-all duration-300 ease-out hover:shadow-2xl hover:-translate-y-2 hover:border-[#153954] cursor-pointer ${
+                          contrat.formule === "Fast" 
+                            ? "border-[#f48161] shadow-xl ring-2 ring-[#f48161]/30 -translate-y-1" 
+                            : "border-slate-200 shadow-sm"
+                        }`}
+                      >
+                        <div className="bg-[#153954] text-white py-2.5 px-3 text-center relative transition-colors duration-300 group-hover:bg-[#102c42]">
+                          <div className="w-8 h-8 rounded-full bg-[#10b981] text-white flex items-center justify-center mx-auto mb-1 shadow-xs transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6">
+                            <Car className="w-4 h-4" />
+                          </div>
+                          <h3 className="text-lg font-black uppercase tracking-wider leading-none">Fast</h3>
+                          <p className="text-[11px] text-cyan-200 mt-0.5">Tierce Complète Tous Risques</p>
+                        </div>
+
+                        <div className="p-4 flex-1 bg-white space-y-2 text-xs">
+                          <div className="flex items-center gap-2 font-medium text-slate-700">
+                            <Check className="w-4 h-4 text-emerald-500 shrink-0" />
+                            <span>Responsabilité civile</span>
+                          </div>
+                          <div className="flex items-center gap-2 font-medium text-slate-700">
+                            <Check className="w-4 h-4 text-emerald-500 shrink-0" />
+                            <span>Défense et Recours</span>
+                          </div>
+                          <div className="flex items-center gap-2 font-medium text-slate-700">
+                            <Check className="w-4 h-4 text-emerald-500 shrink-0" />
+                            <span>Personnes transportées</span>
+                          </div>
+                          <div className="flex items-center gap-2 font-medium text-slate-700">
+                            <Check className="w-4 h-4 text-emerald-500 shrink-0" />
+                            <span>Protection conducteur</span>
+                          </div>
+                          <div className="flex items-center gap-2 font-medium text-slate-700">
+                            <Check className="w-4 h-4 text-emerald-500 shrink-0" />
+                            <span>Assistance 24h/24 Maroc</span>
+                          </div>
+                          <div className="flex items-center gap-2 font-medium text-slate-700">
+                            <Check className="w-4 h-4 text-emerald-500 shrink-0" />
+                            <span>Incendie, vol, inondation</span>
+                          </div>
+                          <div className="flex items-center gap-2 font-medium text-slate-700">
+                            <Check className="w-4 h-4 text-emerald-500 shrink-0" />
+                            <span>Bris de glace</span>
+                          </div>
+                          <div className="flex items-center gap-2 font-bold text-[#153954] bg-blue-50/70 p-1.5 rounded-lg border border-blue-100">
+                            <Check className="w-4 h-4 text-emerald-500 shrink-0" />
+                            <span>Tierce</span>
+                          </div>
+                        </div>
+
+                        <div className="p-4 bg-slate-50 border-t border-slate-100 text-center">
+                          <div className="text-2xl font-black text-slate-800 transition-transform duration-200 group-hover:scale-105">
+                            {prices.Fast.toLocaleString()} <span className="text-sm font-semibold text-slate-500">DHS TTC</span>
+                          </div>
+                          <p className="text-[11px] text-slate-400 mb-3">{contrat.duree.toLowerCase()}</p>
+
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setContrat(prev => ({
+                                ...prev,
+                                formule: "Fast",
+                                garanties: {
+                                  pta: true,
+                                  inc_vol_bdg: true,
+                                  dc: false,
+                                  tc: true,
+                                  assistance_vip: false
+                                }
+                              }));
+                              setStep(4);
+                            }}
+                            className={`w-full py-3 rounded-full font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all duration-200 transform group-hover:scale-[1.02] cursor-pointer ${
+                              contrat.formule === "Fast"
+                                ? "bg-[#153954] text-white shadow-md hover:bg-[#102c42]"
+                                : "bg-white text-[#153954] border border-[#153954]/30 hover:bg-[#153954] hover:text-white hover:border-[#153954] shadow-xs"
+                            }`}
+                          >
+                            <Check className="w-4 h-4" />
+                            <span>Commander Fast</span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
 
-              {/* STEP 4: OPTIONS & SERVICES PREMIUM */}
+              {/* STEP 4: OPTIONS */}
               {step === 4 && (
-                <div className="space-y-8 animate-in fade-in duration-300">
+                <div className="space-y-6 animate-in fade-in duration-300">
                   <div>
-                    <h2 className="text-xl md:text-2xl font-bold text-slate-700 mb-2">
-                      Avec Digiassur, bénéficiez d'un service premium
+                    <h2 className="text-xl md:text-2xl font-bold text-slate-700 mb-1">
+                      Options
                     </h2>
                     <p className="text-slate-500 text-sm">
-                      Personnalisez vos options d'assistance routière et services exclusifs à domicile.
+                      Complétez votre protection avec nos formules d'assistance et services exclusifs.
                     </p>
                   </div>
 
-                  {/* 4 Feature Badges */}
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-                    <div className="p-4 bg-slate-50 rounded-xl border border-slate-100 flex flex-col items-center">
-                      <div className="w-14 h-14 rounded-full bg-[#f48161] text-white flex items-center justify-center mb-2 shadow-sm">
-                        <Smartphone className="w-7 h-7" />
+                  {/* 4 Feature Badges Compact */}
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5">
+                    <div className="p-2.5 bg-slate-50 rounded-xl border border-slate-200/80 flex items-center gap-2.5">
+                      <div className="w-9 h-9 rounded-lg bg-[#f48161] text-white flex items-center justify-center shrink-0 shadow-2xs">
+                        <Smartphone className="w-4 h-4" />
                       </div>
-                      <p className="font-bold text-xs text-slate-700">Traitement accéléré via l'application mobile</p>
+                      <p className="font-bold text-[11px] sm:text-xs text-slate-700 leading-tight">
+                        Traitement accéléré via l'application mobile
+                      </p>
                     </div>
 
-                    <div className="p-4 bg-slate-50 rounded-xl border border-slate-100 flex flex-col items-center">
-                      <div className="w-14 h-14 rounded-full bg-[#f48161] text-white flex items-center justify-center mb-2 shadow-sm">
-                        <Scale className="w-7 h-7" />
+                    <div className="p-2.5 bg-slate-50 rounded-xl border border-slate-200/80 flex items-center gap-2.5">
+                      <div className="w-9 h-9 rounded-lg bg-[#f48161] text-white flex items-center justify-center shrink-0 shadow-2xs">
+                        <Scale className="w-4 h-4" />
                       </div>
-                      <p className="font-bold text-xs text-slate-700">Accompagnement juridique & administratif</p>
+                      <p className="font-bold text-[11px] sm:text-xs text-slate-700 leading-tight">
+                        Accompagnement juridique & administratif
+                      </p>
                     </div>
 
-                    <div className="p-4 bg-slate-50 rounded-xl border border-slate-100 flex flex-col items-center">
-                      <div className="w-14 h-14 rounded-full bg-[#f48161] text-white flex items-center justify-center mb-2 shadow-sm">
-                        <Headphones className="w-7 h-7" />
+                    <div className="p-2.5 bg-slate-50 rounded-xl border border-slate-200/80 flex items-center gap-2.5">
+                      <div className="w-9 h-9 rounded-lg bg-[#f48161] text-white flex items-center justify-center shrink-0 shadow-2xs">
+                        <Headphones className="w-4 h-4" />
                       </div>
-                      <p className="font-bold text-xs text-slate-700">Centre de relation client H24 / 7j</p>
+                      <p className="font-bold text-[11px] sm:text-xs text-slate-700 leading-tight">
+                        Centre de relation client H24 / 7j
+                      </p>
                     </div>
 
-                    <div className="p-4 bg-slate-50 rounded-xl border border-slate-100 flex flex-col items-center">
-                      <div className="w-14 h-14 rounded-full bg-[#f48161] text-white flex items-center justify-center mb-2 shadow-sm">
-                        <Truck className="w-7 h-7" />
+                    <div className="p-2.5 bg-slate-50 rounded-xl border border-slate-200/80 flex items-center gap-2.5">
+                      <div className="w-9 h-9 rounded-lg bg-[#f48161] text-white flex items-center justify-center shrink-0 shadow-2xs">
+                        <Truck className="w-4 h-4" />
                       </div>
-                      <p className="font-bold text-xs text-slate-700">Livraison de votre attestation à domicile</p>
+                      <p className="font-bold text-[11px] sm:text-xs text-slate-700 leading-tight">
+                        Livraison de votre attestation à domicile
+                      </p>
                     </div>
-                  </div>
-
-                  {/* Servicing Options Radio */}
-                  <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-3">
-                    <h3 className="font-bold text-sm text-slate-800">
-                      Option Service Premium Digiassur (Conciergerie automobile) :
-                    </h3>
-
-                    <label className="flex items-start gap-3 p-3 bg-white rounded-xl border border-slate-200 cursor-pointer hover:border-[#f48161]">
-                      <input
-                        type="radio"
-                        name="servicing"
-                        checked={contrat.servicing === 0}
-                        onChange={() => setContrat({ ...contrat, servicing: 0 })}
-                        className="mt-1 text-[#f48161] focus:ring-[#f48161]"
-                      />
-                      <div>
-                        <span className="font-bold text-sm text-slate-800">0 DHS — Formule standard</span>
-                        <p className="text-xs text-slate-500">Je ne souhaite pas bénéficier de ce service premium.</p>
-                      </div>
-                    </label>
-
-                    <label className="flex items-start gap-3 p-3 bg-white rounded-xl border border-slate-200 cursor-pointer hover:border-[#f48161]">
-                      <input
-                        type="radio"
-                        name="servicing"
-                        checked={contrat.servicing === 660}
-                        onChange={() => setContrat({ ...contrat, servicing: 660 })}
-                        className="mt-1 text-[#f48161] focus:ring-[#f48161]"
-                      />
-                      <div>
-                        <span className="font-bold text-sm text-slate-800">+660 DHS — Service Premium sans service des mines</span>
-                        <p className="text-xs text-slate-500">Prise en charge des formalités, convoyage du véhicule en cas de réparation et assistance personnalisée.</p>
-                      </div>
-                    </label>
-
-                    <label className="flex items-start gap-3 p-3 bg-white rounded-xl border border-slate-200 cursor-pointer hover:border-[#f48161]">
-                      <input
-                        type="radio"
-                        name="servicing"
-                        checked={contrat.servicing === 840}
-                        onChange={() => setContrat({ ...contrat, servicing: 840 })}
-                        className="mt-1 text-[#f48161] focus:ring-[#f48161]"
-                      />
-                      <div>
-                        <span className="font-bold text-sm text-slate-800">+840 DHS — Service Premium VIP avec accompagnement au service des mines</span>
-                        <p className="text-xs text-slate-500">Visite technique accompagnée, changement de carte grise, conciergerie administrative totale.</p>
-                      </div>
-                    </label>
                   </div>
 
                   {/* Assistance Extension Cards */}
                   <div>
                     <h3 className="font-bold text-base text-slate-800 mb-3">
-                      Souhaitez-vous souscrire une extension de votre formule d'assistance ?
+                      Formules d'assistance :
                     </h3>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      {/* 85 DHS */}
-                      <label className={`p-5 rounded-2xl border-2 cursor-pointer flex flex-col justify-between transition ${
-                        contrat.assistance === 85 ? "border-[#f48161] bg-orange-50/20 shadow-md" : "border-slate-200 bg-white"
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {/* Formule 0 : Sans formule d'assistance supplémentaire (0 DHS) */}
+                      <label className={`p-3 rounded-xl border-2 cursor-pointer flex flex-col justify-between transition ${
+                        contrat.assistance === 0 ? "border-[#f48161] bg-orange-50/20 shadow-sm ring-2 ring-[#f48161]/20" : "border-slate-200 bg-white hover:border-slate-300"
                       }`}>
                         <div>
-                          <div className="flex items-center justify-between mb-3">
-                            <span className="text-2xl font-black text-[#153954]">85 DHS</span>
-                            <input
-                              type="radio"
-                              name="assistance"
-                              checked={contrat.assistance === 85}
-                              onChange={() => setContrat({ ...contrat, assistance: 85 })}
-                              className="text-[#f48161] focus:ring-[#f48161]"
-                            />
+                          <div className="flex items-center justify-between mb-2 border-b border-slate-100 pb-1.5">
+                            <span className="text-base font-black text-[#153954]">Sans assistance : 0 DHS</span>
+                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">Par défaut</span>
                           </div>
-                          <div className="space-y-2 text-xs text-slate-700">
-                            <p className="font-bold text-slate-900 border-b border-slate-100 pb-1">En cas d'accident :</p>
-                            <p>• Remorquage garage au choix : <strong>Illimité</strong></p>
-                            <p>• Véhicule de remplacement : <strong>5 jours</strong></p>
-                            <p className="font-bold text-slate-900 border-b border-slate-100 pt-2 pb-1">En cas de panne :</p>
-                            <p>• Remorquage : <strong>2 fois / an</strong></p>
-                            <p>• Véhicule remplacement : <strong>0 jour</strong></p>
+                          <div className="grid grid-cols-2 gap-2 text-xs">
+                            <div className="bg-slate-50/80 p-2 rounded-lg">
+                              <span className="font-bold text-slate-600 uppercase text-[10px] block mb-1">Accident</span>
+                              <p className="text-[11px] text-slate-500 leading-tight">Remorquage : <strong className="text-slate-400">Non inclus</strong></p>
+                              <p className="text-[11px] text-slate-500 leading-tight mt-0.5">Véhicule : <strong className="text-slate-400">0 jour</strong></p>
+                            </div>
+                            <div className="bg-slate-50/80 p-2 rounded-lg">
+                              <span className="font-bold text-slate-600 uppercase text-[10px] block mb-1">Panne</span>
+                              <p className="text-[11px] text-slate-500 leading-tight">Remorquage : <strong className="text-slate-400">Non inclus</strong></p>
+                              <p className="text-[11px] text-slate-500 leading-tight mt-0.5">Véhicule : <strong className="text-slate-400">Non inclus</strong></p>
+                            </div>
                           </div>
+                        </div>
+                        <div className="mt-2 pt-1.5 border-t border-slate-100 flex items-center justify-between">
+                          <span className="text-[11px] font-bold text-[#f48161]">Choisir cette formule</span>
+                          <input
+                            type="radio"
+                            name="assistance"
+                            checked={contrat.assistance === 0}
+                            onChange={() => setContrat({ ...contrat, assistance: 0 })}
+                            className="text-[#f48161] focus:ring-[#f48161]"
+                          />
                         </div>
                       </label>
 
-                      {/* 135 DHS */}
-                      <label className={`p-5 rounded-2xl border-2 cursor-pointer flex flex-col justify-between transition ${
-                        contrat.assistance === 135 ? "border-[#f48161] bg-orange-50/20 shadow-md" : "border-slate-200 bg-white"
+                      {/* F1 : 85 DHS */}
+                      <label className={`p-3 rounded-xl border-2 cursor-pointer flex flex-col justify-between transition ${
+                        contrat.assistance === 85 ? "border-[#f48161] bg-orange-50/20 shadow-sm ring-2 ring-[#f48161]/20" : "border-slate-200 bg-white hover:border-slate-300"
                       }`}>
                         <div>
-                          <div className="flex items-center justify-between mb-3">
-                            <span className="text-2xl font-black text-[#153954]">135 DHS</span>
-                            <input
-                              type="radio"
-                              name="assistance"
-                              checked={contrat.assistance === 135}
-                              onChange={() => setContrat({ ...contrat, assistance: 135 })}
-                              className="text-[#f48161] focus:ring-[#f48161]"
-                            />
+                          <div className="flex items-center justify-between mb-2 border-b border-slate-100 pb-1.5">
+                            <span className="text-base font-black text-[#153954]">F1 : 85 DHS</span>
+                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">Formule 1</span>
                           </div>
-                          <div className="space-y-2 text-xs text-slate-700">
-                            <p className="font-bold text-slate-900 border-b border-slate-100 pb-1">En cas d'accident :</p>
-                            <p>• Remorquage garage au choix : <strong>Illimité</strong></p>
-                            <p>• Véhicule de remplacement : <strong>10 jours</strong></p>
-                            <p className="font-bold text-slate-900 border-b border-slate-100 pt-2 pb-1">En cas de panne :</p>
-                            <p>• Remorquage : <strong>3 fois / an</strong></p>
-                            <p>• Véhicule remplacement : <strong>3 jours</strong></p>
+                          <div className="grid grid-cols-2 gap-2 text-xs">
+                            <div className="bg-slate-50/80 p-2 rounded-lg">
+                              <span className="font-bold text-[#f48161] uppercase text-[10px] block mb-1">Accident</span>
+                              <p className="text-[11px] text-slate-500 leading-tight">Remorquage : <strong className="text-slate-800">Illimité</strong></p>
+                              <p className="text-[11px] text-slate-500 leading-tight mt-0.5">Véhicule : <strong className="text-slate-800">5 jours</strong></p>
+                            </div>
+                            <div className="bg-slate-50/80 p-2 rounded-lg">
+                              <span className="font-bold text-slate-600 uppercase text-[10px] block mb-1">Panne</span>
+                              <p className="text-[11px] text-slate-500 leading-tight">Remorquage : <strong className="text-slate-800">2 fois/an</strong></p>
+                              <p className="text-[11px] text-slate-500 leading-tight mt-0.5">Véhicule : <strong className="text-slate-400">Non inclus</strong></p>
+                            </div>
                           </div>
+                        </div>
+                        <div className="mt-2 pt-1.5 border-t border-slate-100 flex items-center justify-between">
+                          <span className="text-[11px] font-bold text-[#f48161]">Choisir cette formule</span>
+                          <input
+                            type="radio"
+                            name="assistance"
+                            checked={contrat.assistance === 85}
+                            onChange={() => setContrat({ ...contrat, assistance: 85 })}
+                            className="text-[#f48161] focus:ring-[#f48161]"
+                          />
                         </div>
                       </label>
 
-                      {/* 150 DHS */}
-                      <label className={`p-5 rounded-2xl border-2 cursor-pointer flex flex-col justify-between transition ${
-                        contrat.assistance === 150 ? "border-[#f48161] bg-orange-50/20 shadow-md" : "border-slate-200 bg-white"
+                      {/* F2 : 135 DHS */}
+                      <label className={`p-3 rounded-xl border-2 cursor-pointer flex flex-col justify-between transition ${
+                        contrat.assistance === 135 ? "border-[#f48161] bg-orange-50/20 shadow-sm ring-2 ring-[#f48161]/20" : "border-slate-200 bg-white hover:border-slate-300"
                       }`}>
                         <div>
-                          <div className="flex items-center justify-between mb-3">
-                            <span className="text-2xl font-black text-[#f48161]">150 DHS</span>
-                            <input
-                              type="radio"
-                              name="assistance"
-                              checked={contrat.assistance === 150}
-                              onChange={() => setContrat({ ...contrat, assistance: 150 })}
-                              className="text-[#f48161] focus:ring-[#f48161]"
-                            />
+                          <div className="flex items-center justify-between mb-2 border-b border-slate-100 pb-1.5">
+                            <span className="text-base font-black text-[#153954]">F2 : 135 DHS</span>
+                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-orange-100 text-[#f48161]">Formule 2</span>
                           </div>
-                          <div className="space-y-2 text-xs text-slate-700">
-                            <p className="font-bold text-slate-900 border-b border-slate-100 pb-1">En cas d'accident :</p>
-                            <p>• Remorquage garage au choix : <strong>Illimité</strong></p>
-                            <p>• Véhicule de remplacement : <strong>15 jours</strong></p>
-                            <p className="font-bold text-slate-900 border-b border-slate-100 pt-2 pb-1">En cas de panne :</p>
-                            <p>• Remorquage : <strong>Illimité</strong></p>
-                            <p>• Véhicule remplacement : <strong>5 jours</strong></p>
+                          <div className="grid grid-cols-2 gap-2 text-xs">
+                            <div className="bg-slate-50/80 p-2 rounded-lg">
+                              <span className="font-bold text-[#f48161] uppercase text-[10px] block mb-1">Accident</span>
+                              <p className="text-[11px] text-slate-500 leading-tight">Remorquage : <strong className="text-slate-800">Illimité</strong></p>
+                              <p className="text-[11px] text-slate-500 leading-tight mt-0.5">Véhicule : <strong className="text-slate-800">10 jours</strong></p>
+                            </div>
+                            <div className="bg-slate-50/80 p-2 rounded-lg">
+                              <span className="font-bold text-slate-600 uppercase text-[10px] block mb-1">Panne</span>
+                              <p className="text-[11px] text-slate-500 leading-tight">Remorquage : <strong className="text-slate-800">3 fois/an</strong></p>
+                              <p className="text-[11px] text-slate-500 leading-tight mt-0.5">Véhicule : <strong className="text-emerald-700">3 jours</strong></p>
+                            </div>
                           </div>
                         </div>
+                        <div className="mt-2 pt-1.5 border-t border-slate-100 flex items-center justify-between">
+                          <span className="text-[11px] font-bold text-[#f48161]">Choisir cette formule</span>
+                          <input
+                            type="radio"
+                            name="assistance"
+                            checked={contrat.assistance === 135}
+                            onChange={() => setContrat({ ...contrat, assistance: 135 })}
+                            className="text-[#f48161] focus:ring-[#f48161]"
+                          />
+                        </div>
                       </label>
-                    </div>
 
-                    <div className="mt-3">
-                      <label className="flex items-center gap-2 cursor-pointer text-xs text-slate-500">
-                        <input
-                          type="radio"
-                          name="assistance"
-                          checked={contrat.assistance === 0}
-                          onChange={() => setContrat({ ...contrat, assistance: 0 })}
-                          className="text-[#f48161] focus:ring-[#f48161]"
-                        />
-                        <span>Je ne souhaite pas bénéficier d'une formule d'assistance étendue (Assistance de base conservée).</span>
+                      {/* F3 : 250 DHS */}
+                      <label className={`p-3 rounded-xl border-2 cursor-pointer flex flex-col justify-between transition ${
+                        contrat.assistance === 250 ? "border-[#f48161] bg-orange-50/20 shadow-sm ring-2 ring-[#f48161]/20" : "border-slate-200 bg-white hover:border-slate-300"
+                      }`}>
+                        <div>
+                          <div className="flex items-center justify-between mb-2 border-b border-slate-100 pb-1.5">
+                            <span className="text-base font-black text-[#153954]">F3: 250 DHS</span>
+                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">Formule VIP</span>
+                          </div>
+                          <div className="grid grid-cols-2 gap-2 text-xs">
+                            <div className="bg-slate-50/80 p-2 rounded-lg">
+                              <span className="font-bold text-[#f48161] uppercase text-[10px] block mb-1">Accident</span>
+                              <p className="text-[11px] text-slate-500 leading-tight">Remorquage : <strong className="text-slate-800">Illimité</strong></p>
+                              <p className="text-[11px] text-slate-500 leading-tight mt-0.5">Véhicule : <strong className="text-slate-800">15 jours</strong></p>
+                            </div>
+                            <div className="bg-slate-50/80 p-2 rounded-lg">
+                              <span className="font-bold text-slate-600 uppercase text-[10px] block mb-1">Panne</span>
+                              <p className="text-[11px] text-slate-500 leading-tight">Remorquage : <strong className="text-slate-800">Illimité</strong></p>
+                              <p className="text-[11px] text-slate-500 leading-tight mt-0.5">Véhicule : <strong className="text-emerald-700">5 jours</strong></p>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="mt-2 pt-1.5 border-t border-slate-100 flex items-center justify-between">
+                          <span className="text-[11px] font-bold text-[#f48161]">Choisir cette formule</span>
+                          <input
+                            type="radio"
+                            name="assistance"
+                            checked={contrat.assistance === 250}
+                            onChange={() => setContrat({ ...contrat, assistance: 250 })}
+                            className="text-[#f48161] focus:ring-[#f48161]"
+                          />
+                        </div>
                       </label>
                     </div>
                   </div>
 
+                  {/* Servicing Options Radio */}
+                  <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3">
+                    <h3 className="font-bold text-sm text-slate-800">
+                      Option Service Premium Digiassur (Conciergerie automobile) :
+                    </h3>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {/* Option 1: +660 DHS */}
+                      <div
+                        onClick={() => setContrat({ ...contrat, servicing: contrat.servicing === 660 ? 0 : 660 })}
+                        className={`p-3.5 rounded-xl border-2 cursor-pointer transition flex items-start gap-3 ${
+                          contrat.servicing === 660
+                            ? "border-[#f48161] bg-orange-50/20 shadow-sm ring-2 ring-[#f48161]/20"
+                            : "border-slate-200 bg-white hover:border-slate-300"
+                        }`}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={contrat.servicing === 660}
+                          onChange={() => {}}
+                          className="mt-0.5 w-5 h-5 rounded text-[#f48161] focus:ring-[#f48161] border-slate-300 cursor-pointer shrink-0"
+                        />
+                        <div className="flex-1">
+                          <div className="flex items-center justify-between gap-2">
+                            <span className="font-bold text-sm text-slate-800">
+                              +660 DHS — Sans service des mines
+                            </span>
+                            {contrat.servicing === 660 && (
+                              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-orange-100 text-[#f48161] shrink-0">
+                                Sélectionné
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-xs text-slate-500 mt-1">
+                            Prise en charge des formalités, convoyage du véhicule en cas de réparation et assistance personnalisée.
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Option 2: +840 DHS */}
+                      <div
+                        onClick={() => setContrat({ ...contrat, servicing: contrat.servicing === 840 ? 0 : 840 })}
+                        className={`p-3.5 rounded-xl border-2 cursor-pointer transition flex items-start gap-3 ${
+                          contrat.servicing === 840
+                            ? "border-[#f48161] bg-orange-50/20 shadow-sm ring-2 ring-[#f48161]/20"
+                            : "border-slate-200 bg-white hover:border-slate-300"
+                        }`}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={contrat.servicing === 840}
+                          onChange={() => {}}
+                          className="mt-0.5 w-5 h-5 rounded text-[#f48161] focus:ring-[#f48161] border-slate-300 cursor-pointer shrink-0"
+                        />
+                        <div className="flex-1">
+                          <div className="flex items-center justify-between gap-2">
+                            <span className="font-bold text-sm text-slate-800">
+                              +840 DHS — VIP avec service des mines
+                            </span>
+                            {contrat.servicing === 840 && (
+                              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-orange-100 text-[#f48161] shrink-0">
+                                Sélectionné
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-xs text-slate-500 mt-1">
+                            Visite technique accompagnée, changement de carte grise, conciergerie administrative totale.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
                   {/* Carte Verte Option */}
-                  <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    <div>
-                      <h4 className="font-bold text-sm text-slate-800">
-                        Souhaitez-vous assurer votre véhicule à l'étranger (Carte Verte) ?
-                      </h4>
-                      <p className="text-xs text-slate-500">Couverture en Espagne, France et Europe continentale.</p>
+                  <div className={`p-3.5 rounded-xl border-2 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
+                    contrat.carte_verte === 500
+                      ? "border-emerald-500 bg-emerald-50/20 shadow-sm ring-2 ring-emerald-500/20"
+                      : "border-slate-200 bg-white hover:border-slate-300"
+                  }`}>
+                    <div className="flex items-start gap-3">
+                      <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 transition ${
+                        contrat.carte_verte === 500
+                          ? "bg-emerald-600 text-white shadow-2xs"
+                          : "bg-emerald-50 text-emerald-600 border border-emerald-200/60"
+                      }`}>
+                        <Globe className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <div className="flex flex-wrap items-center gap-2">
+                          <h4 className="font-bold text-sm text-slate-800">
+                            Assurance à l'étranger (Carte Verte)
+                          </h4>
+                          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                            contrat.carte_verte === 500
+                              ? "bg-emerald-100 text-emerald-800"
+                              : "bg-slate-100 text-slate-600"
+                          }`}>
+                            Espagne, France & Europe
+                          </span>
+                        </div>
+                        <p className="text-xs text-slate-500 mt-0.5">
+                          Attestation officielle pour circuler en toute légalité et sérénité hors du territoire marocain.
+                        </p>
+                      </div>
                     </div>
 
-                    <div className="flex gap-4">
-                      <label className="flex items-center gap-2 cursor-pointer font-bold text-sm text-slate-700">
-                        <input
-                          type="radio"
-                          name="carte_verte"
-                          checked={contrat.carte_verte === 500}
-                          onChange={() => setContrat({ ...contrat, carte_verte: 500 })}
-                          className="text-[#f48161] focus:ring-[#f48161]"
-                        />
-                        <span>Oui (+500 DH)</span>
-                      </label>
-
-                      <label className="flex items-center gap-2 cursor-pointer font-bold text-sm text-slate-700">
-                        <input
-                          type="radio"
-                          name="carte_verte"
-                          checked={contrat.carte_verte === 0}
-                          onChange={() => setContrat({ ...contrat, carte_verte: 0 })}
-                          className="text-[#f48161] focus:ring-[#f48161]"
-                        />
-                        <span>Non (0 DH)</span>
-                      </label>
+                    <div className="flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl shrink-0 self-end sm:self-center">
+                      <button
+                        type="button"
+                        onClick={() => setContrat({ ...contrat, carte_verte: 0 })}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer flex items-center gap-1.5 ${
+                          contrat.carte_verte === 0
+                            ? "bg-white text-slate-800 shadow-2xs ring-1 ring-slate-200"
+                            : "text-slate-500 hover:text-slate-800"
+                        }`}
+                      >
+                        <span className={`w-2 h-2 rounded-full ${contrat.carte_verte === 0 ? "bg-[#f48161]" : "bg-transparent border border-slate-300"}`} />
+                        <span>Non</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setContrat({ ...contrat, carte_verte: 500 })}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
+                          contrat.carte_verte === 500
+                            ? "bg-emerald-600 text-white shadow-2xs"
+                            : "text-slate-700 hover:text-slate-900"
+                        }`}
+                      >
+                        <span className={`w-2 h-2 rounded-full ${contrat.carte_verte === 500 ? "bg-white" : "bg-transparent border border-slate-400"}`} />
+                        <span>Oui</span>
+                        <span className={contrat.carte_verte === 500 ? "text-emerald-100" : "text-emerald-700 font-black"}>
+                          (+500 DHS)
+                        </span>
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -1337,23 +1923,19 @@ export default function AutoDevisPage() {
                     </p>
                   </div>
 
-                  {/* Toggle documents button */}
-                  <div className="pt-4">
-                    <button
-                      type="button"
-                      onClick={() => setShowDocuments(!showDocuments)}
-                      className={`px-6 py-3 rounded-full font-bold text-xs uppercase tracking-wider inline-flex items-center gap-2 transition ${
-                        showDocuments ? "bg-red-500 hover:bg-red-600 text-white" : "bg-[#153954] hover:bg-[#1d4b75] text-white shadow-md"
-                      }`}
-                    >
-                      {showDocuments ? <X className="w-4 h-4" /> : <Upload className="w-4 h-4" />}
-                      <span>{showDocuments ? "Fermer les documents requis" : "Afficher et joindre les documents requis"}</span>
-                    </button>
-                  </div>
+                  {/* Documents Upload Section (Toujours ouvert) */}
+                  <div className="pt-4 text-left">
+                    <div className="mb-4 text-center sm:text-left">
+                      <h3 className="text-base font-bold text-slate-800 flex items-center justify-center sm:justify-start gap-2">
+                        <Upload className="w-4 h-4 text-[#f48161]" />
+                        <span>Documents requis pour l'émission de votre attestation</span>
+                      </h3>
+                      <p className="text-xs text-slate-500 mt-0.5">
+                        Joignez vos pièces justificatives dès maintenant pour valider votre dossier dans les plus brefs délais.
+                      </p>
+                    </div>
 
-                  {/* Documents Upload Section */}
-                  {showDocuments && (
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6 text-left animate-in slide-in-from-top-4 duration-300">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
                       {/* CIN */}
                       <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
                         <h4 className="font-bold text-sm text-[#153954] mb-3 flex items-center gap-2">
@@ -1450,74 +2032,84 @@ export default function AutoDevisPage() {
                         </div>
                       </div>
                     </div>
-                  )}
+                  </div>
 
-                  <div className="pt-6 flex flex-wrap justify-center gap-4">
+                  {/* Actions finalisées (Space Between) */}
+                  <div className="pt-6 flex flex-wrap items-center justify-between gap-4 border-t border-slate-100">
                     <Link
                       href="/auto"
-                      className="px-8 py-3.5 rounded-full font-bold text-xs uppercase tracking-wider bg-[#f48161] hover:bg-[#e46e4e] text-white shadow-lg inline-flex items-center gap-2 transition"
+                      className="px-6 py-3.5 rounded-full font-bold text-xs uppercase tracking-wider bg-slate-100 hover:bg-slate-200 text-slate-700 shadow-sm inline-flex items-center gap-2 transition cursor-pointer"
                     >
                       <ArrowLeft className="w-4 h-4" />
                       <span>Retour à la page Auto</span>
                     </Link>
 
-                    <Link
-                      href="/"
-                      className="px-8 py-3.5 rounded-full font-bold text-xs uppercase tracking-wider bg-[#153954] hover:bg-[#1d4b75] text-white shadow-md inline-flex items-center gap-2 transition"
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const fileCount = Object.keys(uploadedFiles).length;
+                        if (fileCount === 0) {
+                          alert("Veuillez sélectionner au moins un document avant d'envoyer.");
+                        } else {
+                          alert(`${fileCount} document(s) transmis avec succès à nos équipes Digiassur.`);
+                        }
+                      }}
+                      className="px-8 py-3.5 rounded-full font-bold text-xs uppercase tracking-wider bg-[#f48161] hover:bg-[#e46e4e] text-white shadow-lg inline-flex items-center gap-2 transition transform hover:-translate-y-0.5 cursor-pointer"
                     >
-                      <span>Accueil Digiassur</span>
-                    </Link>
+                      <Send className="w-4 h-4" />
+                      <span>Envoyer mes documents</span>
+                    </button>
                   </div>
                 </div>
               )}
 
-              {/* Bottom Wizard Navigation Buttons */}
-              <div className="mt-10 pt-6 border-t border-slate-100 flex flex-wrap items-center justify-between gap-4">
-                {step > 1 && step < lastStep ? (
-                  <button
-                    type="button"
-                    onClick={handlePrev}
-                    className="px-6 py-3 rounded-full font-bold text-xs uppercase tracking-wider bg-[#4b7f9c] hover:bg-[#3d6880] text-white shadow-md inline-flex items-center gap-2 cursor-pointer transition"
-                  >
-                    <ArrowLeft className="w-4 h-4" />
-                    <span>Précédent</span>
-                  </button>
-                ) : (
-                  <div />
-                )}
+              {/* Bottom Wizard Navigation Buttons (Strict Space Between) */}
+              {step < lastStep && (
+                <div className="mt-10 pt-6 border-t border-slate-100 flex items-center justify-between gap-4">
+                  {/* Left Side: Réinitialiser (Step 1) ou Précédent (Steps 2 à 4) */}
+                  <div>
+                    {step === 1 ? (
+                      <button
+                        type="button"
+                        onClick={resetAllData}
+                        className="px-5 py-3 rounded-full font-bold text-xs uppercase tracking-wider bg-slate-100 hover:bg-slate-200 text-slate-700 inline-flex items-center gap-2 cursor-pointer transition shadow-2xs"
+                      >
+                        <RotateCcw className="w-4 h-4" />
+                        <span>Réinitialiser les champs</span>
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={handlePrev}
+                        className="px-6 py-3 rounded-full font-bold text-xs uppercase tracking-wider bg-[#4b7f9c] hover:bg-[#3d6880] text-white shadow-md inline-flex items-center gap-2 cursor-pointer transition"
+                      >
+                        <ArrowLeft className="w-4 h-4" />
+                        <span>Précédent</span>
+                      </button>
+                    )}
+                  </div>
 
-                <div className="flex gap-3">
-                  {(step === 1 || step === lastStep) && (
-                    <button
-                      type="button"
-                      onClick={resetAllData}
-                      className="px-5 py-3 rounded-full font-bold text-xs uppercase tracking-wider bg-slate-200 hover:bg-slate-300 text-slate-700 inline-flex items-center gap-2 cursor-pointer transition"
-                    >
-                      <RotateCcw className="w-4 h-4" />
-                      <span className="hidden sm:inline">Réinitialiser</span>
-                    </button>
-                  )}
-
-                  {step < lastStep && step !== 3 && (
+                  {/* Right Side: Suivant */}
+                  <div>
                     <button
                       type="button"
                       onClick={handleNext}
                       className="px-8 py-3.5 rounded-full font-bold text-xs uppercase tracking-wider bg-[#f48161] hover:bg-[#e46e4e] text-white shadow-lg inline-flex items-center gap-2 cursor-pointer transition transform hover:-translate-y-0.5"
                     >
-                      <span>Suivant</span>
-                      <ArrowRight className="w-4 h-4" />
+                      <span>{step === 3 ? "Valider mon offre" : "Suivant"}</span>
+                      {step === 3 ? <Check className="w-4 h-4" /> : <ArrowRight className="w-4 h-4" />}
                     </button>
-                  )}
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
 
             {/* Right Summary Sidebar (Matching digiassur.ma) */}
             <div className="w-full lg:w-80 shrink-0">
-              <div className="bg-[#f5cbbe]/30 rounded-2xl p-6 border border-[#f5cbbe] sticky top-28 shadow-sm">
+              <div className="bg-[#f5cbbe]/30 rounded-2xl p-4 border border-[#f5cbbe] sticky top-32 shadow-sm">
                 
                 {/* Header Icon */}
-                <div className="w-14 h-14 rounded-full bg-[#153954] text-white flex items-center justify-center mx-auto -mt-12 shadow-md border-4 border-white mb-4">
+                <div className="w-14 h-14 rounded-full bg-[#153954] text-white flex items-center justify-center mx-auto -mt-10 shadow-md border-4 border-white mb-3">
                   <Phone className="w-6 h-6 text-[#f48161]" />
                 </div>
 
@@ -1578,6 +2170,16 @@ export default function AutoDevisPage() {
                         </button>
                       </div>
                       <p className="text-slate-700"><strong>Véhicule :</strong> {vehicule.marque} {vehicule.modele}</p>
+                      <p className="text-slate-700 flex items-center gap-1.5 flex-wrap">
+                        <strong>Immatriculation :</strong>{" "}
+                        <span dir="ltr" className="inline-flex items-center gap-1 font-bold text-slate-800">
+                          <span>{immNum}</span>
+                          <span className="text-slate-400">|</span>
+                          <bdi>{immCode}</bdi>
+                          <span className="text-slate-400">|</span>
+                          <span>{immChiffre}</span>
+                        </span>
+                      </p>
                       <p className="text-slate-700"><strong>Carburant :</strong> {vehicule.energie}</p>
                       <p className="text-slate-700"><strong>Valeur à neuf :</strong> {vehicule.van.toLocaleString()} DH</p>
                       <p className="text-slate-700"><strong>Valeur vénale :</strong> <span className="text-[#153954] font-bold">{estimatedValeurVenale.toLocaleString()} DH</span></p>
@@ -1600,7 +2202,46 @@ export default function AutoDevisPage() {
                       </div>
                       <p className="text-slate-700"><strong>Formule :</strong> <span className="font-black text-[#f48161]">{contrat.formule}</span></p>
                       <p className="text-slate-700"><strong>Durée :</strong> {contrat.duree}</p>
-                      <p className="text-slate-700"><strong>Prime formule :</strong> {activeFormulaPrice.toLocaleString()} DH</p>
+                      
+                      {/* Badges des garanties incluses et choisies */}
+                      <div className="mt-2 mb-2">
+                        <p className="text-[11px] font-bold text-slate-600 mb-1">Garanties activées :</p>
+                        <div className="flex flex-wrap gap-1">
+                          <span className="px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 text-[10px] font-bold border border-emerald-200">
+                            RC Obligatoire
+                          </span>
+                          <span className="px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 text-[10px] font-bold border border-emerald-200">
+                            Défense & Recours
+                          </span>
+                          {(contrat.garanties.pta || contrat.garanties.dc || contrat.garanties.tc) && (
+                            <span className="px-2 py-0.5 rounded bg-orange-100 text-[#f48161] text-[10px] font-bold border border-orange-200">
+                              + PTA
+                            </span>
+                          )}
+                          {(contrat.garanties.inc_vol_bdg || contrat.garanties.dc || contrat.garanties.tc) && (
+                            <span className="px-2 py-0.5 rounded bg-orange-100 text-[#f48161] text-[10px] font-bold border border-orange-200">
+                              + Incendie/Vol/BDG
+                            </span>
+                          )}
+                          {contrat.garanties.dc && (
+                            <span className="px-2 py-0.5 rounded bg-orange-100 text-[#f48161] text-[10px] font-bold border border-orange-200">
+                              + Collision (DC)
+                            </span>
+                          )}
+                          {contrat.garanties.tc && (
+                            <span className="px-2 py-0.5 rounded bg-blue-100 text-[#153954] text-[10px] font-bold border border-blue-200">
+                              + Tous Risques (TC)
+                            </span>
+                          )}
+                          {contrat.garanties.assistance_vip && (
+                            <span className="px-2 py-0.5 rounded bg-purple-100 text-purple-800 text-[10px] font-bold border border-purple-200">
+                              + Assistance VIP
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      <p className="text-slate-700"><strong>Prime auto :</strong> {activeFormulaPrice.toLocaleString()} DH</p>
                       {contrat.assistance > 0 && (
                         <p className="text-slate-700"><strong>Assistance étendue :</strong> {contrat.assistance} DH</p>
                       )}

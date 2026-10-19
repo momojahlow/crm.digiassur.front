@@ -275,17 +275,17 @@ function calculerDevisAuto(params) {
   var RC = RC_base * crm;
 
   // 2. Calcul des Garanties Annexes (GA)
-  var DR = 0; // Défense et Recours toujours incluse d'office
-  var PTA = inclure_PTA ? 200 : 0;
-  var INC_VOL_BDG = inclure_INC_VOL_BDG ? 400 : 0;
-
+  var DR = 0; // Défense et Recours toujours incluse d'office (0 DH)
+  
+  // Convention officielle des 3 Formules :
+  // • Start : DR = 0, PTA = 0 DH (uniquement RC obligatoire + DR 0 DH) -> GA = 0 DH
+  // • Go    : DR = 0, PTA = 125 DH, INC_VOL_BDG = 400 DH, DC = (VN<=200k ? 350 : 500) -> GA = DR+PTA+INC_VOL_BDG+DC
+  // • Fast (Tous Risques) : DR = 0, PTA = 200 DH, INC_VOL_BDG = 400 DH, TC = Paliers -> GA = DR+PTA+INC_VOL_BDG+TC (SANS DC !)
+  var PTA = 0;
+  var INC_VOL_BDG = 0;
   var DC = 0;
-  if (inclure_DC) {
-    if (valeur_neuf <= 200000) DC = 350;
-    else DC = 500;
-  }
-
   var TC = 0;
+
   if (inclure_TC) {
     if (valeur_neuf <= 100000) TC = 800;
     else if (valeur_neuf <= 150000) TC = 950;
@@ -294,6 +294,17 @@ function calculerDevisAuto(params) {
     else if (valeur_neuf <= 400000) TC = 2450;
     else if (valeur_neuf <= 500000) TC = 3150;
     else TC = (valeur_neuf * 0.7) / 100;
+
+    PTA = 200;
+    INC_VOL_BDG = 400;
+    DC = 0; // Inclus / remplacé par TC
+  } else {
+    PTA = inclure_PTA ? 125 : 1;
+    INC_VOL_BDG = inclure_INC_VOL_BDG ? 400 : 0;
+    if (inclure_DC) {
+      if (valeur_neuf <= 200000) DC = 350;
+      else DC = 500;
+    }
   }
 
   var GA = DR + PTA + INC_VOL_BDG + DC + TC;
@@ -364,3 +375,40 @@ function calculerDevisAuto(params) {
 * `EVCAT` = $109.305 + (1\,900 \times 2.5\%) = 109.305 + 47.50 = \mathbf{156.805\text{ DH}}$
 * `CNPAC` = $\mathbf{17.00\text{ DH}}$
 * **Prime Totale Annuelle** : $2429 + 400.785 + 1900 + 285.00 + 156.805 + 17 =$ **5 188.59 DHS TTC**
+
+---
+
+## 8. Expérience Utilisateur : Carte Unique Interactive & Options Supplémentaires
+
+Sur `/auto/devis-auto` :
+1. **Socle de départ inclus (Formule Start)** :
+   - Contient **uniquement** :
+     - **Responsabilité Civile** (Obligatoire au Maroc)
+     - **Défense et Recours** (Inclus 0 DH)
+2. **Options de couverture cochables / décochables (Étape 3)** :
+   - **PTA** : $+235.00\text{ DH TTC}$ en annuel ($200 \times 1.175$)
+   - **Incendie, Vol & Bris de Glace** : $+470.00\text{ DH TTC}$ en annuel ($400 \times 1.175$)
+   - **Dommages Collision (DC)** : $+411.25\text{ DH}$ ou $+587.50\text{ DH TTC}$ en annuel
+   - **Tierce Complète (TC)** : Selon barème VAN $\times 1.175$
+   - *Règle d'exclusivité* : DC et TC sont mutuellement exclusives (cocher l'une désactive l'autre).
+3. **Options supplémentaires (Étape 4)** :
+   - **Formules d'assistance** (grille 2x2 compacte) :
+     - *Sans formule d'assistance* : 0 DHS (par défaut)
+     - *F1* : 85 DHS
+     - *F2* : 135 DHS
+     - *F3* : 250 DHS
+   - **Service Conciergerie Automobile (Servicing VIP)** :
+     - Sans service des mines : +660 DHS
+     - VIP avec accompagnement au service des mines : +840 DHS
+     - Sélection exclusive avec bascule (toggle).
+   - **Carte Verte (Assurance Internationale Europe)** :
+     - Non : 0 DH (coché par défaut)
+     - Oui : +500 DHS TTC
+4. **Documents & Confirmation (Étape 5)** :
+   - Formulaire des documents requis (CIN, Carte Grise, Permis) toujours ouvert par défaut.
+   - Boutons alignés en space-between (`Retour` à gauche, `Envoyer mes documents` à droite).
+
+---
+
+> [!NOTE]
+> Pour consulter les règles de calcul de l'assurance Deux-Roues & Moto (Catégories 1 à 5, fiscalité ACAPS et garanties exclusives RC + Défense & Recours), veuillez vous référer au document dédié : **[Règles de Calcul Devis Moto](file:///d:/Herd/digiassur-front/docs/regles_calcul_devis_moto.md)**.
