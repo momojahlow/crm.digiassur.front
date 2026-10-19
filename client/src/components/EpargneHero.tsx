@@ -1,18 +1,21 @@
 import { ArrowRight, Sparkles } from "lucide-react";
 import { Link } from "wouter";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 type EpargneHeroProps = {
   onSimulate?: () => void;
 };
 
 export default function EpargneHero({ onSimulate }: EpargneHeroProps) {
+  const { t, isRTL } = useLanguage();
+
   return (
     <section className="relative w-full pt-[116px] lg:pt-[116px] bg-slate-50">
       {/* Desktop Hero Container (Desktop - 24) */}
       <div className="hidden md:block w-full">
         <div className="relative w-full h-[470px] bg-[#4d7f9a] overflow-hidden shadow-md">
           {/* 2-Column Split: Image on Left, Content on Right */}
-          <div className="absolute inset-0 flex">
+          <div className={`absolute inset-0 flex ${isRTL ? "flex-row-reverse" : ""}`}>
             {/* Left Image Section */}
             <div className="w-1/2 h-full relative overflow-hidden">
               <img
@@ -23,17 +26,17 @@ export default function EpargneHero({ onSimulate }: EpargneHeroProps) {
                   (e.currentTarget as HTMLImageElement).src = "https://digiassur.ma/assets/img-front/banner-epargne.jpg";
                 }}
               />
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent to-black/20" />
+              <div className={`absolute inset-0 bg-gradient-to-r ${isRTL ? "from-black/20 to-transparent" : "from-transparent to-black/20"}`} />
             </div>
 
             {/* Right Blue Box Section */}
-            <div className="w-1/2 h-full relative flex items-center bg-[#4d7f9a] text-white px-12 lg:px-20 overflow-hidden">
+            <div className={`w-1/2 h-full relative flex items-center bg-[#4d7f9a] text-white px-12 lg:px-20 overflow-hidden ${isRTL ? "text-right" : "text-left"}`}>
               {/* Piggy Bank Watermark Drawing */}
               <img
                 src="/images/epargne-drawer.png"
                 alt=""
                 aria-hidden="true"
-                className="absolute -bottom-10 right-0 h-[480px] w-auto opacity-35 pointer-events-none select-none"
+                className={`absolute -bottom-10 ${isRTL ? "left-0 -scale-x-100" : "right-0"} h-[480px] w-auto opacity-35 pointer-events-none select-none`}
                 onError={(e) => {
                   (e.currentTarget as HTMLImageElement).src = "https://digiassur.ma/assets/img/epargne-drawer.png";
                 }}
@@ -61,7 +64,7 @@ export default function EpargneHero({ onSimulate }: EpargneHeroProps) {
                     className="inline-flex items-center gap-3 bg-[#f48161] hover:bg-[#e46e4e] text-white font-bold text-sm tracking-wider uppercase px-8 py-4 rounded-none shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5 cursor-pointer"
                   >
                     <span>OBTENIR MON DEVIS</span>
-                    <ArrowRight className="w-4 h-4" />
+                    <ArrowRight className={`w-4 h-4 ${isRTL ? "rotate-180" : ""}`} />
                   </Link>
                 </div>
               </div>

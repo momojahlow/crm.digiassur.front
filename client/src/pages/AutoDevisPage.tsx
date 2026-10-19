@@ -62,6 +62,7 @@ interface ContratState {
   duree: "Annuelle" | "Semestrielle" | "Trimestrielle";
   debut: string;
   formule: "Start" | "Go" | "Fast";
+  pta: boolean;
   servicing: number;
   assistance: number;
   carte_verte: number;
@@ -103,6 +104,7 @@ export default function AutoDevisPage() {
     duree: "Annuelle",
     debut: new Date().toISOString().split("T")[0],
     formule: "Go",
+    pta: false,
     servicing: 0,
     assistance: 85,
     carte_verte: 0
@@ -130,46 +132,77 @@ export default function AutoDevisPage() {
     return brand ? brand.modeles : ["Modèle standard"];
   }, [vehicule.marque]);
 
+  // Calcul officiel de la Responsabilité Civile (RC) de base
+  const calculateRc = (energie: string, pf: number) => {
+    if (energie === "Diesel") {
+      if (pf <= 4) return 1840;
+      if (pf === 5) return 2238;
+      if (pf === 6 || pf === 7) return 2429;
+      return 3490;
+    } else {
+      if (pf <= 6) return 1840;
+      if (pf === 7 || pf === 8) return 2238;
+      if (pf === 9 || pf === 10) return 2429;
+      return 3490;
+    }
+  };
+
+  // Calcul officiel devis provisoire
+  // RC et DR (Défense et Recours) sont TOUJOURS inclus par défaut sur toutes les formules (DR = 0)
+  // PTA = 200 DH si inclus (inclus par défaut sur Go & Fast, optionnel sur Start)
+  const calcDevisProvisoire = (duree: string, rcBase: number, includePta: boolean = false) => {
+    let RC = rcBase;
+    const DR = 0; // Inclus par défaut sur toute
+    const PTA = includePta ? 200 : 0;
+    let GA = DR + PTA;
+
+    const d = duree.toLowerCase();
+    if (d.includes("semestri")) {
+      RC = RC * 0.54;
+      GA = GA * 0.54;
+    } else if (d.includes("trimestri")) {
+      RC = RC * 0.27;
+      GA = GA * 0.27;
+    }
+
+    const Taxe_RC = (RC * 16.5) / 100;
+    const Taxe_GA = (GA * 15) / 100;
+    const EVCAT = ((RC * 4.5) / 100) + ((GA * 2.5) / 100);
+    const CNPAC = 17;
+    return Number((RC + Taxe_RC + GA + Taxe_GA + EVCAT + CNPAC).toFixed(2));
+  };
+
   // Pricing Calculation Engine
   const prices = useMemo(() => {
     const cv = Number(vehicule.p_fiscale) || 6;
-    const isDiesel = vehicule.energie === "Diesel";
     const van = Number(vehicule.van) || 150000;
 
-    // Base RC premium by fiscal power
-    let baseRc = 2100;
-    if (cv <= 5) baseRc = 1950;
-    else if (cv === 6) baseRc = 2450;
-    else if (cv === 7) baseRc = 2850;
-    else if (cv <= 9) baseRc = 3600;
-    else if (cv <= 11) baseRc = 4500;
-    else baseRc = 5800;
+    // 1. Calcul RC de base selon énergie et puissance fiscale
+    const baseRc = calculateRc(vehicule.energie, cv);
 
-    if (isDiesel) baseRc += 250;
+    // 2. Formule Start : RC + DR incluses par défaut. PTA selon contrat.pta
+    const primeStart = calcDevisProvisoire(contrat.duree, baseRc, contrat.pta);
+    const primeStartAnnual = calcDevisProvisoire("Annuelle", baseRc, contrat.pta);
 
-    // Start Formula: RC + Defense + Assist basic + Persons
-    const primeStartAnnual = Math.round(baseRc + 450);
+    // Ratio durée
+    let durationMultiplier = 1;
+    if (contrat.duree === "Semestrielle") durationMultiplier = 0.54;
+    if (contrat.duree === "Trimestrielle") durationMultiplier = 0.27;
 
-    // Go Formula: Start + Vol + Incendie + BG + Inondation + Dommages Collision
+    // 3. Formules Go & Fast : RC, DR ET PTA (200 DH) incluses par défaut !
+    const baseGoFastAnnual = calcDevisProvisoire("Annuelle", baseRc, true);
     const bgAdd = (Number(vehicule.plafond_bg) || 5000) * 0.05;
     const volIncendie = (van * 0.012);
-    const primeGoAnnual = Math.round(primeStartAnnual + volIncendie + bgAdd + 850);
+    const primeGoAnnual = Math.round(baseGoFastAnnual + volIncendie + bgAdd + 850);
 
-    // Fast Formula: Go + Tierce intégrale tous risques
     const tierce = (van * 0.024);
     const primeFastAnnual = Math.round(primeGoAnnual + tierce);
 
-    // Duration ratio
-    let durationMultiplier = 1;
-    if (contrat.duree === "Semestrielle") durationMultiplier = 0.55;
-    if (contrat.duree === "Trimestrielle") durationMultiplier = 0.30;
-
-    const start = Math.round(primeStartAnnual * durationMultiplier);
     const go = Math.round(primeGoAnnual * durationMultiplier);
     const fast = Math.round(primeFastAnnual * durationMultiplier);
 
     return {
-      Start: start,
+      Start: primeStart,
       Go: go,
       Fast: fast,
       annual: {
@@ -178,7 +211,7 @@ export default function AutoDevisPage() {
         Fast: primeFastAnnual
       }
     };
-  }, [vehicule.p_fiscale, vehicule.energie, vehicule.van, vehicule.plafond_bg, contrat.duree]);
+  }, [vehicule.p_fiscale, vehicule.energie, vehicule.van, vehicule.plafond_bg, contrat.duree, contrat.pta]);
 
   // Selected formula base premium
   const activeFormulaPrice = prices[contrat.formule] || prices.Go;
@@ -855,17 +888,13 @@ export default function AutoDevisPage() {
                           <Check className="w-4 h-4 text-emerald-500 shrink-0" />
                           <span>Défense et Recours</span>
                         </div>
-                        <div className="flex items-center gap-2 font-medium text-slate-700">
-                          <Check className="w-4 h-4 text-emerald-500 shrink-0" />
-                          <span>Personnes transportées</span>
+                        <div className="flex items-center gap-2 text-slate-400">
+                          <X className="w-4 h-4 text-red-400 shrink-0" />
+                          <span className="line-through">Personnes transportées (PTA)</span>
                         </div>
-                        <div className="flex items-center gap-2 font-medium text-slate-700">
-                          <Check className="w-4 h-4 text-emerald-500 shrink-0" />
-                          <span>Protection conducteur</span>
-                        </div>
-                        <div className="flex items-center gap-2 font-medium text-slate-700">
-                          <Check className="w-4 h-4 text-emerald-500 shrink-0" />
-                          <span>Assistance basique 24h/24</span>
+                        <div className="flex items-center gap-2 text-slate-400">
+                          <X className="w-4 h-4 text-red-400 shrink-0" />
+                          <span className="line-through">Protection conducteur</span>
                         </div>
                         <div className="flex items-center gap-2 text-slate-400">
                           <X className="w-4 h-4 text-red-400 shrink-0" />

@@ -1,11 +1,14 @@
 import { ArrowRight, ShieldCheck, Sparkles, TrendingUp } from "lucide-react";
 import { Link } from "wouter";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 type EpargneWelcomeProps = {
   onSimulate?: () => void;
 };
 
 export default function EpargneWelcome({ onSimulate }: EpargneWelcomeProps) {
+  const { t, isRTL } = useLanguage();
+
   return (
     <section className="py-16 lg:py-24 bg-white" id="decouvrir">
       <div className="max-w-[1280px] mx-auto px-4 lg:px-8">
@@ -21,7 +24,7 @@ export default function EpargneWelcome({ onSimulate }: EpargneWelcomeProps) {
         </div>
 
         {/* 2 Columns: Text on Left, Picture on Right */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+        <div className={`grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center ${isRTL ? "text-right" : "text-left"}`}>
           {/* Left Text & Benefits */}
           <div className="space-y-6">
             <p className="text-base lg:text-lg text-slate-600 leading-relaxed">
@@ -62,7 +65,7 @@ export default function EpargneWelcome({ onSimulate }: EpargneWelcomeProps) {
                 className="inline-flex items-center gap-3 bg-[#f48161] hover:bg-[#e46e4e] text-white font-bold text-sm tracking-wider uppercase px-8 py-4 rounded-none shadow-md hover:shadow-lg transition transform hover:-translate-y-0.5 cursor-pointer"
               >
                 <span>OBTENIR MON DEVIS</span>
-                <ArrowRight className="w-4 h-4" />
+                <ArrowRight className={`w-4 h-4 ${isRTL ? "rotate-180" : ""}`} />
               </Link>
             </div>
           </div>
@@ -83,7 +86,7 @@ export default function EpargneWelcome({ onSimulate }: EpargneWelcomeProps) {
               />
 
               {/* Bottom Partner Trust Badge */}
-              <div className="absolute bottom-4 left-4 bg-white/95 backdrop-blur-xs px-4 py-2 rounded-lg shadow-md flex items-center gap-3 border border-slate-100">
+              <div className={`absolute bottom-4 ${isRTL ? "right-4" : "left-4"} bg-white/95 backdrop-blur-xs px-4 py-2 rounded-lg shadow-md flex items-center gap-3 border border-slate-100`}>
                 <span className="text-[11px] font-semibold text-slate-500">Partenaire agréé :</span>
                 <img
                   src="/images/allianz.svg"

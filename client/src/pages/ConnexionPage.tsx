@@ -4,8 +4,10 @@ import DigiassurFooter from "@/components/DigiassurFooter";
 import FloatingWidgets from "@/components/FloatingWidgets";
 import { Lock, Mail, User, ArrowRight, ShieldCheck } from "lucide-react";
 import { Link } from "wouter";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function ConnexionPage() {
+  const { t, isRTL } = useLanguage();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isRegister, setIsRegister] = useState(false);
@@ -21,7 +23,7 @@ export default function ConnexionPage() {
       <DigiassurHeader />
 
       <main className="flex-1 pt-[130px] pb-20 flex items-center justify-center px-4">
-        <div className="w-full max-w-md bg-white rounded-2xl shadow-xl border border-slate-100 p-8 sm:p-10">
+        <div className={`w-full max-w-md bg-white rounded-2xl shadow-xl border border-slate-100 p-8 sm:p-10 ${isRTL ? "text-right" : "text-left"}`}>
           {/* Header */}
           <div className="text-center mb-8">
             <div className="w-14 h-14 bg-[#f48161]/10 text-[#f48161] rounded-full flex items-center justify-center mx-auto mb-4">
@@ -60,7 +62,7 @@ export default function ConnexionPage() {
                   Email ou Numéro de police
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                  <div className={`absolute inset-y-0 ${isRTL ? "right-0 pr-3.5" : "left-0 pl-3.5"} flex items-center pointer-events-none text-slate-400`}>
                     <Mail className="w-4 h-4 text-[#f48161]" />
                   </div>
                   <input
@@ -69,7 +71,7 @@ export default function ConnexionPage() {
                     placeholder="votre.email@exemple.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 focus:border-[#568ba9] rounded-xl text-sm focus:outline-none focus:bg-white transition"
+                    className={`w-full ${isRTL ? "pr-10 pl-4 text-right" : "pl-10 pr-4 text-left"} py-2.5 bg-slate-50 border border-slate-200 focus:border-[#568ba9] rounded-xl text-sm focus:outline-none focus:bg-white transition`}
                   />
                 </div>
               </div>
@@ -79,7 +81,7 @@ export default function ConnexionPage() {
                   Mot de passe
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                  <div className={`absolute inset-y-0 ${isRTL ? "right-0 pr-3.5" : "left-0 pl-3.5"} flex items-center pointer-events-none text-slate-400`}>
                     <Lock className="w-4 h-4 text-[#f48161]" />
                   </div>
                   <input
@@ -88,7 +90,7 @@ export default function ConnexionPage() {
                     placeholder="••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 focus:border-[#568ba9] rounded-xl text-sm focus:outline-none focus:bg-white transition"
+                    className={`w-full ${isRTL ? "pr-10 pl-4 text-right" : "pl-10 pr-4 text-left"} py-2.5 bg-slate-50 border border-slate-200 focus:border-[#568ba9] rounded-xl text-sm focus:outline-none focus:bg-white transition`}
                   />
                 </div>
               </div>
@@ -108,7 +110,7 @@ export default function ConnexionPage() {
                 className="w-full mt-4 bg-[#f48161] hover:bg-[#e46e4e] text-white font-bold text-sm uppercase py-3.5 rounded-xl shadow-md transition flex items-center justify-center gap-2 cursor-pointer"
               >
                 <span>{isRegister ? "S'inscrire" : "Se connecter"}</span>
-                <ArrowRight className="w-4 h-4" />
+                <ArrowRight className={`w-4 h-4 ${isRTL ? "rotate-180" : ""}`} />
               </button>
 
               <div className="text-center pt-4 border-t border-slate-100 text-xs text-slate-600">
@@ -118,7 +120,7 @@ export default function ConnexionPage() {
                     <button
                       type="button"
                       onClick={() => setIsRegister(false)}
-                      className="text-[#153954] font-bold hover:underline"
+                      className="text-[#153954] font-bold hover:underline cursor-pointer"
                     >
                       Se connecter
                     </button>
@@ -129,7 +131,7 @@ export default function ConnexionPage() {
                     <button
                       type="button"
                       onClick={() => setIsRegister(true)}
-                      className="text-[#f48161] font-bold hover:underline"
+                      className="text-[#f48161] font-bold hover:underline cursor-pointer"
                     >
                       Créer un nouveau compte
                     </button>

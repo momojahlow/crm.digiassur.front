@@ -2,8 +2,11 @@ import DigiassurHeader from "@/components/DigiassurHeader";
 import DigiassurFooter from "@/components/DigiassurFooter";
 import FloatingWidgets from "@/components/FloatingWidgets";
 import { ShieldCheck, FileText, Lock, Building } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function MentionsLegalesPage() {
+  const { t, isRTL, language } = useLanguage();
+
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col font-sans">
       <DigiassurHeader />
@@ -11,7 +14,7 @@ export default function MentionsLegalesPage() {
       <main className="flex-1 pt-[130px] pb-20">
         <div className="max-w-[1000px] mx-auto px-6">
           {/* Header */}
-          <div className="bg-white p-8 lg:p-12 rounded-2xl shadow-sm border border-slate-100 mb-8">
+          <div className={`bg-white p-8 lg:p-12 rounded-2xl shadow-sm border border-slate-100 mb-8 ${isRTL ? "text-right" : "text-left"}`}>
             <div className="inline-flex items-center gap-2 bg-[#f48161]/10 text-[#f48161] font-bold text-xs uppercase px-3.5 py-1.5 rounded-full mb-4">
               <FileText className="w-3.5 h-3.5" />
               <span>Informations Légales & Réglementaires</span>
@@ -20,14 +23,14 @@ export default function MentionsLegalesPage() {
               Mentions Légales & Politique de Confidentialité
             </h1>
             <p className="text-sm text-slate-500">
-              Dernière mise à jour : {new Date().toLocaleDateString("fr-FR", { year: "numeric", month: "long" })}
+              Dernière mise à jour : {new Date().toLocaleDateString(language === "ar" ? "ar-MA" : language === "en" ? "en-US" : "fr-FR", { year: "numeric", month: "long" })}
             </p>
           </div>
 
           {/* Legal Sections */}
           <div className="space-y-6">
             {/* 1. Éditeur du site */}
-            <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-xs border border-slate-100">
+            <div className={`bg-white p-6 sm:p-8 rounded-2xl shadow-xs border border-slate-100 ${isRTL ? "text-right" : "text-left"}`}>
               <div className="flex items-center gap-3 text-[#153954] font-bold text-lg mb-4">
                 <Building className="w-5 h-5 text-[#f48161]" />
                 <h2>1. Éditeur de la plateforme DigiAssur</h2>
@@ -36,7 +39,7 @@ export default function MentionsLegalesPage() {
                 <p>
                   Le site <strong>DigiAssur</strong> (<span className="text-[#153954]">digiassur.ma</span>) est édité par la société <strong>Assur'wi</strong>, société de courtage d’assurance et de réassurance.
                 </p>
-                <ul className="list-disc pl-5 space-y-1.5 text-slate-600">
+                <ul className={`list-disc ${isRTL ? "pr-5" : "pl-5"} space-y-1.5 text-slate-600`}>
                   <li><strong>Forme juridique :</strong> Société à Responsabilité Limitée d'Assurance</li>
                   <li><strong>Agrément ministériel :</strong> Décision du 16 Mai 2018 portant le numéro C340893782018780 régie par la loi n° 17-99 portant code des assurances</li>
                   <li><strong>Siège social :</strong> 27, Rue Ain Asserdoune, Rez de jardin, CIL, Casablanca, Maroc</li>
@@ -47,7 +50,7 @@ export default function MentionsLegalesPage() {
             </div>
 
             {/* 2. Protection des données personnelles (CNDP) */}
-            <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-xs border border-slate-100">
+            <div className={`bg-white p-6 sm:p-8 rounded-2xl shadow-xs border border-slate-100 ${isRTL ? "text-right" : "text-left"}`}>
               <div className="flex items-center gap-3 text-[#153954] font-bold text-lg mb-4">
                 <ShieldCheck className="w-5 h-5 text-[#f48161]" />
                 <h2>2. Protection des données personnelles (Loi 09-08)</h2>
@@ -66,7 +69,7 @@ export default function MentionsLegalesPage() {
             </div>
 
             {/* 3. Sécurité & Confidentialité */}
-            <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-xs border border-slate-100">
+            <div className={`bg-white p-6 sm:p-8 rounded-2xl shadow-xs border border-slate-100 ${isRTL ? "text-right" : "text-left"}`}>
               <div className="flex items-center gap-3 text-[#153954] font-bold text-lg mb-4">
                 <Lock className="w-5 h-5 text-[#f48161]" />
                 <h2>3. Sécurité des échanges</h2>

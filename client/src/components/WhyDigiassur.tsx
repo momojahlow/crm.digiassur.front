@@ -1,32 +1,36 @@
+import { useLanguage } from "@/contexts/LanguageContext";
+
 export default function WhyDigiassur() {
+  const { t } = useLanguage();
+
   const reasons = [
     {
       icon: "/images/why-mobile.svg",
-      title: "Accélération du traitement des sinistres via l’application mobile",
+      title: t("home.whyChoose.adv1", "Accélération du traitement des sinistres via l’application mobile"),
     },
     {
       icon: "/images/why-legal.svg",
-      title: "Accompagnement juridique et administratif",
+      title: t("home.whyChoose.adv2", "Accompagnement juridique et administratif"),
     },
     {
       icon: "/images/why-support.svg",
-      title: "Centre de relation client H24",
+      title: t("home.whyChoose.adv3", "Centre de relation client H24"),
     },
     {
       icon: "/images/why-shipping.svg",
-      title: "Livraison gratuite",
+      title: t("home.whyChoose.adv4", "Livraison gratuite de votre attestation"),
     },
     {
       icon: "/images/why-espace.svg",
-      title: "Espace client en ligne et sur l’application mobile",
+      title: t("home.whyChoose.adv5", "Espace client en ligne et sur l’application mobile"),
     },
     {
       icon: "/images/why-card.svg",
-      title: "Paiement par mensualité (crédit gratuit sofac)",
+      title: t("home.whyChoose.adv6", "Paiement par mensualité (crédit gratuit sofac)"),
     },
     {
       icon: "/images/why-psy.svg",
-      title: "Plateforme d’écoute psychologique en cas d’accident",
+      title: t("home.whyChoose.adv7", "Plateforme d’écoute psychologique en cas d’accident"),
     },
   ];
 
@@ -35,7 +39,7 @@ export default function WhyDigiassur() {
       <div className="max-w-[1440px] mx-auto px-4 lg:px-8">
         <div className="text-center max-w-2xl mx-auto mb-16">
           <h2 className="text-3xl lg:text-4xl font-extrabold tracking-tight mb-4">
-            Pourquoi choisir Digiassur ?
+            {t("home.whyChoose.title", "Pourquoi choisir Digiassur ?")}
           </h2>
           <div className="w-16 h-1 bg-[#f48161] mx-auto rounded-full" />
         </div>
@@ -69,3 +73,4 @@ export default function WhyDigiassur() {
     </section>
   );
 }
+

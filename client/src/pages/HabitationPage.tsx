@@ -17,8 +17,11 @@ import {
   Lock
 } from "lucide-react";
 import { Link } from "wouter";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function HabitationPage() {
+  const { t, isRTL } = useLanguage();
+
   return (
     <div className="min-h-screen bg-white text-slate-800 flex flex-col font-sans selection:bg-[#f48161] selection:text-white">
       <DigiassurHeader />
@@ -28,7 +31,7 @@ export default function HabitationPage() {
         <section className="relative w-full pt-[116px] bg-slate-50">
           <div className="hidden md:block w-full">
             <div className="relative w-full h-[470px] bg-[#4d7f9a] overflow-hidden shadow-md">
-              <div className="absolute inset-0 flex">
+              <div className={`absolute inset-0 flex ${isRTL ? "flex-row-reverse" : ""}`}>
                 {/* Left Photo */}
                 <div className="w-1/2 h-full relative overflow-hidden">
                   <img
@@ -36,16 +39,16 @@ export default function HabitationPage() {
                     alt="Assurance Habitation Digiassur"
                     className="w-full h-full object-cover object-center"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent to-black/20" />
+                  <div className={`absolute inset-0 bg-gradient-to-r ${isRTL ? "from-black/20 to-transparent" : "from-transparent to-black/20"}`} />
                 </div>
 
                 {/* Right Slate Blue Container */}
-                <div className="w-1/2 h-full relative flex items-center bg-[#4d7f9a] text-white px-12 lg:px-20 overflow-hidden">
+                <div className={`w-1/2 h-full relative flex items-center bg-[#4d7f9a] text-white px-12 lg:px-20 overflow-hidden ${isRTL ? "text-right" : "text-left"}`}>
                   <img
                     src="/images/habitation-drawer.svg"
                     alt=""
                     aria-hidden="true"
-                    className="absolute -bottom-10 right-0 h-[460px] w-auto opacity-25 pointer-events-none select-none"
+                    className={`absolute -bottom-10 ${isRTL ? "left-0 -scale-x-100" : "right-0"} h-[460px] w-auto opacity-25 pointer-events-none select-none`}
                   />
 
                   <div className="relative z-10 max-w-[560px]">
@@ -64,7 +67,7 @@ export default function HabitationPage() {
                         className="inline-flex items-center gap-2 bg-[#f48161] hover:bg-[#e46e4e] text-white font-bold text-sm tracking-wider uppercase px-7 py-3.5 shadow-lg transition transform hover:-translate-y-0.5 cursor-pointer"
                       >
                         <span>OBTENIR MON DEVIS</span>
-                        <ArrowRight className="w-4 h-4" />
+                        <ArrowRight className={`w-4 h-4 ${isRTL ? "rotate-180" : ""}`} />
                       </Link>
 
                       <Link
@@ -121,7 +124,7 @@ export default function HabitationPage() {
               Bienvenue sur l’espace Habitation de Digiassur
             </h2>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div className={`grid grid-cols-1 lg:grid-cols-2 gap-12 items-center ${isRTL ? "text-right" : "text-left"}`}>
               <div className="space-y-6 text-slate-700 leading-relaxed text-base">
                 <p className="text-lg font-semibold text-[#153954]">
                   Parce que par définition un risque n’annonce jamais à l’avance sa survenance, vous devez :
@@ -154,7 +157,7 @@ export default function HabitationPage() {
                     className="inline-flex items-center gap-2 bg-[#f48161] hover:bg-[#e46e4e] text-white font-bold text-xs uppercase px-8 py-3.5 shadow-md cursor-pointer transition"
                   >
                     <span>OBTENIR MON DEVIS</span>
-                    <ArrowRight className="w-4 h-4" />
+                    <ArrowRight className={`w-4 h-4 ${isRTL ? "rotate-180" : ""}`} />
                   </Link>
                 </div>
               </div>

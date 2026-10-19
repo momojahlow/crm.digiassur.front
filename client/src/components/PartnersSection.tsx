@@ -1,4 +1,8 @@
+import { useLanguage } from "@/contexts/LanguageContext";
+
 export default function PartnersSection() {
+  const { t } = useLanguage();
+
   const partners = [
     {
       name: "AXA",
@@ -43,10 +47,10 @@ export default function PartnersSection() {
       <div className="max-w-[1440px] mx-auto px-4 lg:px-8">
         <div className="text-center max-w-2xl mx-auto mb-10">
           <h2 className="text-2xl lg:text-3xl font-bold text-[#153954] mb-3">
-            Nos partenaires
+            {t("home.partners.title", "Nos partenaires")}
           </h2>
           <p className="text-sm text-slate-500 leading-relaxed">
-            Nous sommes fiers de travailler avec une sélection de compagnies d'assurance de premier plan pour offrir à nos clients les meilleurs produits et services possibles.
+            {t("home.partners.subtitle", "Nous sommes fiers de travailler avec une sélection de compagnies d'assurance de premier plan pour offrir à nos clients les meilleurs produits et services possibles.")}
           </p>
         </div>
 
@@ -69,7 +73,7 @@ export default function PartnersSection() {
           ))}
         </div>
 
-        {/* Pagination Dots (as in Figma) */}
+        {/* Pagination Dots */}
         <div className="flex justify-center items-center gap-2 mt-8">
           <span className="w-2.5 h-2.5 rounded-full bg-[#f48161]"></span>
           <span className="w-2.5 h-2.5 rounded-full bg-[#f48161]/35"></span>
@@ -79,3 +83,4 @@ export default function PartnersSection() {
     </section>
   );
 }
+

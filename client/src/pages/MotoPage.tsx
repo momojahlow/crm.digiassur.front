@@ -6,8 +6,11 @@ import WhyDigiassur from "@/components/WhyDigiassur";
 import AssurwiBanner from "@/components/AssurwiBanner";
 import { ArrowRight, ShieldCheck, CheckCircle2 } from "lucide-react";
 import { Link } from "wouter";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function MotoPage() {
+  const { t, isRTL } = useLanguage();
+
   return (
     <div className="min-h-screen bg-white text-slate-800 flex flex-col font-sans selection:bg-[#f48161] selection:text-white overflow-x-hidden">
       <DigiassurHeader />
@@ -20,7 +23,7 @@ export default function MotoPage() {
         <section className="relative w-full bg-slate-50">
           <div className="hidden md:block w-full">
             <div className="relative w-full h-[470px] bg-[#4d7f9a] overflow-hidden shadow-md">
-              <div className="absolute inset-0 flex">
+              <div className={`absolute inset-0 flex ${isRTL ? "flex-row-reverse" : ""}`}>
                 {/* Left Photo (Couple on moto with helmet) */}
                 <div className="w-1/2 h-full relative overflow-hidden">
                   <img
@@ -28,16 +31,16 @@ export default function MotoPage() {
                     alt="Assurance Moto Digiassur"
                     className="w-full h-full object-cover object-center"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent to-black/20" />
+                  <div className={`absolute inset-0 bg-gradient-to-r ${isRTL ? "from-black/20 to-transparent" : "from-transparent to-black/20"}`} />
                 </div>
 
                 {/* Right Slate Blue Container */}
-                <div className="w-1/2 h-full relative flex items-center bg-[#4d7f9a] text-white px-12 lg:px-20 overflow-hidden">
+                <div className={`w-1/2 h-full relative flex items-center bg-[#4d7f9a] text-white px-12 lg:px-20 overflow-hidden ${isRTL ? "text-right" : "text-left"}`}>
                   <img
                     src="/images/moto-drawer.svg"
                     alt=""
                     aria-hidden="true"
-                    className="absolute -bottom-16 right-0 h-[480px] w-auto opacity-25 pointer-events-none select-none"
+                    className={`absolute -bottom-16 ${isRTL ? "left-0 -scale-x-100" : "right-0"} h-[480px] w-auto opacity-25 pointer-events-none select-none`}
                   />
 
                   <div className="relative z-10 max-w-[560px]">
@@ -56,7 +59,7 @@ export default function MotoPage() {
                         className="inline-flex items-center gap-2 bg-[#f48161] hover:bg-[#e46e4e] text-white font-bold text-sm tracking-wider uppercase px-7 py-3.5 shadow-lg transition transform hover:-translate-y-0.5 cursor-pointer"
                       >
                         <span>OBTENIR MON TARIF MOTO</span>
-                        <ArrowRight className="w-4 h-4" />
+                        <ArrowRight className={`w-4 h-4 ${isRTL ? "rotate-180" : ""}`} />
                       </Link>
 
                       <Link
@@ -116,7 +119,7 @@ export default function MotoPage() {
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               {/* Left Column: Text & Buttons */}
-              <div className="space-y-5 text-slate-600 text-sm lg:text-base leading-relaxed text-justify">
+              <div className={`space-y-5 text-slate-600 text-sm lg:text-base leading-relaxed ${isRTL ? "text-right" : "text-left"}`}>
                 <p>
                   L'assurance moto de <strong>Digiassur</strong> est une option intéressante pour les conducteurs qui souhaitent bénéficier d'une couverture d'assurance plus étendue que l'assurance au tiers, tout en ne payant pas autant que pour une bonne assurance.
                 </p>
@@ -136,7 +139,7 @@ export default function MotoPage() {
                     className="inline-flex items-center gap-2 bg-[#f48161] hover:bg-[#e46e4e] text-white font-bold text-xs uppercase tracking-wider px-7 py-3.5 shadow-md transition transform hover:-translate-y-0.5 cursor-pointer"
                   >
                     <span>OBTENIR MON TARIF MOTO</span>
-                    <ArrowRight className="w-4 h-4" />
+                    <ArrowRight className={`w-4 h-4 ${isRTL ? "rotate-180" : ""}`} />
                   </Link>
 
                   <Link

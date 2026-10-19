@@ -3,8 +3,10 @@ import DigiassurHeader from "@/components/DigiassurHeader";
 import DigiassurFooter from "@/components/DigiassurFooter";
 import FloatingWidgets from "@/components/FloatingWidgets";
 import { Phone, Mail, MapPin, Send, CheckCircle2, Clock } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function ContactPage() {
+  const { t, isRTL } = useLanguage();
   const [sent, setSent] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -30,7 +32,7 @@ export default function ContactPage() {
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             {/* Left Contact Information Card (5 cols) */}
-            <div className="lg:col-span-5 bg-[#153954] text-white p-8 rounded-2xl shadow-xl space-y-6">
+            <div className={`lg:col-span-5 bg-[#153954] text-white p-8 rounded-2xl shadow-xl space-y-6 ${isRTL ? "text-right" : "text-left"}`}>
               <h3 className="text-xl font-bold border-b border-white/10 pb-4">
                 Nos Coordonnées
               </h3>
@@ -88,7 +90,7 @@ export default function ContactPage() {
             </div>
 
             {/* Right Contact Form (7 cols) */}
-            <div className="lg:col-span-7 bg-white p-8 sm:p-10 rounded-2xl shadow-sm border border-slate-100">
+            <div className={`lg:col-span-7 bg-white p-8 sm:p-10 rounded-2xl shadow-sm border border-slate-100 ${isRTL ? "text-right" : "text-left"}`}>
               {sent ? (
                 <div className="text-center py-10 animate-in zoom-in-95 duration-200">
                   <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -100,7 +102,7 @@ export default function ContactPage() {
                   </p>
                   <button
                     onClick={() => setSent(false)}
-                    className="bg-[#153954] text-white text-xs font-semibold px-6 py-2.5 rounded-full"
+                    className="bg-[#153954] text-white text-xs font-semibold px-6 py-2.5 rounded-full cursor-pointer"
                   >
                     Envoyer un autre message
                   </button>
@@ -168,7 +170,7 @@ export default function ContactPage() {
                     className="w-full bg-[#f48161] hover:bg-[#e46e4e] text-white font-bold text-sm uppercase py-3.5 rounded-xl shadow-md transition flex items-center justify-center gap-2 cursor-pointer"
                   >
                     <span>Envoyer mon message</span>
-                    <Send className="w-4 h-4" />
+                    <Send className={`w-4 h-4 ${isRTL ? "rotate-180 -scale-y-100" : ""}`} />
                   </button>
                 </form>
               )}
