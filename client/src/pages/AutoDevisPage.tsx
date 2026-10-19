@@ -4,6 +4,7 @@ import DigiassurFooter from "@/components/DigiassurFooter";
 import FloatingWidgets from "@/components/FloatingWidgets";
 import PartnersSection from "@/components/PartnersSection";
 import { CAR_BRANDS, MOROCCAN_PREFECTURES, ARABIC_LETTERS } from "@/data/carBrands";
+import { calculateValeurVenale, calculateFormules } from "@/lib/pricingEngine";
 import { 
   UserCheck, 
   Car, 
@@ -54,6 +55,7 @@ interface VehiculeState {
   p_fiscale: number;
   date_mec: string;
   van: number;
+  crm: number;
   plafond_bg: number;
   custom_plafond_bg: string;
 }
@@ -90,6 +92,7 @@ export default function AutoDevisPage() {
     p_fiscale: 6,
     date_mec: new Date().toISOString().split("T")[0],
     van: 150000,
+    crm: 1.0,
     plafond_bg: 5000,
     custom_plafond_bg: ""
   });
@@ -112,6 +115,7 @@ export default function AutoDevisPage() {
 
   // Step 5: Document toggles & uploads
   const [showDocuments, setShowDocuments] = useState<boolean>(false);
+  const [showTaxDetails, setShowTaxDetails] = useState<boolean>(false);
   const [uploadedFiles, setUploadedFiles] = useState<{ [key: string]: string }>({});
 
   // UI Dropdown states
@@ -132,89 +136,31 @@ export default function AutoDevisPage() {
     return brand ? brand.modeles : ["Modèle standard"];
   }, [vehicule.marque]);
 
-  // Calcul officiel de la Responsabilité Civile (RC) de base
-  const calculateRc = (energie: string, pf: number) => {
-    if (energie === "Diesel") {
-      if (pf <= 4) return 1840;
-      if (pf === 5) return 2238;
-      if (pf === 6 || pf === 7) return 2429;
-      return 3490;
-    } else {
-      if (pf <= 6) return 1840;
-      if (pf === 7 || pf === 8) return 2238;
-      if (pf === 9 || pf === 10) return 2429;
-      return 3490;
-    }
-  };
-
-  // Calcul officiel devis provisoire
-  // RC et DR (Défense et Recours) sont TOUJOURS inclus par défaut sur toutes les formules (DR = 0)
-  // PTA = 200 DH si inclus (inclus par défaut sur Go & Fast, optionnel sur Start)
-  const calcDevisProvisoire = (duree: string, rcBase: number, includePta: boolean = false) => {
-    let RC = rcBase;
-    const DR = 0; // Inclus par défaut sur toute
-    const PTA = includePta ? 200 : 0;
-    let GA = DR + PTA;
-
-    const d = duree.toLowerCase();
-    if (d.includes("semestri")) {
-      RC = RC * 0.54;
-      GA = GA * 0.54;
-    } else if (d.includes("trimestri")) {
-      RC = RC * 0.27;
-      GA = GA * 0.27;
-    }
-
-    const Taxe_RC = (RC * 16.5) / 100;
-    const Taxe_GA = (GA * 15) / 100;
-    const EVCAT = ((RC * 4.5) / 100) + ((GA * 2.5) / 100);
-    const CNPAC = 17;
-    return Number((RC + Taxe_RC + GA + Taxe_GA + EVCAT + CNPAC).toFixed(2));
-  };
-
-  // Pricing Calculation Engine
-  const prices = useMemo(() => {
+  // Pricing Calculation Engine powered by pricingEngine.ts
+  const formuleResults = useMemo(() => {
     const cv = Number(vehicule.p_fiscale) || 6;
     const van = Number(vehicule.van) || 150000;
+    const crm = Number(vehicule.crm) || 1.0;
 
-    // 1. Calcul RC de base selon énergie et puissance fiscale
-    const baseRc = calculateRc(vehicule.energie, cv);
+    return calculateFormules({
+      energie: vehicule.energie,
+      puissanceFiscale: cv,
+      valeurNeuf: van,
+      dateMec: vehicule.date_mec,
+      crm,
+      duree: contrat.duree,
+      ptaForStart: contrat.pta
+    });
+  }, [vehicule.p_fiscale, vehicule.energie, vehicule.van, vehicule.crm, vehicule.date_mec, contrat.duree, contrat.pta]);
 
-    // 2. Formule Start : RC + DR incluses par défaut. PTA selon contrat.pta
-    const primeStart = calcDevisProvisoire(contrat.duree, baseRc, contrat.pta);
-    const primeStartAnnual = calcDevisProvisoire("Annuelle", baseRc, contrat.pta);
-
-    // Ratio durée
-    let durationMultiplier = 1;
-    if (contrat.duree === "Semestrielle") durationMultiplier = 0.54;
-    if (contrat.duree === "Trimestrielle") durationMultiplier = 0.27;
-
-    // 3. Formules Go & Fast : RC, DR ET PTA (200 DH) incluses par défaut !
-    const baseGoFastAnnual = calcDevisProvisoire("Annuelle", baseRc, true);
-    const bgAdd = (Number(vehicule.plafond_bg) || 5000) * 0.05;
-    const volIncendie = (van * 0.012);
-    const primeGoAnnual = Math.round(baseGoFastAnnual + volIncendie + bgAdd + 850);
-
-    const tierce = (van * 0.024);
-    const primeFastAnnual = Math.round(primeGoAnnual + tierce);
-
-    const go = Math.round(primeGoAnnual * durationMultiplier);
-    const fast = Math.round(primeFastAnnual * durationMultiplier);
-
-    return {
-      Start: primeStart,
-      Go: go,
-      Fast: fast,
-      annual: {
-        Start: primeStartAnnual,
-        Go: primeGoAnnual,
-        Fast: primeFastAnnual
-      }
-    };
-  }, [vehicule.p_fiscale, vehicule.energie, vehicule.van, vehicule.plafond_bg, contrat.duree, contrat.pta]);
-
-  // Selected formula base premium
+  const prices = formuleResults;
+  const activeBreakdown = formuleResults.details[contrat.formule] || formuleResults.details.Go;
   const activeFormulaPrice = prices[contrat.formule] || prices.Go;
+
+  // Calcul dynamique de la Valeur Vénale via le moteur de règles
+  const estimatedValeurVenale = useMemo(() => {
+    return calculateValeurVenale(Number(vehicule.van) || 0, vehicule.date_mec);
+  }, [vehicule.van, vehicule.date_mec]);
 
   // End Date calculation based on start date & duration
   const dateFin = useMemo(() => {
@@ -289,6 +235,7 @@ export default function AutoDevisPage() {
       duree: "Annuelle",
       debut: new Date().toISOString().split("T")[0],
       formule: "Go",
+      pta: false,
       servicing: 0,
       assistance: 85,
       carte_verte: 0
@@ -764,6 +711,38 @@ export default function AutoDevisPage() {
                         />
                       </div>
                       {errors.van && <p className="text-red-500 text-xs mt-1 pl-4">{errors.van}</p>}
+                      <div className="flex items-center justify-between text-[11px] text-slate-500 pl-3 pt-1.5">
+                        <span>Valeur vénale estimée (décote FMSAR) :</span>
+                        <span className="font-bold text-[#153954] bg-slate-100 px-2 py-0.5 rounded-md">
+                          {estimatedValeurVenale.toLocaleString()} DHS
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Bonus / Malus CRM */}
+                    <div>
+                      <label className="block text-xs font-bold text-slate-600 mb-1 pl-2">
+                        Bonus / Malus (Coefficient CRM ACAPS)
+                      </label>
+                      <div className="bg-slate-100 rounded-full p-1.5 flex items-center shadow-inner">
+                        <div className="w-10 h-10 rounded-full bg-[#153954] text-white flex items-center justify-center shrink-0 font-bold text-xs">
+                          %
+                        </div>
+                        <select
+                          value={vehicule.crm}
+                          onChange={e => setVehicule({ ...vehicule, crm: Number(e.target.value) })}
+                          className="w-full bg-transparent px-3 text-slate-700 font-bold outline-none text-sm cursor-pointer"
+                        >
+                          <option value="1.0">CRM 1.00 — Standard (Neutre)</option>
+                          <option value="0.9">CRM 0.90 — Bonus -10%</option>
+                          <option value="0.8">CRM 0.80 — Bonus -20%</option>
+                          <option value="0.7">CRM 0.70 — Bonus -30%</option>
+                          <option value="0.6">CRM 0.60 — Bonus -40%</option>
+                          <option value="0.5">CRM 0.50 — Bonus maximal (-50%)</option>
+                          <option value="1.2">CRM 1.20 — Malus (+20%)</option>
+                          <option value="1.4">CRM 1.40 — Jeune conducteur / Malus (+40%)</option>
+                        </select>
+                      </div>
                     </div>
                   </div>
 
@@ -1600,8 +1579,9 @@ export default function AutoDevisPage() {
                       </div>
                       <p className="text-slate-700"><strong>Véhicule :</strong> {vehicule.marque} {vehicule.modele}</p>
                       <p className="text-slate-700"><strong>Carburant :</strong> {vehicule.energie}</p>
-                      <p className="text-slate-700"><strong>Puissance :</strong> {vehicule.p_fiscale} CV</p>
                       <p className="text-slate-700"><strong>Valeur à neuf :</strong> {vehicule.van.toLocaleString()} DH</p>
+                      <p className="text-slate-700"><strong>Valeur vénale :</strong> <span className="text-[#153954] font-bold">{estimatedValeurVenale.toLocaleString()} DH</span></p>
+                      <p className="text-slate-700"><strong>Bonus / Malus :</strong> CRM {vehicule.crm.toFixed(2)}</p>
                       <p className="text-slate-700"><strong>Plafond Bris de glace :</strong> {vehicule.plafond_bg.toLocaleString()} DH</p>
                     </div>
 
@@ -1637,6 +1617,49 @@ export default function AutoDevisPage() {
                         <p className="text-xl font-black text-[#153954]">
                           {Number(totalPrime).toLocaleString()} <span className="text-xs font-semibold">DHS</span>
                         </p>
+                      </div>
+
+                      {/* Accordéon détail officiel du calcul et taxes */}
+                      <div className="mt-2.5 pt-2.5 border-t border-slate-200">
+                        <button
+                          type="button"
+                          onClick={() => setShowTaxDetails(!showTaxDetails)}
+                          className="w-full flex items-center justify-between text-[11px] font-bold text-[#153954] hover:text-[#f48161] transition"
+                        >
+                          <span>Détail calcul & taxes officielles</span>
+                          <span className="text-[9px]">{showTaxDetails ? "▲ Fermer" : "▼ Voir"}</span>
+                        </button>
+
+                        {showTaxDetails && activeBreakdown && (
+                          <div className="mt-2 p-2.5 bg-slate-50 rounded-lg text-[10px] space-y-1.5 border border-slate-200 text-slate-600 animate-in fade-in duration-200">
+                            <div className="flex justify-between">
+                              <span>Prime RC nette :</span>
+                              <span className="font-bold text-slate-800">{activeBreakdown.rcNette.toLocaleString()} DH</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span>Garanties annexes (GA) :</span>
+                              <span className="font-bold text-slate-800">{activeBreakdown.gaNette.toLocaleString()} DH</span>
+                            </div>
+                            <div className="border-t border-dashed border-slate-200 my-1 pt-1 space-y-1 text-slate-500">
+                              <div className="flex justify-between">
+                                <span>• Taxe RC (16.5%) :</span>
+                                <span>{activeBreakdown.taxeRc.toFixed(2)} DH</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span>• Taxe GA (15%) :</span>
+                                <span>{activeBreakdown.taxeGa.toFixed(2)} DH</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span>• Fonds Catastrophes (EVCAT) :</span>
+                                <span>{activeBreakdown.evcat.toFixed(2)} DH</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span>• Taxe CNPAC (NARSA) :</span>
+                                <span>{activeBreakdown.cnpac} DH</span>
+                              </div>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>

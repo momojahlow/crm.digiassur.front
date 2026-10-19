@@ -12,6 +12,7 @@ import EpargnePage from "./pages/EpargnePage";
 import EpargneDevisPage from "./pages/EpargneDevisPage";
 import AutoPage from "./pages/AutoPage";
 import AutoDevisPage from "./pages/AutoDevisPage";
+import AutoDevisPageOld from "./pages/AutoDevisPage_old";
 import MotoPage from "./pages/MotoPage";
 import MotoDevisPage from "./pages/MotoDevisPage";
 import AccidentPage from "./pages/AccidentPage";
@@ -45,6 +46,8 @@ function Router() {
       <Route path="/auto" component={AutoPage} />
       <Route path="/auto/devis-auto" component={AutoDevisPage} />
       <Route path="/auto/devis" component={AutoDevisPage} />
+      <Route path="/auto/devis-auto-old" component={AutoDevisPageOld} />
+      <Route path="/auto/devis-old" component={AutoDevisPageOld} />
 
       {/* Moto (Figma Desktop - 8, 9, 10, 11, 13) */}
       <Route path="/moto" component={MotoPage} />
