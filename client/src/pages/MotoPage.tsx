@@ -63,7 +63,7 @@ export default function MotoPage() {
                       </Link>
 
                       <Link
-                        href="/moto/devis-moto"
+                        href="/moto/devis-moto?mode=comparateur"
                         className="inline-flex items-center gap-2 bg-[#689ebd] hover:bg-[#588da9] text-white font-bold text-sm tracking-wider uppercase px-7 py-3.5 shadow-lg transition transform hover:-translate-y-0.5 cursor-pointer"
                       >
                         <span>COMPARER MON DEVIS ACTUEL</span>
@@ -143,7 +143,7 @@ export default function MotoPage() {
                   </Link>
 
                   <Link
-                    href="/moto/devis-moto"
+                    href="/moto/devis-moto?mode=comparateur"
                     className="inline-flex items-center gap-2 bg-[#689ebd] hover:bg-[#588da9] text-white font-bold text-xs uppercase tracking-wider px-7 py-3.5 shadow-md transition transform hover:-translate-y-0.5 cursor-pointer"
                   >
                     <span>COMPARER MON DEVIS ACTUEL</span>

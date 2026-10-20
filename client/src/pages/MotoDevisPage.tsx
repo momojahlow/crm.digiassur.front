@@ -25,9 +25,12 @@ import {
   ShieldCheck, 
   FileCheck,
   Send,
-  HelpCircle
+  HelpCircle,
+  Building2,
+  Sparkles
 } from "lucide-react";
 import { Link } from "wouter";
+import DevisPartnerComparator from "@/components/DevisPartnerComparator";
 
 // Barème officiel ACAPS des 5 catégories Moto
 // La puissance fiscale (1 à 5) est un code technique interne pour correspondre aux catégories réelles
@@ -120,6 +123,11 @@ export default function MotoDevisPage() {
 
   // Step 3: Durée
   const [duree, setDuree] = useState<"1 an*" | "6 mois" | "3 mois">("1 an*");
+  const isComparatorRequested = typeof window !== "undefined" && new URLSearchParams(window.location.search).get("mode") === "comparateur";
+  const [viewMode, setViewMode] = useState<"standard" | "comparateur">(
+    isComparatorRequested ? "comparateur" : "standard"
+  );
+  const [selectedCompagnie, setSelectedCompagnie] = useState<string>("AtlantaSanad");
 
   // Accordéon détail des taxes
   const [showTaxDetails, setShowTaxDetails] = useState<boolean>(false);
@@ -748,101 +756,173 @@ export default function MotoDevisPage() {
                     </div>
                   </div>
 
-                  {/* Formula Card "Moto Run" (Exclusivement RC + DR 0 DH) — Version Compacte */}
-                  <div className="max-w-[380px] mx-auto pt-1">
-                    <div className="rounded-2xl overflow-hidden shadow-lg border border-slate-200 relative bg-[#205680] text-white text-center">
-                      
-                      {/* Top Circular Emblem */}
-                      <div className="pt-5 pb-3">
-                        <div className="w-12 h-12 rounded-full bg-[#f48161] text-white flex items-center justify-center mx-auto shadow-sm border-2 border-white/90">
-                          <Bike className="w-6 h-6" />
-                        </div>
-                        <h3 className="text-2xl font-black mt-2 tracking-wide leading-none">
-                          Moto Run
-                        </h3>
-                        <p className="text-[10px] text-orange-200 mt-1 uppercase tracking-wider font-semibold">
-                          Formule Standard Complète ACAPS
-                        </p>
-                      </div>
-
-                      {/* Guarantees List (Strictement RC + Défense & Recours 0 DH) — ALIGNÉES & COMPACTES */}
-                      <div className="bg-[#174669] px-5 py-2.5 border-t border-white/10">
-                        <div className="max-w-[270px] mx-auto space-y-2 text-left text-xs font-semibold">
-                          <div className="flex items-center gap-2">
-                            <Check className="w-4 h-4 text-emerald-400 shrink-0" />
-                            <span>Responsabilité Civile <span className="text-[11px] font-normal text-emerald-300">(Obligatoire)</span></span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <Check className="w-4 h-4 text-emerald-400 shrink-0" />
-                            <span>Défense et Recours <span className="text-[11px] font-normal text-cyan-200">(Inclus)</span></span>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Price Section : Orange pour le montant, couleur du bg du card (#205680) pour DHS TTC */}
-                      <div className="bg-white py-3.5 px-4 border-t border-slate-100">
-                        <div className="text-2xl md:text-3xl font-black text-[#f48161]">
-                          {pricingBreakdown.totalTtc.toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} <span className="text-sm font-bold text-[#205680]">DHS TTC</span>
-                        </div>
-                        <p className="text-[11px] font-medium text-slate-400 mt-0.5">
-                          Périodicité : {duree === "1 an*" ? "Annuelle (12 mois)" : duree === "6 mois" ? "Semestrielle (6 mois)" : "Trimestrielle (3 mois)"}
-                        </p>
-                      </div>
-
-                      {/* Commander Button */}
-                      <div className="p-4 bg-[#205680]">
-                        <button
-                          type="button"
-                          onClick={() => setStep(4)}
-                          className="w-full py-2.5 px-5 rounded-full bg-[#f48161] hover:bg-[#e46e4e] text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-md transition transform hover:-translate-y-0.5 cursor-pointer"
-                        >
-                          <Check className="w-4 h-4" />
-                          <span>Commander cette formule</span>
-                        </button>
-                      </div>
+                  {/* Top Bar Switcher: Standard Moto Run vs Comparateur Partenaires */}
+                  <div className="flex flex-wrap items-center justify-between gap-3 bg-white p-3 rounded-2xl border border-slate-200 shadow-xs">
+                    <div className="flex items-center gap-2">
+                      <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                      <span className="text-xs font-black uppercase tracking-wider text-[#153954]">
+                        {viewMode === "standard" ? "Offre Officielle Moto Run" : "Comparateur Multi-Assureurs"}
+                      </span>
                     </div>
 
-                    {/* Accordéon détail calcul & taxes */}
-                    <div className="mt-2.5 bg-slate-50 rounded-xl p-2.5 border border-slate-200 text-xs text-slate-600">
+                    <div className="flex flex-wrap items-center gap-2">
                       <button
                         type="button"
-                        onClick={() => setShowTaxDetails(!showTaxDetails)}
-                        className="w-full flex items-center justify-between font-bold text-[#153954] hover:text-[#f48161] transition"
+                        onClick={() => setViewMode("standard")}
+                        className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition cursor-pointer flex items-center gap-1.5 ${
+                          viewMode === "standard"
+                            ? "bg-[#153954] text-white shadow-xs"
+                            : "bg-slate-100 text-slate-600 hover:text-[#153954] hover:bg-slate-200"
+                        }`}
                       >
-                        <span>Détail calcul & taxes officielles</span>
-                        <span className="text-[10px]">{showTaxDetails ? "▲ Masquer" : "▼ Afficher"}</span>
+                        <Bike className="w-3.5 h-3.5" />
+                        <span>Offre Standard</span>
                       </button>
 
-                      {showTaxDetails && (
-                        <div className="mt-2.5 pt-2 border-t border-slate-200 space-y-1.5 text-[11px] animate-in fade-in duration-200">
-                          <div className="flex justify-between">
-                            <span>• {selectedCategory.shortLabel} :</span>
-                            <span className="font-bold text-slate-800">{pricingBreakdown.rcAnnuelle} DH (Annuelle)</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span>• Prime RC Nette ({duree}) :</span>
-                            <span className="font-bold text-slate-800">{pricingBreakdown.rcNette.toFixed(2)} DH</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span>• Taxe RC (16.5%) :</span>
-                            <span>{pricingBreakdown.taxeRc.toFixed(2)} DH</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span>• Taxe Catastrophes EVCAT (4.5%) :</span>
-                            <span>{pricingBreakdown.evcat.toFixed(2)} DH</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span>• Forfait CNPAC (Sécurité Routière) :</span>
-                            <span>{pricingBreakdown.cnpac.toFixed(2)} DH</span>
-                          </div>
-                          <div className="border-t border-dashed border-slate-300 pt-1.5 flex justify-between font-black text-slate-900 text-xs">
-                            <span>Total TTC :</span>
-                            <span className="text-[#f48161]">{pricingBreakdown.totalTtc.toFixed(2)} DHS</span>
-                          </div>
-                        </div>
-                      )}
+                      <button
+                        type="button"
+                        onClick={() => setViewMode("comparateur")}
+                        className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition cursor-pointer flex items-center gap-1.5 border ${
+                          viewMode === "comparateur"
+                            ? "bg-gradient-to-r from-[#f48161] to-[#e46e4e] text-white border-[#f48161] shadow-md ring-2 ring-[#f48161]/30"
+                            : "animate-zoom-pulse bg-gradient-to-r from-orange-50 via-white to-orange-50 border-[#f48161] text-[#153954] hover:border-[#e46e4e]"
+                        }`}
+                      >
+                        <Building2 className={`w-3.5 h-3.5 ${viewMode === "comparateur" ? "text-white" : "animate-slow-spin text-[#f48161]"}`} />
+                        <span>Comparateur Partenaires</span>
+                        <span className="bg-amber-400 text-slate-900 text-[9px] font-black uppercase px-1.5 py-0.2 rounded-full shadow-2xs">
+                          Nouveau
+                        </span>
+                      </button>
                     </div>
                   </div>
+
+                  {/* Header dynamique */}
+                  <div>
+                    <h2 className="text-xl md:text-2xl font-black text-slate-800">
+                      {viewMode === "standard" 
+                        ? "Tarif Officiel Moto & Deux-Roues" 
+                        : "Comparateur des Offres Partenaires Moto (AtlantaSanad, Sanlam, RMA, AXA)"}
+                    </h2>
+                    <p className="text-slate-500 text-xs md:text-sm mt-0.5">
+                      {viewMode === "standard"
+                        ? "Formule Standard complète ACAPS pour votre deux-roues."
+                        : "Comparez en direct les tarifs négociés et services de nos assureurs partenaires deux-roues."}
+                    </p>
+                  </div>
+
+                  {/* VUE 1 : CARTE MOTO RUN STANDARD */}
+                  {viewMode === "standard" && (
+                    <div className="max-w-[380px] mx-auto pt-1 animate-in fade-in duration-200">
+                      <div className="rounded-2xl overflow-hidden shadow-lg border border-slate-200 relative bg-[#205680] text-white text-center">
+                        
+                        {/* Top Circular Emblem */}
+                        <div className="pt-5 pb-3">
+                          <div className="w-12 h-12 rounded-full bg-[#f48161] text-white flex items-center justify-center mx-auto shadow-sm border-2 border-white/90">
+                            <Bike className="w-6 h-6" />
+                          </div>
+                          <h3 className="text-2xl font-black mt-2 tracking-wide leading-none">
+                            Moto Run
+                          </h3>
+                          <p className="text-[10px] text-orange-200 mt-1 uppercase tracking-wider font-semibold">
+                            Formule Standard Complète ACAPS
+                          </p>
+                        </div>
+
+                        {/* Guarantees List (Strictement RC + Défense & Recours 0 DH) — ALIGNÉES & COMPACTES */}
+                        <div className="bg-[#174669] px-5 py-2.5 border-t border-white/10">
+                          <div className="max-w-[270px] mx-auto space-y-2 text-left text-xs font-semibold">
+                            <div className="flex items-center gap-2">
+                              <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                              <span>Responsabilité Civile <span className="text-[11px] font-normal text-emerald-300">(Obligatoire)</span></span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                              <span>Défense et Recours <span className="text-[11px] font-normal text-cyan-200">(Inclus)</span></span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Price Section : Orange pour le montant, couleur du bg du card (#205680) pour DHS TTC */}
+                        <div className="bg-white py-3.5 px-4 border-t border-slate-100">
+                          <div className="text-2xl md:text-3xl font-black text-[#f48161]">
+                            {pricingBreakdown.totalTtc.toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} <span className="text-sm font-bold text-[#205680]">DHS TTC</span>
+                          </div>
+                          <p className="text-[11px] font-medium text-slate-400 mt-0.5">
+                            Périodicité : {duree === "1 an*" ? "Annuelle (12 mois)" : duree === "6 mois" ? "Semestrielle (6 mois)" : "Trimestrielle (3 mois)"}
+                          </p>
+                        </div>
+
+                        {/* Commander Button */}
+                        <div className="p-4 bg-[#205680]">
+                          <button
+                            type="button"
+                            onClick={() => setStep(4)}
+                            className="w-full py-2.5 px-5 rounded-full bg-[#f48161] hover:bg-[#e46e4e] text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-md transition transform hover:-translate-y-0.5 cursor-pointer"
+                          >
+                            <Check className="w-4 h-4" />
+                            <span>Commander cette formule</span>
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Accordéon détail calcul & taxes */}
+                      <div className="mt-2.5 bg-slate-50 rounded-xl p-2.5 border border-slate-200 text-xs text-slate-600">
+                        <button
+                          type="button"
+                          onClick={() => setShowTaxDetails(!showTaxDetails)}
+                          className="w-full flex items-center justify-between font-bold text-[#153954] hover:text-[#f48161] transition"
+                        >
+                          <span>Détail calcul & taxes officielles</span>
+                          <span className="text-[10px]">{showTaxDetails ? "▲ Masquer" : "▼ Afficher"}</span>
+                        </button>
+
+                        {showTaxDetails && (
+                          <div className="mt-2.5 pt-2 border-t border-slate-200 space-y-1.5 text-[11px] animate-in fade-in duration-200">
+                            <div className="flex justify-between">
+                              <span>• {selectedCategory.shortLabel} :</span>
+                              <span className="font-bold text-slate-800">{pricingBreakdown.rcAnnuelle} DH (Annuelle)</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span>• Prime RC Nette ({duree}) :</span>
+                              <span className="font-bold text-slate-800">{pricingBreakdown.rcNette.toFixed(2)} DH</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span>• Taxe RC (16.5%) :</span>
+                              <span>{pricingBreakdown.taxeRc.toFixed(2)} DH</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span>• Taxe Catastrophes EVCAT (4.5%) :</span>
+                              <span>{pricingBreakdown.evcat.toFixed(2)} DH</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span>• Forfait CNPAC (Sécurité Routière) :</span>
+                              <span>{pricingBreakdown.cnpac.toFixed(2)} DH</span>
+                            </div>
+                            <div className="border-t border-dashed border-slate-300 pt-1.5 flex justify-between font-black text-slate-900 text-xs">
+                              <span>Total TTC :</span>
+                              <span className="text-[#f48161]">{pricingBreakdown.totalTtc.toFixed(2)} DHS</span>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* VUE 2 : COMPARATEUR MULTI-ASSUREURS PARTENAIRES MOTO */}
+                  {viewMode === "comparateur" && (
+                    <DevisPartnerComparator
+                      type="moto"
+                      basePrice={pricingBreakdown.totalTtc}
+                      duree={duree === "1 an*" ? "Annuelle" : duree}
+                      formuleActive="Moto Run"
+                      selectedCompagnie={selectedCompagnie}
+                      onSelectCompagnie={(compagnie) => {
+                        setSelectedCompagnie(compagnie);
+                      }}
+                      onProceed={() => setStep(4)}
+                    />
+                  )}
                 </div>
               )}
 
@@ -1145,6 +1225,7 @@ export default function MotoDevisPage() {
                           </button>
                         </div>
                         <p className="text-slate-700"><strong>Formule :</strong> Moto Run</p>
+                        <p className="text-slate-700"><strong>Assureur :</strong> <span className="font-bold text-[#153954]">{selectedCompagnie}</span></p>
                         <p className="text-slate-700"><strong>Durée :</strong> {duree === "1 an*" ? "Annuelle (1 an)" : duree}</p>
                         <div className="mt-2 flex flex-wrap gap-1">
                           <span className="px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 text-[10px] font-bold border border-emerald-200">

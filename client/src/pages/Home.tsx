@@ -35,7 +35,7 @@ export default function Home() {
       ctaPrimary: t("home.hero.slide1.ctaPrimary", "OBTENIR MON TARIF AUTO"),
       ctaPrimaryLink: "/auto/devis-auto",
       ctaSecondary: t("home.hero.slide1.ctaSecondary", "COMPARER MON DEVIS ACTUEL"),
-      ctaSecondaryLink: "/auto",
+      ctaSecondaryLink: "/auto/devis-auto?mode=comparateur",
       image: "/images/hero-car-dealership.png",
       tag: t("home.hero.slide1.tag", "Auto")
     },

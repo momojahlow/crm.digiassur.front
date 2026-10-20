@@ -45,9 +45,11 @@ import {
   Pencil,
   Plus,
   Sparkles,
-  Globe
+  Globe,
+  Building2
 } from "lucide-react";
 import { Link } from "wouter";
+import DevisPartnerComparator from "@/components/DevisPartnerComparator";
 
 interface ProspectState {
   nom: string;
@@ -82,6 +84,7 @@ interface ContratState {
   duree: "Annuelle" | "Semestrielle" | "Trimestrielle";
   debut: string;
   formule: string;
+  compagnie?: string;
   garanties: ContratGaranties;
   servicing: number;
   assistance: number;
@@ -125,6 +128,7 @@ export default function AutoDevisPage() {
     duree: "Annuelle",
     debut: new Date().toISOString().split("T")[0],
     formule: "Sur-Mesure",
+    compagnie: "AtlantaSanad",
     garanties: {
       pta: false,
       inc_vol_bdg: false,
@@ -137,8 +141,11 @@ export default function AutoDevisPage() {
     carte_verte: 0
   });
 
-  // Mode d'affichage de l'Étape 3 : 'sur-mesure' (carte unique interactive) ou '3-formules' (Start, Go, Fast)
-  const [viewMode, setViewMode] = useState<"sur-mesure" | "3-formules">("sur-mesure");
+  // Mode d'affichage de l'Étape 3 : 'sur-mesure', '3-formules' ou 'comparateur' (AtlantaSanad, Sanlam, RMA, AXA, Allianz)
+  const isComparatorRequested = typeof window !== "undefined" && new URLSearchParams(window.location.search).get("mode") === "comparateur";
+  const [viewMode, setViewMode] = useState<"sur-mesure" | "3-formules" | "comparateur">(
+    isComparatorRequested ? "comparateur" : "sur-mesure"
+  );
 
   // Step 5: Document toggles & uploads
   const [showDocuments, setShowDocuments] = useState<boolean>(false);
@@ -910,20 +917,38 @@ export default function AutoDevisPage() {
               {/* STEP 3: DEVIS AUTO - BASCULEMENT SUR-MESURE OU 3 FORMULES */}
               {step === 3 && (
                 <div className="space-y-6 animate-in fade-in duration-300">
-                  {/* Top Bar: Badge + Toggle Button at top right */}
-                  <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-4">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-100/70 text-[#f48161] text-xs font-black uppercase tracking-wider">
-                      <Sparkles className="w-3.5 h-3.5" />
-                      <span>{viewMode === "sur-mesure" ? "Offre Modulaire & Sur-Mesure" : "Comparatif 3 Formules"}</span>
+                  {/* Top Bar Switcher: Sur-Mesure vs 3-Formules vs Comparateur Partenaires */}
+                  <div className="flex flex-wrap items-center justify-between gap-3 bg-white p-3 rounded-2xl border border-slate-200 shadow-xs">
+                    <div className="flex items-center gap-2">
+                      <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                      <span className="text-xs font-black uppercase tracking-wider text-[#153954]">
+                        {viewMode === "sur-mesure" ? "Offre Modulaire Sur-Mesure" : viewMode === "3-formules" ? "Comparatif 3 Formules" : "Comparateur Multi-Assureurs"}
+                      </span>
                     </div>
 
-                    {/* Bouton de basculement positionné tout en haut à droite */}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setViewMode(prev => {
-                          const nextMode = prev === "sur-mesure" ? "3-formules" : "sur-mesure";
-                          if (nextMode === "3-formules" && contrat.formule === "Sur-Mesure") {
+                    {/* Onglets de navigation entre les 3 vues */}
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setViewMode("sur-mesure");
+                          setContrat(c => ({ ...c, formule: "Sur-Mesure" }));
+                        }}
+                        className={`px-3 py-1.5 rounded-full text-xs font-bold transition cursor-pointer flex items-center gap-1.5 ${
+                          viewMode === "sur-mesure"
+                            ? "bg-[#153954] text-white shadow-xs"
+                            : "bg-slate-100 text-slate-600 hover:text-[#153954] hover:bg-slate-200"
+                        }`}
+                      >
+                        <SlidersHorizontal className="w-3.5 h-3.5" />
+                        <span>Sur-Mesure</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setViewMode("3-formules");
+                          if (contrat.formule === "Sur-Mesure") {
                             setContrat(c => ({
                               ...c,
                               formule: "Go",
@@ -935,35 +960,51 @@ export default function AutoDevisPage() {
                                 assistance_vip: false
                               }
                             }));
-                          } else if (nextMode === "sur-mesure") {
-                            setContrat(c => ({
-                              ...c,
-                              formule: "Sur-Mesure"
-                            }));
                           }
-                          return nextMode;
-                        });
-                      }}
-                      className={`inline-flex items-center gap-2 text-xs font-bold px-4 py-2 rounded-full transition-all shrink-0 cursor-pointer shadow-md border ${
-                        viewMode === "sur-mesure"
-                          ? "animate-zoom-pulse bg-gradient-to-r from-orange-50 via-white to-orange-50 border-[#f48161] text-[#153954] hover:shadow-lg hover:border-[#e46e4e]"
-                          : "bg-slate-100 hover:bg-slate-200 text-[#153954] border-slate-200 hover:text-[#f48161]"
-                      }`}
-                    >
-                      <SlidersHorizontal className={`w-3.5 h-3.5 shrink-0 ${viewMode === "sur-mesure" ? "animate-slow-spin text-[#f48161]" : "text-[#153954]"}`} />
-                      <span>{viewMode === "sur-mesure" ? "Voir la version 3 formules classiques" : "Revenir à l'offre personnalisée sur-mesure"}</span>
-                    </button>
+                        }}
+                        className={`px-3 py-1.5 rounded-full text-xs font-bold transition cursor-pointer flex items-center gap-1.5 ${
+                          viewMode === "3-formules"
+                            ? "bg-[#153954] text-white shadow-xs"
+                            : "bg-slate-100 text-slate-600 hover:text-[#153954] hover:bg-slate-200"
+                        }`}
+                      >
+                        <Car className="w-3.5 h-3.5" />
+                        <span>3 Formules</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setViewMode("comparateur")}
+                        className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition cursor-pointer flex items-center gap-1.5 border ${
+                          viewMode === "comparateur"
+                            ? "bg-gradient-to-r from-[#f48161] to-[#e46e4e] text-white border-[#f48161] shadow-md ring-2 ring-[#f48161]/30"
+                            : "animate-zoom-pulse bg-gradient-to-r from-orange-50 via-white to-orange-50 border-[#f48161] text-[#153954] hover:border-[#e46e4e]"
+                        }`}
+                      >
+                        <Building2 className={`w-3.5 h-3.5 ${viewMode === "comparateur" ? "text-white" : "animate-slow-spin text-[#f48161]"}`} />
+                        <span>Comparateur Partenaires</span>
+                        <span className="bg-amber-400 text-slate-900 text-[9px] font-black uppercase px-1.5 py-0.2 rounded-full shadow-2xs">
+                          Nouveau
+                        </span>
+                      </button>
+                    </div>
                   </div>
 
                   {/* Header Title & Subtitle */}
                   <div>
                     <h2 className="text-xl md:text-2xl font-black text-slate-800">
-                      {viewMode === "sur-mesure" ? "Votre Couverture Auto Personnalisée" : "Choisissez votre formule Digiassur"}
+                      {viewMode === "sur-mesure" 
+                        ? "Votre Couverture Auto Personnalisée" 
+                        : viewMode === "3-formules" 
+                          ? "Choisissez votre formule Digiassur" 
+                          : "Comparateur des Offres Partenaires (AtlantaSanad, Sanlam, RMA, AXA, Allianz)"}
                     </h2>
                     <p className="text-slate-500 text-xs md:text-sm mt-0.5">
                       {viewMode === "sur-mesure" 
                         ? "Démarrez avec le prix de base Start et cochez / décochez vos garanties pour suivre l'évolution de votre tarif en direct."
-                        : "Comparez nos formules Start, Go et Fast pour votre véhicule."}
+                        : viewMode === "3-formules"
+                          ? "Comparez nos formules Start, Go et Fast pour votre véhicule."
+                          : "Comparez en direct les tarifs négociés et les avantages exclusifs de nos compagnies d'assurance partenaires."}
                     </p>
                   </div>
 
@@ -1561,6 +1602,24 @@ export default function AutoDevisPage() {
                         </div>
                       </div>
                     </div>
+                  )}
+
+                  {/* VUE 3: COMPARATEUR MULTI-ASSUREURS PARTENAIRES */}
+                  {viewMode === "comparateur" && (
+                    <DevisPartnerComparator
+                      type="auto"
+                      basePrice={activeFormulaPrice}
+                      duree={contrat.duree}
+                      formuleActive={contrat.formule}
+                      selectedCompagnie={contrat.compagnie || "AtlantaSanad"}
+                      onSelectCompagnie={(compagnie) => {
+                        setContrat(c => ({
+                          ...c,
+                          compagnie
+                        }));
+                      }}
+                      onProceed={() => setStep(4)}
+                    />
                   )}
                 </div>
               )}
@@ -2201,6 +2260,7 @@ export default function AutoDevisPage() {
                         </button>
                       </div>
                       <p className="text-slate-700"><strong>Formule :</strong> <span className="font-black text-[#f48161]">{contrat.formule}</span></p>
+                      <p className="text-slate-700"><strong>Assureur :</strong> <span className="font-bold text-[#153954]">{contrat.compagnie || "AtlantaSanad"}</span></p>
                       <p className="text-slate-700"><strong>Durée :</strong> {contrat.duree}</p>
                       
                       {/* Badges des garanties incluses et choisies */}

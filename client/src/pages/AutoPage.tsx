@@ -60,7 +60,7 @@ export default function AutoPage() {
                       </Link>
 
                       <Link
-                        href="/auto/devis-auto"
+                        href="/auto/devis-auto?mode=comparateur"
                         className="inline-flex items-center gap-2 bg-[#689ebd] hover:bg-[#588da9] text-white font-bold text-sm tracking-wider uppercase px-7 py-3.5 shadow-lg transition transform hover:-translate-y-0.5 cursor-pointer"
                       >
                         <span>COMPARER MON DEVIS ACTUEL</span>
@@ -132,7 +132,7 @@ export default function AutoPage() {
                     OBTENIR MON TARIF AUTO
                   </Link>
                   <Link
-                    href="/auto/devis-auto"
+                    href="/auto/devis-auto?mode=comparateur"
                     className="inline-flex items-center gap-2 bg-[#689ebd] hover:bg-[#588da9] text-white font-bold text-xs uppercase px-7 py-3.5 shadow-md cursor-pointer transition"
                   >
                     COMPARER MON DEVIS ACTUEL
