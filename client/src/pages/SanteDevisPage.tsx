@@ -20,7 +20,8 @@ import {
   Stethoscope, 
   FileText, 
   Upload,
-  Users
+  Users,
+  Send
 } from "lucide-react";
 import { Link } from "wouter";
 import { MOROCCAN_CITIES } from "@/data/motoBrands";
@@ -60,6 +61,12 @@ export default function SanteDevisPage() {
     if (!formData.cgu) errs.cgu = "Veuillez accepter les CGU";
     setErrors(errs);
     return Object.keys(errs).length === 0;
+  };
+
+  const handleFileUpload = (docKey: string, e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setUploadedFiles(prev => ({ ...prev, [docKey]: e.target.files![0] }));
+    }
   };
 
   const handleNext = (e: React.FormEvent) => {
@@ -379,76 +386,133 @@ export default function SanteDevisPage() {
           )}
 
           {step === 2 && (
-            <div className="bg-white p-6 md:p-10 rounded-2xl shadow-sm border border-slate-200 text-center animate-in fade-in zoom-in-95 duration-300">
-              <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                <CheckCircle2 className="w-10 h-10" />
+            <div className="bg-white p-6 md:p-10 rounded-2xl shadow-sm border border-slate-200 text-center animate-in zoom-in-95 duration-300 space-y-6">
+              <div className="w-20 h-20 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-sm">
+                <CheckCircle2 className="w-12 h-12" />
               </div>
 
-              <h2 className="text-2xl md:text-3xl font-extrabold text-slate-800 mb-2">
-                Félicitations {formData.prenom} {formData.nom} !
+              <h2 className="text-2xl md:text-3xl font-black uppercase text-[#153954]">
+                Félicitations, votre devis est prêt !
               </h2>
-              <p className="text-slate-600 max-w-xl mx-auto mb-6 text-sm md:text-base">
-                Votre demande de devis <strong>Assurance Santé Complémentaire</strong> a bien été enregistrée.
-                Un de nos conseillers experts en couverture médicale étudie votre profil et vous transmettra les meilleures offres de nos partenaires d'ici 15 minutes.
-              </p>
 
-              {/* Récapitulatif */}
-              <div className="bg-slate-50 border border-slate-200 rounded-xl p-5 max-w-lg mx-auto text-left mb-6 text-xs md:text-sm space-y-2">
-                <div className="font-bold text-slate-700 border-b pb-2 flex items-center justify-between">
-                  <span>Récapitulatif de votre demande</span>
-                  <span className="text-[#4b7f9c] font-semibold">{formData.typeCouverture}</span>
+              <div className="max-w-2xl mx-auto text-slate-600 text-sm md:text-base leading-relaxed space-y-2">
+                <p>
+                  Votre devis Digiassur Santé & Complémentaire <strong>N° DS-{Math.floor(100000 + Math.random() * 900000)}</strong> a été généré avec succès.
+                </p>
+                <p>
+                  Une copie détaillée a été envoyée à l'adresse <strong>{formData.email || "votre adresse email"}</strong> et nos conseillers experts vont vous joindre au <strong>{formData.telephone || "votre numéro"}</strong>.
+                </p>
+                <p className="text-xs text-slate-400">
+                  Afin d'accélérer l'émission immédiate de votre attestation d'adhésion, vous pouvez nous transmettre vos pièces justificatives dès maintenant.
+                </p>
+              </div>
+
+              {/* Récapitulatif Santé */}
+              <div className="bg-[#fef1eb] p-6 rounded-2xl border border-orange-200 text-left max-w-xl mx-auto text-xs sm:text-sm space-y-2.5 shadow-xs">
+                <div className="flex items-center justify-between border-b border-orange-200/70 pb-3 mb-2">
+                  <div>
+                    <span className="text-xs uppercase text-orange-800 font-bold tracking-wider">Couverture</span>
+                    <div className="text-base sm:text-lg font-extrabold text-[#153954]">
+                      Formule {formData.typeCouverture}
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-xs uppercase text-orange-800 font-bold tracking-wider">Taux de remboursement</span>
+                    <div className="text-base sm:text-lg font-extrabold text-emerald-700">
+                      {formData.tauxRemboursement}
+                    </div>
+                  </div>
                 </div>
-                <div className="flex justify-between text-slate-600">
-                  <span>Adhérent :</span>
-                  <span className="font-semibold text-slate-800">{formData.nom} {formData.prenom}</span>
-                </div>
-                <div className="flex justify-between text-slate-600">
-                  <span>Téléphone :</span>
-                  <span className="font-semibold text-slate-800">{formData.telephone}</span>
-                </div>
-                <div className="flex justify-between text-slate-600">
-                  <span>Email :</span>
-                  <span className="font-semibold text-slate-800">{formData.email}</span>
-                </div>
-                <div className="flex justify-between text-slate-600">
-                  <span>Ville :</span>
-                  <span className="font-semibold text-slate-800">{formData.ville}</span>
-                </div>
-                <div className="flex justify-between text-slate-600">
-                  <span>Taux souhaité :</span>
-                  <span className="font-semibold text-emerald-600">{formData.tauxRemboursement}</span>
-                </div>
-                <div className="flex justify-between text-slate-600">
-                  <span>Plafond annuel :</span>
-                  <span className="font-semibold text-slate-800">{formData.plafondAnnuel}</span>
+
+                <div className="grid grid-cols-2 gap-3 text-slate-700">
+                  <div>
+                    <span className="text-slate-500 block">Adhérent :</span>
+                    <strong>{formData.nom} {formData.prenom}</strong>
+                  </div>
+                  <div>
+                    <span className="text-slate-500 block">Plafond annuel :</span>
+                    <strong>{formData.plafondAnnuel}</strong>
+                  </div>
+                  <div>
+                    <span className="text-slate-500 block">Date de début :</span>
+                    <strong>{formData.datePriseEffet}</strong>
+                  </div>
+                  <div>
+                    <span className="text-slate-500 block">Ville :</span>
+                    <strong>{formData.ville}</strong>
+                  </div>
                 </div>
               </div>
 
-              {/* Action buttons */}
-              <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
-                <a
-                  href={`https://wa.me/212675289966?text=Bonjour%20DigiAssur,%20je%20souhaite%20finaliser%20mon%20devis%20Assurance%20Sante%20pour%20${encodeURIComponent(formData.nom + ' ' + formData.prenom)}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="w-full sm:w-auto px-6 py-3 bg-[#25D366] hover:bg-[#20ba59] text-white rounded-full font-bold text-sm shadow flex items-center justify-center gap-2 transition"
-                >
-                  <span>Accélérer mon devis sur WhatsApp</span>
-                </a>
+              {/* Document Requis pour la Santé : Juste CIN Recto et Verso */}
+              <div className="pt-4 text-left border-t border-slate-100">
+                <div className="mb-4 text-center sm:text-left">
+                  <h3 className="text-base font-bold text-slate-800 flex items-center justify-center sm:justify-start gap-2">
+                    <Upload className="w-4 h-4 text-[#f48360]" />
+                    <span>Pièce justificative requise</span>
+                  </h3>
+                  <p className="text-xs text-slate-500 mt-0.5">
+                    Téléversez votre carte d'identité (CIN) recto et verso pour valider l'adhésion immédiate à votre couverture santé.
+                  </p>
+                </div>
 
-                <button
-                  onClick={() => setStep(1)}
-                  className="w-full sm:w-auto px-6 py-3 border border-slate-300 text-slate-700 hover:bg-slate-50 rounded-full font-semibold text-sm flex items-center justify-center gap-2 transition"
-                >
-                  <RotateCcw className="w-4 h-4" />
-                  <span>Modifier mes informations</span>
-                </button>
+                <div className="max-w-xl mx-auto bg-slate-50 p-5 rounded-xl border border-slate-200">
+                  <h4 className="font-bold text-sm text-[#153954] mb-3 flex items-center gap-2">
+                    <User className="w-4 h-4 text-[#f48360]" />
+                    <span>Carte d'Identité Nationale (CIN)</span>
+                  </h4>
 
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-[11px] font-bold text-slate-500 mb-1">CIN RECTO</label>
+                      <label className="border border-dashed border-slate-300 rounded-lg p-2.5 flex items-center justify-between cursor-pointer hover:bg-white text-xs transition">
+                        <span className="truncate max-w-[140px] text-slate-600">
+                          {uploadedFiles["cin_recto"]?.name || "Parcourir le fichier..."}
+                        </span>
+                        <input type="file" className="hidden" onChange={e => handleFileUpload("cin_recto", e)} />
+                        <Upload className="w-4 h-4 text-[#f48360]" />
+                      </label>
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] font-bold text-slate-500 mb-1">CIN VERSO</label>
+                      <label className="border border-dashed border-slate-300 rounded-lg p-2.5 flex items-center justify-between cursor-pointer hover:bg-white text-xs transition">
+                        <span className="truncate max-w-[140px] text-slate-600">
+                          {uploadedFiles["cin_verso"]?.name || "Parcourir le fichier..."}
+                        </span>
+                        <input type="file" className="hidden" onChange={e => handleFileUpload("cin_verso", e)} />
+                        <Upload className="w-4 h-4 text-[#f48360]" />
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Bottom Actions Space Between */}
+              <div className="pt-6 flex flex-wrap items-center justify-between gap-4 border-t border-slate-100">
                 <Link
                   href="/sante"
-                  className="w-full sm:w-auto px-6 py-3 bg-slate-800 hover:bg-slate-900 text-white rounded-full font-semibold text-sm flex items-center justify-center gap-2 transition"
+                  className="px-6 py-3.5 rounded-full font-bold text-xs uppercase tracking-wider bg-slate-100 hover:bg-slate-200 text-slate-700 shadow-xs inline-flex items-center gap-2 transition cursor-pointer"
                 >
+                  <ArrowLeft className="w-4 h-4" />
                   <span>Retour à la page Santé</span>
                 </Link>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    const count = Object.keys(uploadedFiles).length;
+                    if (count === 0) {
+                      alert("Veuillez sélectionner au moins un document avant d'envoyer.");
+                    } else {
+                      alert(`${count} document(s) transmis avec succès à nos équipes Digiassur.`);
+                    }
+                  }}
+                  className="px-8 py-3.5 rounded-full font-bold text-xs uppercase tracking-wider bg-[#f48360] hover:bg-orange-600 text-white shadow-lg inline-flex items-center gap-2 cursor-pointer transition transform hover:-translate-y-0.5"
+                >
+                  <Send className="w-4 h-4" />
+                  <span>Envoyer mes documents</span>
+                </button>
               </div>
             </div>
           )}

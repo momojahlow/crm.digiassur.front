@@ -19,7 +19,8 @@ import {
   Globe2, 
   Upload, 
   FileText,
-  RotateCcw
+  RotateCcw,
+  Send
 } from "lucide-react";
 import { Link } from "wouter";
 
@@ -75,6 +76,13 @@ export default function VoyageDevisPage() {
 
   const [cgu, setCgu] = useState<boolean>(true);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [uploadedFiles, setUploadedFiles] = useState<Record<string, File>>({});
+
+  const handleFileUpload = (docKey: string, e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setUploadedFiles(prev => ({ ...prev, [docKey]: e.target.files![0] }));
+    }
+  };
 
   const validateStep = (s: number) => {
     const errs: Record<string, string> = {};
@@ -689,67 +697,177 @@ export default function VoyageDevisPage() {
               </div>
             )}
 
-            {/* STEP 5: CONFIRMATION */}
+            {/* STEP 5: CONFIRMATION & DOCUMENTS (Standard Auto & Moto) */}
             {step === 5 && (
-              <div className="text-center space-y-6 animate-in zoom-in-95 duration-200">
-                <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto">
-                  <CheckCircle2 className="w-10 h-10" />
+              <div className="space-y-6 text-center animate-in zoom-in-95 duration-200">
+                <div className="w-20 h-20 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-sm">
+                  <CheckCircle2 className="w-12 h-12" />
                 </div>
 
-                <h2 className="text-2xl text-[#f48360] md:text-3xl font-bold uppercase">
-                  Félicitations {assure.prenom} !
+                <h2 className="text-2xl md:text-3xl font-black uppercase text-[#153954]">
+                  Félicitations, votre devis est prêt !
                 </h2>
 
-                <p className="text-base text-slate-600 max-w-xl mx-auto leading-relaxed">
-                  Votre devis d'assurance voyage pour <strong>{assure.destination}</strong> (du {assure.dateDepart} au {assure.dateRetour}) a été validé.
-                  Votre attestation consulaire pour visa vous a été transmise à <strong>{assure.email}</strong>.
-                </p>
+                <div className="max-w-2xl mx-auto text-slate-600 text-sm md:text-base leading-relaxed space-y-2">
+                  <p>
+                    Votre devis Digiassur Voyage <strong>N° DV-{Math.floor(100000 + Math.random() * 900000)}</strong> a été généré avec succès.
+                  </p>
+                  <p>
+                    Une copie détaillée a été envoyée à l'adresse <strong>{assure.email || "votre adresse email"}</strong> et nos conseillers vont vous joindre au <strong>{assure.telephone || "votre numéro"}</strong>.
+                  </p>
+                  <p className="text-xs text-slate-400">
+                    Afin d'accélérer l'émission immédiate de votre attestation d'assurance, vous pouvez nous transmettre vos pièces justificatives dès maintenant.
+                  </p>
+                </div>
 
-                <div className="bg-[#fef1eb] p-6 rounded-2xl border border-orange-200 text-left max-w-md mx-auto text-xs space-y-2">
-                  <div className="flex justify-between">
-                    <span className="text-slate-500">Souscripteur :</span>
-                    <strong>{assure.prenom} {assure.nom}</strong>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-slate-500">Passeport :</span>
-                    <strong>{assure.passeport}</strong>
-                  </div>
-                  {famille.enCouple === "oui" && (
-                    <div className="flex justify-between">
-                      <span className="text-slate-500">Conjoint(e) :</span>
-                      <strong>{famille.conjointPrenom ? `${famille.conjointPrenom} ` : ""}{famille.conjointNom}</strong>
+                {/* Summary Card */}
+                <div className="bg-[#fef1eb] p-6 rounded-2xl border border-orange-200 text-left max-w-xl mx-auto text-xs sm:text-sm space-y-2.5 shadow-xs">
+                  <div className="flex items-center justify-between border-b border-orange-200/70 pb-3 mb-2">
+                    <div>
+                      <span className="text-xs uppercase text-orange-800 font-bold tracking-wider">Destination</span>
+                      <div className="text-base sm:text-lg font-extrabold text-[#153954]">
+                        {assure.destination}
+                      </div>
                     </div>
-                  )}
-                  {famille.avecEnfants === "oui" && (
-                    <div className="flex justify-between">
-                      <span className="text-slate-500">Enfants accompagnants :</span>
-                      <strong>{famille.nombreEnfants} {parseInt(famille.nombreEnfants, 10) > 1 ? "enfants" : "enfant"}</strong>
+                    <div className="text-right">
+                      <span className="text-xs uppercase text-orange-800 font-bold tracking-wider">Prime TTC</span>
+                      <div className="text-xl font-extrabold text-[#f48360]">
+                        650.00 DHS
+                      </div>
                     </div>
-                  )}
-                  <div className="flex justify-between">
-                    <span className="text-slate-500">Plafond médical :</span>
-                    <strong>30 000 € (300 000 DHS)</strong>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-slate-500">Prime TTC :</span>
-                    <strong className="text-base text-[#f48360]">650.00 DHS</strong>
+
+                  <div className="grid grid-cols-2 gap-3 text-slate-700">
+                    <div>
+                      <span className="text-slate-500 block">Souscripteur :</span>
+                      <strong>{assure.prenom} {assure.nom}</strong>
+                    </div>
+                    <div>
+                      <span className="text-slate-500 block">N° Passeport :</span>
+                      <strong>{assure.passeport}</strong>
+                    </div>
+                    <div>
+                      <span className="text-slate-500 block">Dates du séjour :</span>
+                      <strong>Du {assure.dateDepart} au {assure.dateRetour}</strong>
+                    </div>
+                    <div>
+                      <span className="text-slate-500 block">Plafond médical :</span>
+                      <strong className="text-emerald-700">30 000 € (300 000 DH)</strong>
+                    </div>
+                    {famille.enCouple === "oui" && (
+                      <div>
+                        <span className="text-slate-500 block">Conjoint(e) :</span>
+                        <strong>{famille.conjointPrenom ? `${famille.conjointPrenom} ` : ""}{famille.conjointNom}</strong>
+                      </div>
+                    )}
+                    {famille.avecEnfants === "oui" && (
+                      <div>
+                        <span className="text-slate-500 block">Enfants :</span>
+                        <strong>{famille.nombreEnfants} {parseInt(famille.nombreEnfants, 10) > 1 ? "enfants" : "enfant"}</strong>
+                      </div>
+                    )}
                   </div>
                 </div>
 
-                <div className="flex justify-center gap-4 pt-4">
+                {/* Documents Requis pour le Voyage (Juste CIN et Passeport) */}
+                <div className="pt-4 text-left border-t border-slate-100">
+                  <div className="mb-4 text-center sm:text-left">
+                    <h3 className="text-base font-bold text-slate-800 flex items-center justify-center sm:justify-start gap-2">
+                      <Upload className="w-4 h-4 text-[#f48360]" />
+                      <span>Documents requis pour l'émission de votre attestation</span>
+                    </h3>
+                    <p className="text-xs text-slate-500 mt-0.5">
+                      Joignez vos pièces d'identité dès maintenant pour valider votre dossier dans les plus brefs délais.
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2 max-w-2xl mx-auto">
+                    {/* 1. CIN */}
+                    <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                      <h4 className="font-bold text-sm text-[#153954] mb-3 flex items-center gap-2">
+                        <User className="w-4 h-4 text-[#f48360]" />
+                        <span>Carte d'Identité (CIN)</span>
+                      </h4>
+
+                      <div className="space-y-3">
+                        <div>
+                          <label className="block text-[11px] font-bold text-slate-500 mb-1">CIN RECTO</label>
+                          <label className="border border-dashed border-slate-300 rounded-lg p-2.5 flex items-center justify-between cursor-pointer hover:bg-white text-xs transition">
+                            <span className="truncate max-w-[140px] text-slate-600">
+                              {uploadedFiles["cin_recto"]?.name || "Parcourir le fichier..."}
+                            </span>
+                            <input type="file" className="hidden" onChange={e => handleFileUpload("cin_recto", e)} />
+                            <Upload className="w-4 h-4 text-[#f48360]" />
+                          </label>
+                        </div>
+
+                        <div>
+                          <label className="block text-[11px] font-bold text-slate-500 mb-1">CIN VERSO</label>
+                          <label className="border border-dashed border-slate-300 rounded-lg p-2.5 flex items-center justify-between cursor-pointer hover:bg-white text-xs transition">
+                            <span className="truncate max-w-[140px] text-slate-600">
+                              {uploadedFiles["cin_verso"]?.name || "Parcourir le fichier..."}
+                            </span>
+                            <input type="file" className="hidden" onChange={e => handleFileUpload("cin_verso", e)} />
+                            <Upload className="w-4 h-4 text-[#f48360]" />
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* 2. PASSEPORT */}
+                    <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-col justify-between">
+                      <div>
+                        <h4 className="font-bold text-sm text-[#153954] mb-3 flex items-center gap-2">
+                          <Globe2 className="w-4 h-4 text-[#f48360]" />
+                          <span>Passeport international</span>
+                        </h4>
+
+                        <div className="space-y-3">
+                          <div>
+                            <label className="block text-[11px] font-bold text-slate-500 mb-1">PAGE D'IDENTITÉ PHOTO</label>
+                            <label className="border border-dashed border-slate-300 rounded-lg p-2.5 flex items-center justify-between cursor-pointer hover:bg-white text-xs transition">
+                              <span className="truncate max-w-[140px] text-slate-600">
+                                {uploadedFiles["passeport_photo"]?.name || "Parcourir le fichier..."}
+                              </span>
+                              <input type="file" className="hidden" onChange={e => handleFileUpload("passeport_photo", e)} />
+                              <Upload className="w-4 h-4 text-[#f48360]" />
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+
+                      <p className="text-[11px] text-slate-400 leading-relaxed pt-3">
+                        Obligatoire pour les attestations conformes aux demandes de Visa Schengen ou internationales.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Bottom Actions Space Between */}
+                <div className="pt-6 flex flex-wrap items-center justify-between gap-4 border-t border-slate-100">
+                  <Link
+                    href="/voyage"
+                    className="px-6 py-3.5 rounded-full font-bold text-xs uppercase tracking-wider bg-slate-100 hover:bg-slate-200 text-slate-700 shadow-xs inline-flex items-center gap-2 transition cursor-pointer"
+                  >
+                    <ArrowLeft className="w-4 h-4" />
+                    <span>Retour à la page Voyage</span>
+                  </Link>
+
                   <button
                     type="button"
-                    onClick={() => setStep(1)}
-                    className="px-6 py-2.5 rounded-full bg-[#4b7f9c] text-white font-bold text-xs uppercase"
+                    onClick={() => {
+                      const count = Object.keys(uploadedFiles).length;
+                      if (count === 0) {
+                        alert("Veuillez sélectionner au moins un document avant d'envoyer.");
+                      } else {
+                        alert(`${count} document(s) transmis avec succès à nos équipes Digiassur.`);
+                      }
+                    }}
+                    className="px-8 py-3.5 rounded-full font-bold text-xs uppercase tracking-wider bg-[#f48360] hover:bg-orange-600 text-white shadow-lg inline-flex items-center gap-2 cursor-pointer transition transform hover:-translate-y-0.5"
                   >
-                    Nouveau devis voyage
+                    <Send className="w-4 h-4" />
+                    <span>Envoyer mes documents</span>
                   </button>
-                  <Link
-                    href="/"
-                    className="px-6 py-2.5 rounded-full bg-[#f48360] text-white font-bold text-xs uppercase"
-                  >
-                    Retour à l'accueil
-                  </Link>
                 </div>
               </div>
             )}

@@ -18,7 +18,8 @@ import {
   Briefcase, 
   CheckCircle2, 
   Upload, 
-  FileText
+  FileText,
+  Send
 } from "lucide-react";
 import { Link } from "wouter";
 
@@ -1274,44 +1275,41 @@ export default function AccidentDevisPage() {
           )}
 
           {/* ============================================================== */}
-          {/* ÉTAPE 3: CONFIRMATION & ENVOI DES DOCUMENTS (FIGMA EXACT)       */}
+          {/* ÉTAPE 3: CONFIRMATION & DOCUMENTS (Standard Auto & Moto)       */}
           {/* ============================================================== */}
           {step === 3 && (
-            <div className="max-w-4xl mx-auto bg-white p-6 md:p-12 rounded-2xl shadow-sm border border-slate-200 text-center animate-in zoom-in-95 duration-200">
-              <h2 className="text-2xl text-[#f48360] md:text-3xl lg:text-4xl font-bold uppercase mb-6 px-4">
-                Félicitations !
-              </h2>
-
-              <div className="mx-auto p-4 max-w-2xl text-lg md:text-2xl text-gray-600 font-bold leading-relaxed mb-8">
-                Vous allez recevoir par email votre devis dans quelques minutes.<br />
-                Suivez ensuite les instructions pour finaliser l'assurance de votre devis accident.<br />
-                Afin d'accélérer le processus d'obtention d'un devis définitif,<br />
-                veuillez cliquer sur le bouton suivant pour nous envoyer les documents requis :
+            <div className="max-w-4xl mx-auto bg-white p-6 md:p-10 rounded-2xl shadow-sm border border-slate-200 text-center animate-in zoom-in-95 duration-200 space-y-6">
+              <div className="w-20 h-20 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-sm">
+                <CheckCircle2 className="w-12 h-12" />
               </div>
 
-              {/* Documents Button */}
-              <div className="mb-10">
-                <button
-                  type="button"
-                  onClick={() => setShowDocsModal(true)}
-                  className="inline-flex items-center gap-2 px-8 py-3.5 bg-[#f48360] hover:bg-orange-600 text-white font-bold text-sm uppercase rounded-full shadow-lg transition cursor-pointer"
-                >
-                  <Upload className="w-5 h-5" />
-                  <span>Afficher les documents requis</span>
-                </button>
+              <h2 className="text-2xl md:text-3xl font-black uppercase text-[#153954]">
+                Félicitations, votre devis est prêt !
+              </h2>
+
+              <div className="max-w-2xl mx-auto text-slate-600 text-sm md:text-base leading-relaxed space-y-2">
+                <p>
+                  Votre devis Digiassur Individuelle Accident <strong>N° DA-{Math.floor(100000 + Math.random() * 900000)}</strong> a été généré avec succès.
+                </p>
+                <p>
+                  Une copie détaillée a été envoyée à l'adresse <strong>{prospect.email || "votre adresse email"}</strong> et nos conseillers vont vous joindre au <strong>{prospect.telephone || "votre numéro"}</strong>.
+                </p>
+                <p className="text-xs text-slate-400">
+                  Afin d'accélérer l'émission immédiate de votre attestation d'assurance, vous pouvez nous transmettre vos pièces justificatives dès maintenant.
+                </p>
               </div>
 
               {/* Summary Card */}
-              <div className="bg-[#fef1eb] p-6 rounded-2xl border border-orange-200 text-left max-w-xl mx-auto mb-10 text-sm">
-                <div className="flex items-center justify-between border-b border-orange-200 pb-3 mb-3">
+              <div className="bg-[#fef1eb] p-6 rounded-2xl border border-orange-200 text-left max-w-xl mx-auto text-sm shadow-xs">
+                <div className="flex items-center justify-between border-b border-orange-200/70 pb-3 mb-3">
                   <div>
-                    <span className="text-xs uppercase text-orange-800 font-bold">Formule</span>
+                    <span className="text-xs uppercase text-orange-800 font-bold tracking-wider">Formule</span>
                     <div className="text-lg font-extrabold text-[#153954]">
                       FORMULE {formule.toUpperCase()}
                     </div>
                   </div>
                   <div className="text-right">
-                    <span className="text-xs uppercase text-orange-800 font-bold">Prime Annuelle TTC</span>
+                    <span className="text-xs uppercase text-orange-800 font-bold tracking-wider">Prime Annuelle TTC</span>
                     <div className="text-xl font-extrabold text-[#f48360]">
                       {currentTotal} DHS
                     </div>
@@ -1320,131 +1318,94 @@ export default function AccidentDevisPage() {
 
                 <div className="grid grid-cols-2 gap-3 text-slate-700 text-xs">
                   <div>
-                    <span className="text-slate-500 block">Assuré</span>
+                    <span className="text-slate-500 block">Assuré :</span>
                     <strong>{prospect.prenom} {prospect.nom}</strong>
                   </div>
                   <div>
-                    <span className="text-slate-500 block">Téléphone</span>
+                    <span className="text-slate-500 block">Téléphone :</span>
                     <strong>{prospect.telephone}</strong>
                   </div>
                   <div>
-                    <span className="text-slate-500 block">Capital décès</span>
-                    <strong>{currentCapital}</strong>
+                    <span className="text-slate-500 block">Capital décès :</span>
+                    <strong className="text-emerald-700">{currentCapital}</strong>
                   </div>
                   <div>
-                    <span className="text-slate-500 block">Date d'effet</span>
+                    <span className="text-slate-500 block">Date d'effet :</span>
                     <strong>{debut}</strong>
                   </div>
                 </div>
               </div>
 
-              {/* Bottom Actions */}
-              <div className="flex flex-wrap justify-between items-center gap-4 pt-6 border-t border-slate-100">
-                <button
-                  type="button"
-                  onClick={resetAllData}
-                  className="btn text-white gap-2 px-6 py-2.5 rounded-full bg-[#4b7f9c] hover:bg-cyan-700 transition flex items-center font-bold text-sm cursor-pointer shadow-md"
-                >
-                  <RotateCcw className="w-4 h-4" />
-                  <span>Réinitialiser</span>
-                </button>
+              {/* Document Requis pour l'Accident : Juste CIN Recto et Verso */}
+              <div className="pt-4 text-left border-t border-slate-100">
+                <div className="mb-4 text-center sm:text-left">
+                  <h3 className="text-base font-bold text-slate-800 flex items-center justify-center sm:justify-start gap-2">
+                    <Upload className="w-4 h-4 text-[#f48360]" />
+                    <span>Pièce justificative requise</span>
+                  </h3>
+                  <p className="text-xs text-slate-500 mt-0.5">
+                    Téléversez votre carte d'identité (CIN) recto et verso pour valider l'émission immédiate de votre contrat garantie accident.
+                  </p>
+                </div>
 
-                <Link
-                  href="/"
-                  className="btn text-white gap-2 px-8 py-2.5 rounded-full bg-[#f48360] hover:bg-orange-600 transition flex items-center font-bold text-sm cursor-pointer shadow-md shadow-orange-200"
-                >
-                  <span>Retour à l'accueil</span>
-                  <ArrowRight className="w-4 h-4" />
-                </Link>
-              </div>
+                <div className="max-w-xl mx-auto bg-slate-50 p-5 rounded-xl border border-slate-200">
+                  <h4 className="font-bold text-sm text-[#153954] mb-3 flex items-center gap-2">
+                    <User className="w-4 h-4 text-[#f48360]" />
+                    <span>Carte d'Identité Nationale (CIN)</span>
+                  </h4>
 
-              {/* Modal for Documents Upload */}
-              {showDocsModal && (
-                <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4 backdrop-blur-2xs">
-                  <div className="bg-white rounded-2xl max-w-lg w-full p-6 text-left shadow-2xl space-y-5 animate-in zoom-in-95">
-                    <div className="flex items-center justify-between border-b pb-3">
-                      <h3 className="font-extrabold text-lg text-slate-800">Documents Requis</h3>
-                      <button
-                        onClick={() => setShowDocsModal(false)}
-                        className="text-slate-400 hover:text-slate-600 p-1 cursor-pointer"
-                      >
-                        <X className="w-5 h-5" />
-                      </button>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-[11px] font-bold text-slate-500 mb-1">CIN RECTO</label>
+                      <label className="border border-dashed border-slate-300 rounded-lg p-2.5 flex items-center justify-between cursor-pointer hover:bg-white text-xs transition">
+                        <span className="truncate max-w-[140px] text-slate-600">
+                          {uploadedFiles["cin_recto"]?.name || "Parcourir le fichier..."}
+                        </span>
+                        <input type="file" className="hidden" onChange={e => handleFileUpload("cin_recto", e)} />
+                        <Upload className="w-4 h-4 text-[#f48360]" />
+                      </label>
                     </div>
 
-                    <p className="text-xs text-slate-500">
-                      Veuillez téléverser vos documents (formats acceptés: PNG, JPG, PDF) :
-                    </p>
-
-                    <div className="space-y-3">
-                      {/* CIN */}
-                      <div className="p-3.5 rounded-xl border border-dashed border-slate-300 bg-slate-50 flex items-center justify-between">
-                        <div>
-                          <div className="font-bold text-xs text-slate-800">CIN (Recto / Verso) *</div>
-                          <div className="text-[11px] text-slate-400">
-                            {uploadedFiles["cin"] ? uploadedFiles["cin"].name : "Aucun fichier sélectionné"}
-                          </div>
-                        </div>
-                        <div>
-                          <input
-                            type="file"
-                            id="file-cin"
-                            className="hidden"
-                            onChange={e => handleFileUpload("cin", e)}
-                          />
-                          <label
-                            htmlFor="file-cin"
-                            className="px-3 py-1.5 bg-[#4b7f9c] text-white text-xs font-bold rounded-lg cursor-pointer hover:bg-cyan-700"
-                          >
-                            Parcourir
-                          </label>
-                        </div>
-                      </div>
-
-                      {/* Permis ou Justificatif */}
-                      <div className="p-3.5 rounded-xl border border-dashed border-slate-300 bg-slate-50 flex items-center justify-between">
-                        <div>
-                          <div className="font-bold text-xs text-slate-800">Justificatif d'activité (Optionnel)</div>
-                          <div className="text-[11px] text-slate-400">
-                            {uploadedFiles["justif"] ? uploadedFiles["justif"].name : "Aucun fichier sélectionné"}
-                          </div>
-                        </div>
-                        <div>
-                          <input
-                            type="file"
-                            id="file-justif"
-                            className="hidden"
-                            onChange={e => handleFileUpload("justif", e)}
-                          />
-                          <label
-                            htmlFor="file-justif"
-                            className="px-3 py-1.5 bg-[#4b7f9c] text-white text-xs font-bold rounded-lg cursor-pointer hover:bg-cyan-700"
-                          >
-                            Parcourir
-                          </label>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="flex justify-end gap-3 pt-3 border-t">
-                      <button
-                        type="button"
-                        onClick={() => setShowDocsModal(false)}
-                        className="px-4 py-2 border rounded-lg text-xs font-bold text-slate-600 hover:bg-slate-50 cursor-pointer"
-                      >
-                        Fermer
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setShowDocsModal(false)}
-                        className="px-5 py-2 bg-[#f48360] hover:bg-orange-600 text-white text-xs font-bold rounded-lg shadow-sm cursor-pointer"
-                      >
-                        Enregistrer
-                      </button>
+                    <div>
+                      <label className="block text-[11px] font-bold text-slate-500 mb-1">CIN VERSO</label>
+                      <label className="border border-dashed border-slate-300 rounded-lg p-2.5 flex items-center justify-between cursor-pointer hover:bg-white text-xs transition">
+                        <span className="truncate max-w-[140px] text-slate-600">
+                          {uploadedFiles["cin_verso"]?.name || "Parcourir le fichier..."}
+                        </span>
+                        <input type="file" className="hidden" onChange={e => handleFileUpload("cin_verso", e)} />
+                        <Upload className="w-4 h-4 text-[#f48360]" />
+                      </label>
                     </div>
                   </div>
                 </div>
-              )}
+              </div>
+
+              {/* Bottom Actions Space Between */}
+              <div className="pt-6 flex flex-wrap items-center justify-between gap-4 border-t border-slate-100">
+                <Link
+                  href="/accident"
+                  className="px-6 py-3.5 rounded-full font-bold text-xs uppercase tracking-wider bg-slate-100 hover:bg-slate-200 text-slate-700 shadow-xs inline-flex items-center gap-2 transition cursor-pointer"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                  <span>Retour à la page Accident</span>
+                </Link>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    const count = Object.keys(uploadedFiles).length;
+                    if (count === 0) {
+                      alert("Veuillez sélectionner au moins un document avant d'envoyer.");
+                    } else {
+                      alert(`${count} document(s) transmis avec succès à nos équipes Digiassur.`);
+                    }
+                  }}
+                  className="px-8 py-3.5 rounded-full font-bold text-xs uppercase tracking-wider bg-[#f48360] hover:bg-orange-600 text-white shadow-lg inline-flex items-center gap-2 cursor-pointer transition transform hover:-translate-y-0.5"
+                >
+                  <Send className="w-4 h-4" />
+                  <span>Envoyer mes documents</span>
+                </button>
+              </div>
             </div>
           )}
         </section>

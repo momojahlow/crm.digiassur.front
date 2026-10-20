@@ -17,7 +17,8 @@ import {
   ShieldCheck, 
   Building, 
   Upload, 
-  FileText
+  FileText,
+  Send
 } from "lucide-react";
 import { Link } from "wouter";
 import { MOROCCAN_CITIES } from "@/data/motoBrands";
@@ -54,6 +55,12 @@ export default function HabitationDevisPage() {
     if (!formData.cgu) errs.cgu = "Veuillez accepter les CGU";
     setErrors(errs);
     return Object.keys(errs).length === 0;
+  };
+
+  const handleFileUpload = (docKey: string, e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setUploadedFiles(prev => ({ ...prev, [docKey]: e.target.files![0] }));
+    }
   };
 
   const handleNext = (e: React.FormEvent) => {
@@ -309,53 +316,133 @@ export default function HabitationDevisPage() {
           )}
 
           {step === 2 && (
-            <div className="bg-white p-8 md:p-12 rounded-2xl shadow-sm border border-slate-200 text-center animate-in zoom-in-95 duration-200">
-              <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                <CheckCircle2 className="w-10 h-10" />
+            <div className="bg-white p-6 md:p-10 rounded-2xl shadow-sm border border-slate-200 text-center animate-in zoom-in-95 duration-200 space-y-6">
+              <div className="w-20 h-20 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-sm">
+                <CheckCircle2 className="w-12 h-12" />
               </div>
 
-              <h2 className="text-2xl text-[#f48360] md:text-3xl font-bold uppercase mb-4">
-                Félicitations {formData.prenom} !
+              <h2 className="text-2xl md:text-3xl font-black uppercase text-[#153954]">
+                Félicitations, votre devis est prêt !
               </h2>
 
-              <p className="text-base text-slate-600 max-w-xl mx-auto mb-6 leading-relaxed">
-                Votre demande de tarification pour votre <strong>{formData.typeLogement}</strong> ({formData.superficie} m² à {formData.ville}) a bien été enregistrée.
-                Un conseiller Digiassur spécialisé vous transmettra les 3 meilleures propositions comparées à <strong>{formData.email}</strong>.
-              </p>
+              <div className="max-w-2xl mx-auto text-slate-600 text-sm md:text-base leading-relaxed space-y-2">
+                <p>
+                  Votre devis Digiassur Habitation <strong>N° DH-{Math.floor(100000 + Math.random() * 900000)}</strong> a été généré avec succès.
+                </p>
+                <p>
+                  Une copie détaillée a été envoyée à l'adresse <strong>{formData.email || "votre adresse email"}</strong> et nos conseillers vont vous joindre au <strong>{formData.telephone || "votre numéro"}</strong>.
+                </p>
+                <p className="text-xs text-slate-400">
+                  Afin d'accélérer l'émission immédiate de votre attestation d'assurance, vous pouvez nous transmettre vos pièces justificatives dès maintenant.
+                </p>
+              </div>
 
-              <div className="bg-[#fef1eb] p-6 rounded-2xl border border-orange-200 text-left max-w-md mx-auto mb-8 text-xs space-y-2">
-                <div className="flex justify-between">
-                  <span className="text-slate-500">Assuré :</span>
-                  <strong>{formData.prenom} {formData.nom}</strong>
+              {/* Summary Card */}
+              <div className="bg-[#fef1eb] p-6 rounded-2xl border border-orange-200 text-left max-w-xl mx-auto text-xs sm:text-sm space-y-2.5 shadow-xs">
+                <div className="flex items-center justify-between border-b border-orange-200/70 pb-3 mb-2">
+                  <div>
+                    <span className="text-xs uppercase text-orange-800 font-bold tracking-wider">Logement</span>
+                    <div className="text-lg font-extrabold text-[#153954]">
+                      {formData.typeLogement} ({formData.statut})
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-xs uppercase text-orange-800 font-bold tracking-wider">Localisation</span>
+                    <div className="text-base font-bold text-[#f48360]">
+                      {formData.ville}
+                    </div>
+                  </div>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-500">Téléphone :</span>
-                  <strong>{formData.telephone}</strong>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-500">Estimation bâtiment :</span>
-                  <strong>{Number(formData.valeurBatiment).toLocaleString()} DHS</strong>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-500">Contenu assuré :</span>
-                  <strong>{Number(formData.valeurContenu).toLocaleString()} DHS</strong>
+
+                <div className="grid grid-cols-2 gap-3 text-slate-700">
+                  <div>
+                    <span className="text-slate-500 block">Assuré :</span>
+                    <strong>{formData.prenom} {formData.nom}</strong>
+                  </div>
+                  <div>
+                    <span className="text-slate-500 block">Superficie :</span>
+                    <strong>{formData.superficie} m²</strong>
+                  </div>
+                  <div>
+                    <span className="text-slate-500 block">Estimation bâtiment :</span>
+                    <strong className="text-slate-800">{Number(formData.valeurBatiment).toLocaleString()} DHS</strong>
+                  </div>
+                  <div>
+                    <span className="text-slate-500 block">Contenu & Mobilier :</span>
+                    <strong className="text-emerald-700">{Number(formData.valeurContenu).toLocaleString()} DHS</strong>
+                  </div>
                 </div>
               </div>
 
-              <div className="flex justify-center gap-4">
+              {/* Document Requis pour l'Habitation : Juste CIN Recto et Verso */}
+              <div className="pt-4 text-left border-t border-slate-100">
+                <div className="mb-4 text-center sm:text-left">
+                  <h3 className="text-base font-bold text-slate-800 flex items-center justify-center sm:justify-start gap-2">
+                    <Upload className="w-4 h-4 text-[#f48360]" />
+                    <span>Pièce justificative requise</span>
+                  </h3>
+                  <p className="text-xs text-slate-500 mt-0.5">
+                    Téléversez votre carte d'identité (CIN) recto et verso pour valider l'émission immédiate de votre contrat d'assurance habitation.
+                  </p>
+                </div>
+
+                <div className="max-w-xl mx-auto bg-slate-50 p-5 rounded-xl border border-slate-200">
+                  <h4 className="font-bold text-sm text-[#153954] mb-3 flex items-center gap-2">
+                    <User className="w-4 h-4 text-[#f48360]" />
+                    <span>Carte d'Identité Nationale (CIN)</span>
+                  </h4>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-[11px] font-bold text-slate-500 mb-1">CIN RECTO</label>
+                      <label className="border border-dashed border-slate-300 rounded-lg p-2.5 flex items-center justify-between cursor-pointer hover:bg-white text-xs transition">
+                        <span className="truncate max-w-[140px] text-slate-600">
+                          {uploadedFiles["cin_recto"]?.name || "Parcourir le fichier..."}
+                        </span>
+                        <input type="file" className="hidden" onChange={e => handleFileUpload("cin_recto", e)} />
+                        <Upload className="w-4 h-4 text-[#f48360]" />
+                      </label>
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] font-bold text-slate-500 mb-1">CIN VERSO</label>
+                      <label className="border border-dashed border-slate-300 rounded-lg p-2.5 flex items-center justify-between cursor-pointer hover:bg-white text-xs transition">
+                        <span className="truncate max-w-[140px] text-slate-600">
+                          {uploadedFiles["cin_verso"]?.name || "Parcourir le fichier..."}
+                        </span>
+                        <input type="file" className="hidden" onChange={e => handleFileUpload("cin_verso", e)} />
+                        <Upload className="w-4 h-4 text-[#f48360]" />
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Bottom Actions Space Between */}
+              <div className="pt-6 flex flex-wrap items-center justify-between gap-4 border-t border-slate-100">
+                <Link
+                  href="/habitation"
+                  className="px-6 py-3.5 rounded-full font-bold text-xs uppercase tracking-wider bg-slate-100 hover:bg-slate-200 text-slate-700 shadow-xs inline-flex items-center gap-2 transition cursor-pointer"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                  <span>Retour à la page Habitation</span>
+                </Link>
+
                 <button
                   type="button"
-                  onClick={() => setStep(1)}
-                  className="px-6 py-2.5 rounded-full bg-[#4b7f9c] text-white font-bold text-xs uppercase"
+                  onClick={() => {
+                    const count = Object.keys(uploadedFiles).length;
+                    if (count === 0) {
+                      alert("Veuillez sélectionner au moins un document avant d'envoyer.");
+                    } else {
+                      alert(`${count} document(s) transmis avec succès à nos équipes Digiassur.`);
+                    }
+                  }}
+                  className="px-8 py-3.5 rounded-full font-bold text-xs uppercase tracking-wider bg-[#f48360] hover:bg-orange-600 text-white shadow-lg inline-flex items-center gap-2 cursor-pointer transition transform hover:-translate-y-0.5"
                 >
-                  Modifier ma demande
+                  <Send className="w-4 h-4" />
+                  <span>Envoyer mes documents</span>
                 </button>
-                <Link
-                  href="/"
-                  className="px-6 py-2.5 rounded-full bg-[#f48360] text-white font-bold text-xs uppercase"
-                >
-                  Retour à l'accueil
-                </Link>
               </div>
             </div>
           )}

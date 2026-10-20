@@ -12,11 +12,15 @@ import {
   CreditCard, 
   CheckCircle2, 
   ArrowRight, 
+  ArrowLeft,
   RotateCcw, 
   ShieldCheck, 
   TrendingUp, 
   PhoneCall,
-  Check
+  Check,
+  Upload,
+  FileText,
+  Send
 } from "lucide-react";
 import { Link } from "wouter";
 import { MOROCCAN_CITIES } from "@/data/motoBrands";
@@ -25,6 +29,17 @@ import { useLanguage } from "@/contexts/LanguageContext";
 export default function EpargneDevisPage() {
   const { language, isRTL, t } = useLanguage();
   const [step, setStep] = useState<number>(1);
+  const [uploadedFiles, setUploadedFiles] = useState<Record<string, File>>({});
+
+  const handleFileUpload = (docKey: string, e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setUploadedFiles(prev => ({
+        ...prev,
+        [docKey]: e.target.files![0]
+      }));
+    }
+  };
+
   const [monthlyAmount, setMonthlyAmount] = useState<number>(2000);
   const [durationYears, setDurationYears] = useState<number>(10);
   
@@ -446,75 +461,192 @@ export default function EpargneDevisPage() {
           )}
 
           {step === 2 && (
-            <div className="max-w-2xl mx-auto bg-white p-6 md:p-10 rounded-2xl shadow-sm border border-slate-200 text-center animate-in fade-in zoom-in-95 duration-300">
-              <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                <CheckCircle2 className="w-10 h-10" />
+            <div className="bg-white p-6 md:p-10 rounded-2xl shadow-sm border border-slate-200 text-center animate-in zoom-in-95 duration-300 space-y-6">
+              <div className="w-20 h-20 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-sm">
+                <CheckCircle2 className="w-12 h-12" />
               </div>
 
-              <h2 className="text-2xl md:text-3xl font-extrabold text-slate-800 mb-2">
-                {t("common.congratulations", "Félicitations")} {formData.prenom} {formData.nom} !
+              <h2 className="text-2xl md:text-3xl font-black uppercase text-[#153954]">
+                {t("common.congratulations", "Félicitations, votre simulation est prête !")}
               </h2>
-              <p className="text-slate-600 mb-6 text-sm md:text-base">
-                {t("common.partnerGuaranteed", "Votre demande a bien été enregistrée.")}
-              </p>
+
+              <div className="max-w-2xl mx-auto text-slate-600 text-sm md:text-base leading-relaxed space-y-2">
+                <p>
+                  Votre dossier Digiassur Épargne & Retraite <strong>N° DE-{Math.floor(100000 + Math.random() * 900000)}</strong> a été calculé avec succès.
+                </p>
+                <p>
+                  Une étude patrimoniale complète a été envoyée à l'adresse <strong>{formData.email || "votre adresse email"}</strong> et nos conseillers en gestion de patrimoine vont vous joindre au <strong>{formData.telephone || "votre numéro"}</strong>.
+                </p>
+                <p className="text-xs text-slate-400">
+                  Afin d'accélérer l'ouverture de votre compte épargne sécurisé auprès de la compagnie partenaire, vous pouvez nous transmettre vos pièces justificatives dès maintenant.
+                </p>
+              </div>
 
               {/* Résumé de l'estimation */}
-              <div className="bg-slate-50 border border-slate-200 rounded-xl p-5 text-left mb-6 text-xs md:text-sm space-y-2" dir={isRTL ? "rtl" : "ltr"}>
-                <div className="font-bold text-slate-700 border-b pb-2 flex items-center justify-between">
-                  <span>{t("epargne.title", "Synthèse de votre simulation")}</span>
-                  <span className="text-[#f48360] font-bold">{formatDhs(projection.futureValue)}</span>
+              <div className="bg-[#fef1eb] p-6 rounded-2xl border border-orange-200 text-left max-w-xl mx-auto text-xs sm:text-sm space-y-2.5 shadow-xs" dir={isRTL ? "rtl" : "ltr"}>
+                <div className="flex items-center justify-between border-b border-orange-200/70 pb-3 mb-2">
+                  <div>
+                    <span className="text-xs uppercase text-orange-800 font-bold tracking-wider">{t("epargne.title", "Capital projeté à terme")}</span>
+                    <div className="text-base sm:text-lg font-extrabold text-[#153954]">
+                      {formatDhs(projection.futureValue)}
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-xs uppercase text-orange-800 font-bold tracking-wider">{t("epargne.estimatedGains", "Plus-values estimées")}</span>
+                    <div className="text-base sm:text-lg font-extrabold text-emerald-700">
+                      +{formatDhs(projection.interests)}
+                    </div>
+                  </div>
                 </div>
-                <div className="flex justify-between text-slate-600">
-                  <span>{t("common.fullName", "Souscripteur")} :</span>
-                  <span className="font-semibold text-slate-800">{formData.nom} {formData.prenom}</span>
-                </div>
-                <div className="flex justify-between text-slate-600">
-                  <span>{t("common.phone", "Téléphone")} :</span>
-                  <span className="font-semibold text-slate-800" dir="ltr">{formData.telephone}</span>
-                </div>
-                <div className="flex justify-between text-slate-600">
-                  <span>{t("epargne.monthlyCapacity", "Versement mensuel")} :</span>
-                  <span className="font-semibold text-slate-800">{formatDhs(monthlyAmount)}</span>
-                </div>
-                <div className="flex justify-between text-slate-600">
-                  <span>{t("epargne.durationEnvisaged", "Durée")} :</span>
-                  <span className="font-semibold text-slate-800">{durationYears} {t("epargne.yearsCount", "ans")} ({projection.months} {t("epargne.monthsCount", "mois")})</span>
-                </div>
-                <div className="flex justify-between text-slate-600">
-                  <span>{t("epargne.totalContributions", "Total versements")} :</span>
-                  <span className="font-semibold text-slate-800">{formatDhs(projection.totalDeposits)}</span>
-                </div>
-                <div className="flex justify-between text-slate-600">
-                  <span>{t("epargne.estimatedGains", "Plus-values estimées")} :</span>
-                  <span className="font-semibold text-emerald-600 font-bold">+{formatDhs(projection.interests)}</span>
+
+                <div className="grid grid-cols-2 gap-3 text-slate-700">
+                  <div>
+                    <span className="text-slate-500 block">{t("common.fullName", "Souscripteur")} :</span>
+                    <strong>{formData.nom} {formData.prenom}</strong>
+                  </div>
+                  <div>
+                    <span className="text-slate-500 block">{t("epargne.monthlyCapacity", "Versement mensuel")} :</span>
+                    <strong>{formatDhs(monthlyAmount)}</strong>
+                  </div>
+                  <div>
+                    <span className="text-slate-500 block">{t("epargne.durationEnvisaged", "Durée")} :</span>
+                    <strong>{durationYears} {t("epargne.yearsCount", "ans")} ({projection.months} {t("epargne.monthsCount", "mois")})</strong>
+                  </div>
+                  <div>
+                    <span className="text-slate-500 block">{t("epargne.totalContributions", "Total versements")} :</span>
+                    <strong>{formatDhs(projection.totalDeposits)}</strong>
+                  </div>
                 </div>
               </div>
 
-              {/* Action buttons */}
-              <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
-                <a
-                  href={`https://wa.me/212675289966?text=Bonjour%20DigiAssur,%20je%20souhaite%20finaliser%20mon%20devis%20Epargne%20avec%20un%20capital%20projet%C3%A9%20de%20${encodeURIComponent(formatDhs(projection.futureValue))}%20pour%20${encodeURIComponent(formData.nom + ' ' + formData.prenom)}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="w-full sm:w-auto px-6 py-3 bg-[#25D366] hover:bg-[#20ba59] text-white rounded-full font-bold text-sm shadow flex items-center justify-center gap-2 transition"
-                >
-                  <span>{t("common.whatsappSpeedUp", "Accélérer sur WhatsApp")}</span>
-                </a>
+              {/* Documents Requis pour l'Épargne */}
+              <div className="pt-4 text-left border-t border-slate-100">
+                <div className="mb-4 text-center sm:text-left">
+                  <h3 className="text-base font-bold text-slate-800 flex items-center justify-center sm:justify-start gap-2">
+                    <Upload className="w-4 h-4 text-[#f48360]" />
+                    <span>Documents requis pour l'ouverture de votre contrat Épargne</span>
+                  </h3>
+                  <p className="text-xs text-slate-500 mt-0.5">
+                    Joignez vos pièces justificatives dès maintenant pour valider votre dossier dans les plus brefs délais.
+                  </p>
+                </div>
 
-                <button
-                  onClick={() => setStep(1)}
-                  className="w-full sm:w-auto px-6 py-3 border border-slate-300 text-slate-700 hover:bg-slate-50 rounded-full font-semibold text-sm flex items-center justify-center gap-2 transition cursor-pointer"
-                >
-                  <RotateCcw className="w-4 h-4" />
-                  <span>{t("common.modifyInfo", "Ajuster ma simulation")}</span>
-                </button>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
+                  {/* 1. CIN */}
+                  <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <h4 className="font-bold text-sm text-[#153954] mb-3 flex items-center gap-2">
+                      <User className="w-4 h-4 text-[#f48360]" />
+                      <span>Carte d'Identité (CIN)</span>
+                    </h4>
 
+                    <div className="space-y-3">
+                      <div>
+                        <label className="block text-[11px] font-bold text-slate-500 mb-1">CIN RECTO</label>
+                        <label className="border border-dashed border-slate-300 rounded-lg p-2.5 flex items-center justify-between cursor-pointer hover:bg-white text-xs transition">
+                          <span className="truncate max-w-[140px] text-slate-600">
+                            {uploadedFiles["cin_recto"]?.name || "Parcourir le fichier..."}
+                          </span>
+                          <input type="file" className="hidden" onChange={e => handleFileUpload("cin_recto", e)} />
+                          <Upload className="w-4 h-4 text-[#f48360]" />
+                        </label>
+                      </div>
+
+                      <div>
+                        <label className="block text-[11px] font-bold text-slate-500 mb-1">CIN VERSO</label>
+                        <label className="border border-dashed border-slate-300 rounded-lg p-2.5 flex items-center justify-between cursor-pointer hover:bg-white text-xs transition">
+                          <span className="truncate max-w-[140px] text-slate-600">
+                            {uploadedFiles["cin_verso"]?.name || "Parcourir le fichier..."}
+                          </span>
+                          <input type="file" className="hidden" onChange={e => handleFileUpload("cin_verso", e)} />
+                          <Upload className="w-4 h-4 text-[#f48360]" />
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 2. RIB Bancaire */}
+                  <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <h4 className="font-bold text-sm text-[#153954] mb-3 flex items-center gap-2">
+                      <CreditCard className="w-4 h-4 text-[#f48360]" />
+                      <span>Relevé d'Identité Bancaire (RIB)</span>
+                    </h4>
+
+                    <div className="space-y-3">
+                      <div>
+                        <label className="block text-[11px] font-bold text-slate-500 mb-1">ATTESTATION DE RIB (24 CHIFFRES)</label>
+                        <label className="border border-dashed border-slate-300 rounded-lg p-2.5 flex items-center justify-between cursor-pointer hover:bg-white text-xs transition">
+                          <span className="truncate max-w-[140px] text-slate-600">
+                            {uploadedFiles["rib"]?.name || "Parcourir le fichier..."}
+                          </span>
+                          <input type="file" className="hidden" onChange={e => handleFileUpload("rib", e)} />
+                          <Upload className="w-4 h-4 text-[#f48360]" />
+                        </label>
+                      </div>
+
+                      <p className="text-[11px] text-slate-400 leading-relaxed pt-1">
+                        Pour la mise en place des prélèvements programmés de votre épargne mensuelle.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* 3. Justificatif de domicile ou revenus (Optionnel) */}
+                  <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <h4 className="font-bold text-sm text-[#153954] mb-3 flex items-center gap-2">
+                      <FileText className="w-4 h-4 text-[#f48360]" />
+                      <span>Justificatif complémentaire</span>
+                    </h4>
+
+                    <div className="space-y-3">
+                      <div>
+                        <label className="block text-[11px] font-bold text-slate-500 mb-1">QUITTANCE OU BULLETINS (OPTIONNEL)</label>
+                        <label className="border border-dashed border-slate-300 rounded-lg p-2.5 flex items-center justify-between cursor-pointer hover:bg-white text-xs transition">
+                          <span className="truncate max-w-[140px] text-slate-600">
+                            {uploadedFiles["justificatif_revenus"]?.name || "Parcourir le fichier..."}
+                          </span>
+                          <input type="file" className="hidden" onChange={e => handleFileUpload("justificatif_revenus", e)} />
+                          <Upload className="w-4 h-4 text-[#f48360]" />
+                        </label>
+                      </div>
+
+                      <p className="text-[11px] text-slate-400 leading-relaxed pt-1">
+                        Optionnel : justificatif de domicile ou bulletin de salaire pour valider l'abattement fiscal.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Bottom Actions Space Between */}
+              <div className="pt-6 flex flex-wrap items-center justify-between gap-4 border-t border-slate-100">
                 <Link
                   href="/epargne"
-                  className="w-full sm:w-auto px-6 py-3 bg-slate-800 hover:bg-slate-900 text-white rounded-full font-semibold text-sm flex items-center justify-center gap-2 transition"
+                  className="px-6 py-3.5 rounded-full font-bold text-xs uppercase tracking-wider bg-slate-100 hover:bg-slate-200 text-slate-700 shadow-xs inline-flex items-center gap-2 transition cursor-pointer"
                 >
+                  <ArrowLeft className="w-4 h-4" />
                   <span>{t("common.backHome", "Retour à l'accueil Épargne")}</span>
                 </Link>
+
+                <div className="flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setStep(1)}
+                    className="px-5 py-3.5 rounded-full font-bold text-xs uppercase tracking-wider border border-slate-300 text-slate-700 hover:bg-slate-50 transition cursor-pointer inline-flex items-center gap-2"
+                  >
+                    <RotateCcw className="w-4 h-4" />
+                    <span>{t("common.modifyInfo", "Ajuster ma simulation")}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      alert("Vos documents pour votre contrat épargne ont bien été transmis avec succès. Nos équipes vous contacteront.");
+                    }}
+                    className="px-8 py-3.5 rounded-full font-bold text-xs uppercase tracking-wider bg-[#153954] hover:bg-[#153954]/90 text-white shadow-md inline-flex items-center gap-2 transition cursor-pointer"
+                  >
+                    <Send className="w-4 h-4" />
+                    <span>Envoyer mes documents</span>
+                  </button>
+                </div>
               </div>
             </div>
           )}
