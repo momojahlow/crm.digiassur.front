@@ -25,6 +25,9 @@ import SantePage from "./pages/SantePage";
 import SanteDevisPage from "./pages/SanteDevisPage";
 import LoisirPage from "./pages/LoisirPage";
 import LoisirDevisPage from "./pages/LoisirDevisPage";
+import EntreprisePage from "./pages/EntreprisePage";
+import MrePage from "./pages/MrePage";
+import AffiliationPage from "./pages/AffiliationPage";
 import ProductPage from "./pages/ProductPage";
 import ConnexionPage from "./pages/ConnexionPage";
 import ContactPage from "./pages/ContactPage";
@@ -83,15 +86,9 @@ function Router() {
       <Route path="/loisir/obtenir-un-devis" component={LoisirDevisPage} />
       <Route path="/loisir/devis-loisir" component={LoisirDevisPage} />
       <Route path="/loisir/devis" component={LoisirDevisPage} />
-      <Route path="/entreprise">
-        {() => <ProductPage productKey="entreprise" />}
-      </Route>
-      <Route path="/affiliation">
-        {() => <ProductPage productKey="entreprise" />}
-      </Route>
-      <Route path="/marocains-etranger">
-        {() => <ProductPage productKey="voyage" />}
-      </Route>
+      <Route path="/entreprise" component={EntreprisePage} />
+      <Route path="/affiliation" component={AffiliationPage} />
+      <Route path="/marocains-etranger" component={MrePage} />
 
       {/* Utilities */}
       <Route path="/connexion" component={ConnexionPage} />
