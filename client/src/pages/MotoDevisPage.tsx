@@ -128,6 +128,7 @@ export default function MotoDevisPage() {
     isComparatorRequested ? "comparateur" : "standard"
   );
   const [selectedCompagnie, setSelectedCompagnie] = useState<string>("AtlantaSanad");
+  const [selectedCompagniePrice, setSelectedCompagniePrice] = useState<number | null>(null);
 
   // Accordéon détail des taxes
   const [showTaxDetails, setShowTaxDetails] = useState<boolean>(false);
@@ -917,8 +918,9 @@ export default function MotoDevisPage() {
                       duree={duree === "1 an*" ? "Annuelle" : duree}
                       formuleActive="Moto Run"
                       selectedCompagnie={selectedCompagnie}
-                      onSelectCompagnie={(compagnie) => {
+                      onSelectCompagnie={(compagnie, calculatedPrice) => {
                         setSelectedCompagnie(compagnie);
+                        setSelectedCompagniePrice(calculatedPrice);
                       }}
                       onProceed={() => setStep(4)}
                     />
@@ -1238,8 +1240,18 @@ export default function MotoDevisPage() {
                         <div className="mt-3 pt-2.5 border-t border-slate-200">
                           <p className="text-[11px] uppercase font-bold text-slate-500">Prime Totale TTC :</p>
                           <p className="text-lg font-black text-[#f48161]">
-                            {pricingBreakdown.totalTtc.toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} <span className="text-xs font-bold text-[#205680]">DHS TTC</span>
+                            {((viewMode === "comparateur" && typeof selectedCompagniePrice === "number")
+                              ? selectedCompagniePrice
+                              : pricingBreakdown.totalTtc
+                            ).toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}{" "}
+                            <span className="text-xs font-bold text-[#205680]">DHS TTC</span>
                           </p>
+                          {viewMode === "comparateur" && typeof selectedCompagniePrice === "number" && selectedCompagniePrice < pricingBreakdown.totalTtc && (
+                            <div className="flex items-center justify-between text-[11px] text-emerald-700 font-bold bg-emerald-50/80 px-2 py-1 rounded border border-emerald-200 mt-1">
+                              <span>Remise partenaire {selectedCompagnie} :</span>
+                              <span>-{Math.round(pricingBreakdown.totalTtc - selectedCompagniePrice)} DH</span>
+                            </div>
+                          )}
                         </div>
                       </div>
                     )}

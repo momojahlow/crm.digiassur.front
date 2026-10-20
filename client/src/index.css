@@ -233,3 +233,30 @@ input[type="checkbox"] {
 .animate-slow-spin {
   animation: slow-spin 5s linear infinite;
 }
+
+/* Barre de défilement horizontale orange soft transparent */
+.orange-soft-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(244, 129, 97, 0.45) rgba(244, 129, 97, 0.08);
+}
+
+.orange-soft-scrollbar::-webkit-scrollbar {
+  height: 6px;
+}
+
+.orange-soft-scrollbar::-webkit-scrollbar-track {
+  background: rgba(244, 129, 97, 0.08);
+  border-radius: 9999px;
+  margin: 0 40px;
+}
+
+.orange-soft-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(244, 129, 97, 0.42);
+  border-radius: 9999px;
+  backdrop-filter: blur(4px);
+  transition: background 0.2s ease;
+}
+
+.orange-soft-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(244, 129, 97, 0.75);
+}

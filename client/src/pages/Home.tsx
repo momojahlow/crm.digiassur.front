@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import DigiassurHeader from "@/components/DigiassurHeader";
 import DigiassurFooter from "@/components/DigiassurFooter";
 import FloatingWidgets from "@/components/FloatingWidgets";
@@ -20,12 +20,14 @@ import { useLanguage } from "@/contexts/LanguageContext";
 export default function Home() {
   const { t, isRTL } = useLanguage();
   const [activeHeroSlide, setActiveHeroSlide] = useState(0);
-  const [activeOffrePage, setActiveOffrePage] = useState(0);
   const [activeSimPage, setActiveSimPage] = useState(0);
   const [activePartnerPage, setActivePartnerPage] = useState(0);
   const [activeTestimonialPage, setActiveTestimonialPage] = useState(0);
+  const offersScrollRef = useRef<HTMLDivElement>(null);
+  const [isOffersHovered, setIsOffersHovered] = useState(false);
+  const [userTookControl, setUserTookControl] = useState(false);
 
-  // Hero Slides
+  // Hero Slides avec les différentes offres qui existent (Auto, Moto, Habitation, Santé, Épargne)
   const heroSlides = [
     {
       titlePrefix: t("home.hero.slide1.titlePrefix", "Assurer votre voiture"),
@@ -40,21 +42,57 @@ export default function Home() {
       tag: t("home.hero.slide1.tag", "Auto")
     },
     {
-      titlePrefix: t("home.hero.slide2.titlePrefix", "Assurance Moto sur mesure au meilleur prix"),
-      fromPrice: "",
-      price: "",
-      subtitle: t("home.hero.slide2.subtitle", "Roulez en toute sérénité dès 89 DHS/Mois avec assistance 24/7"),
+      titlePrefix: t("home.hero.slide2.titlePrefix", "Assurance Moto sur mesure"),
+      fromPrice: t("home.hero.slide2.fromPrice", "à partir de"),
+      price: t("home.hero.slide2.price", "89 DHS TTC/Mois"),
+      subtitle: t("home.hero.slide2.subtitle", "Roulez en toute sérénité avec assistance dépannage 24/7 partout au Maroc"),
       ctaPrimary: t("home.hero.slide2.ctaPrimary", "OBTENIR MON TARIF MOTO"),
-      ctaPrimaryLink: "/moto",
-      ctaSecondary: t("home.hero.slide2.ctaSecondary", "DÉCOUVRIR LES GARANTIES"),
-      ctaSecondaryLink: "/moto",
+      ctaPrimaryLink: "/moto/devis-moto",
+      ctaSecondary: t("home.hero.slide2.ctaSecondary", "COMPARER MON DEVIS MOTO"),
+      ctaSecondaryLink: "/moto/devis-moto?mode=comparateur",
       image: "/images/banner-moto-welcome.png",
       tag: t("home.hero.slide2.tag", "Moto")
     },
     {
+      titlePrefix: t("home.hero.slideAccident.titlePrefix", "Assurance Individuelle Accident"),
+      fromPrice: t("home.hero.slideAccident.fromPrice", "dès"),
+      price: t("home.hero.slideAccident.price", "35 DHS TTC/Mois"),
+      subtitle: t("home.hero.slideAccident.subtitle", "Une protection financière immédiate pour vous et vos proches en cas d'accident de la vie quotidienne"),
+      ctaPrimary: t("home.hero.slideAccident.ctaPrimary", "OBTENIR MON TARIF ACCIDENT"),
+      ctaPrimaryLink: "/accident",
+      ctaSecondary: t("home.hero.slideAccident.ctaSecondary", "EN SAVOIR PLUS"),
+      ctaSecondaryLink: "/accident",
+      image: "/images/banner-accident.jpg",
+      tag: t("home.hero.slideAccident.tag", "Accident")
+    },
+    {
+      titlePrefix: t("home.hero.slideHabitation.titlePrefix", "Assurance Habitation multirisque"),
+      fromPrice: t("home.hero.slideHabitation.fromPrice", "dès"),
+      price: t("home.hero.slideHabitation.price", "45 DHS TTC/Mois"),
+      subtitle: t("home.hero.slideHabitation.subtitle", "Protégez votre domicile, vos biens et votre famille contre les dégâts des eaux, incendie et vol"),
+      ctaPrimary: t("home.hero.slideHabitation.ctaPrimary", "SIMULER MON HABITATION"),
+      ctaPrimaryLink: "/habitation",
+      ctaSecondary: t("home.hero.slideHabitation.ctaSecondary", "EN SAVOIR PLUS"),
+      ctaSecondaryLink: "/habitation",
+      image: "/images/banner-habitation.jpg",
+      tag: t("home.hero.slideHabitation.tag", "Habitation")
+    },
+    {
+      titlePrefix: t("home.hero.slideSante.titlePrefix", "Complémentaire Santé & Prévoyance"),
+      fromPrice: t("home.hero.slideSante.fromPrice", "dès"),
+      price: t("home.hero.slideSante.price", "120 DHS TTC/Mois"),
+      subtitle: t("home.hero.slideSante.subtitle", "Remboursements rapides sous 48h et prise en charge directe dans les cliniques conventionnées"),
+      ctaPrimary: t("home.hero.slideSante.ctaPrimary", "SIMULER MON TARIF SANTÉ"),
+      ctaPrimaryLink: "/sante",
+      ctaSecondary: t("home.hero.slideSante.ctaSecondary", "DÉCOUVRIR LES GARANTIES"),
+      ctaSecondaryLink: "/sante",
+      image: "/images/banner-sante.jpg",
+      tag: t("home.hero.slideSante.tag", "Santé")
+    },
+    {
       titlePrefix: t("home.hero.slide3.titlePrefix", "Construisez votre épargne en toute sécurité"),
-      fromPrice: "",
-      price: "",
+      fromPrice: t("home.hero.slide3.fromPrice", "dès"),
+      price: t("home.hero.slide3.price", "200 DHS / Mois"),
       subtitle: t("home.hero.slide3.subtitle", "Des rendements attractifs et une fiscalité avantageuse au Maroc"),
       ctaPrimary: t("home.hero.slide3.ctaPrimary", "SIMULER MON ÉPARGNE"),
       ctaPrimaryLink: "/epargne",
@@ -62,18 +100,80 @@ export default function Home() {
       ctaSecondaryLink: "/epargne",
       image: "/images/epargne-pic.jpg",
       tag: t("home.hero.slide3.tag", "Épargne")
+    },
+    {
+      titlePrefix: t("home.hero.slideLoisir.titlePrefix", "Assurance Loisir & Passions"),
+      fromPrice: t("home.hero.slideLoisir.fromPrice", "dès"),
+      price: t("home.hero.slideLoisir.price", "60 DHS TTC/Mois"),
+      subtitle: t("home.hero.slideLoisir.subtitle", "Profitez de vos activités de plein air, sports et loisirs avec une protection complète pour vous et vos équipements"),
+      ctaPrimary: t("home.hero.slideLoisir.ctaPrimary", "DÉCOUVRIR L'OFFRE LOISIR"),
+      ctaPrimaryLink: "/loisir",
+      ctaSecondary: t("home.hero.slideLoisir.ctaSecondary", "EN SAVOIR PLUS"),
+      ctaSecondaryLink: "/loisir",
+      image: "/images/banner-loisir.jpg",
+      tag: t("home.hero.slideLoisir.tag", "Loisir")
+    },
+    {
+      titlePrefix: t("home.hero.slideVoyage.titlePrefix", "Assurance Voyage Internationale"),
+      fromPrice: t("home.hero.slideVoyage.fromPrice", "dès"),
+      price: t("home.hero.slideVoyage.price", "150 DHS TTC"),
+      subtitle: t("home.hero.slideVoyage.subtitle", "Partez l'esprit tranquille avec notre assistance rapatriement et couverture médicale dans le monde entier"),
+      ctaPrimary: t("home.hero.slideVoyage.ctaPrimary", "SIMULER MON VOYAGE"),
+      ctaPrimaryLink: "/voyage",
+      ctaSecondary: t("home.hero.slideVoyage.ctaSecondary", "EN SAVOIR PLUS"),
+      ctaSecondaryLink: "/voyage",
+      image: "/images/banner-voyage.jpg",
+      tag: t("home.hero.slideVoyage.tag", "Voyage")
     }
   ];
 
-  const currentHero = heroSlides[activeHeroSlide];
+  const currentHero = heroSlides[activeHeroSlide] || heroSlides[0];
 
-  // 6 Circular Offers
+  // Rotation automatique animée des slides du hero toutes les 5 secondes
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setActiveHeroSlide((prev) => (prev + 1) % heroSlides.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [heroSlides.length]);
+
+  // Défilement automatique horizontal des offres : s'arrête dès que l'utilisateur prend la main ou survole
+  useEffect(() => {
+    if (isOffersHovered || userTookControl) return;
+
+    const interval = setInterval(() => {
+      const container = offersScrollRef.current;
+      if (!container || userTookControl) return;
+
+      const maxScrollLeft = container.scrollWidth - container.clientWidth;
+      if (container.scrollLeft >= maxScrollLeft - 30) {
+        container.scrollTo({ left: 0, behavior: "smooth" });
+      } else {
+        container.scrollBy({ left: 260, behavior: "smooth" });
+      }
+    }, 2800);
+
+    return () => clearInterval(interval);
+  }, [isOffersHovered, userTookControl]);
+
+  // Scroll horizontal manuel des offres (arrête aussi l'auto-scroll car l'utilisateur a pris la main)
+  const scrollOffers = (direction: "left" | "right") => {
+    setUserTookControl(true);
+    if (offersScrollRef.current) {
+      const offset = direction === "left" ? -280 : 280;
+      offersScrollRef.current.scrollBy({ left: offset, behavior: "smooth" });
+    }
+  };
+
+  // 8 Offres avec largeur généreuse et shadow utilisant la couleur thématique
   const offres = [
     {
       title: t("home.offres.auto.title", "Auto"),
       desc: t("home.offres.auto.desc", "L'assurance auto pour particulier est une couverture qui protège les propriétaires de voitures..."),
       icon: "/images/icon-cat-auto.svg",
       bgColor: "bg-[#dbf2f4]",
+      accentColor: "#28a2b5",
+      shadowColor: "rgba(40, 162, 181, 0.28)",
       link: "/auto"
     },
     {
@@ -81,6 +181,8 @@ export default function Home() {
       desc: t("home.offres.moto.desc", "L'assurance moto est une couverture qui protège les motocyclistes contre les risques..."),
       icon: "/images/icon-cat-moto.svg",
       bgColor: "bg-[#fde4dd]",
+      accentColor: "#f48161",
+      shadowColor: "rgba(244, 129, 97, 0.28)",
       link: "/moto"
     },
     {
@@ -88,6 +190,8 @@ export default function Home() {
       desc: t("home.offres.accident.desc", "L'assurance accident est une couverture qui protège les assurés contre les conséquences financières..."),
       icon: "/images/icon-cat-accident.svg",
       bgColor: "bg-[#fde9df]",
+      accentColor: "#ea6e3c",
+      shadowColor: "rgba(234, 110, 60, 0.28)",
       link: "/accident"
     },
     {
@@ -95,6 +199,8 @@ export default function Home() {
       desc: t("home.offres.habitation.desc", "L'assurance habitation est une couverture qui protège les propriétaires et locataires d'une habitation contre les risques..."),
       icon: "/images/icon-habitation.svg",
       bgColor: "bg-[#fef0e7]",
+      accentColor: "#d97706",
+      shadowColor: "rgba(217, 119, 6, 0.28)",
       link: "/habitation"
     },
     {
@@ -102,6 +208,8 @@ export default function Home() {
       desc: t("home.offres.voyage.desc", "L'assurance voyage est une couverture qui protège les voyageurs contre les risques financiers liés à..."),
       icon: "/images/icon-cat-voyage.svg",
       bgColor: "bg-[#e0f5f0]",
+      accentColor: "#10b981",
+      shadowColor: "rgba(16, 185, 129, 0.28)",
       link: "/voyage"
     },
     {
@@ -109,7 +217,27 @@ export default function Home() {
       desc: t("home.offres.sante.desc", "L'assurance santé/prévoyance est une couverture qui protège les assurés contre les coûts financiers liés aux soins..."),
       icon: "/images/icon-sante.svg",
       bgColor: "bg-[#fce4ec]",
+      accentColor: "#e11d48",
+      shadowColor: "rgba(225, 29, 72, 0.28)",
       link: "/sante"
+    },
+    {
+      title: t("home.offres.epargne.title", "Épargne"),
+      desc: t("home.offres.epargne.desc", "Des solutions de placement et d'épargne avec des rendements attractifs et une fiscalité très avantageuse."),
+      icon: "/images/icon-epargne.svg",
+      bgColor: "bg-[#e8edfc]",
+      accentColor: "#3b82f6",
+      shadowColor: "rgba(59, 130, 246, 0.28)",
+      link: "/epargne"
+    },
+    {
+      title: t("home.offres.loisir.title", "Loisir"),
+      desc: t("home.offres.loisir.desc", "Vivez vos passions et vos loisirs en toute sécurité avec une protection complète pour vous et vos équipements."),
+      icon: "/images/icon-loisir.svg",
+      bgColor: "bg-[#f3e8ff]",
+      accentColor: "#9333ea",
+      shadowColor: "rgba(147, 51, 234, 0.28)",
+      link: "/loisir"
     }
   ];
 
@@ -245,23 +373,30 @@ export default function Home() {
             {/* Background Full Image */}
             <div className="absolute inset-0">
               <img
+                key={currentHero.image}
                 src={currentHero.image}
                 alt={currentHero.titlePrefix}
-                className="w-full h-full object-cover object-center transition-all duration-700"
+                className="w-full h-full object-cover object-center transition-all duration-700 animate-in fade-in"
               />
-              <div className="absolute inset-0 bg-black/10" />
+              <div className="absolute inset-0 bg-black/15" />
             </div>
 
             {/* Diagonal Blue Slate Overlay Polygon (Figma Mask with RTL support) */}
             <div 
-              className={`absolute inset-y-0 ${isRTL ? "right-0" : "left-0"} w-full md:w-[62%] lg:w-[56%] bg-[#4d7f9a]/95 text-white flex flex-col justify-center px-8 sm:px-12 md:px-16 lg:px-20 z-10`}
+              key={`overlay-${activeHeroSlide}`}
+              className={`absolute inset-y-0 ${isRTL ? "right-0" : "left-0"} w-full md:w-[62%] lg:w-[56%] bg-[#4d7f9a]/95 text-white flex flex-col justify-center px-8 sm:px-12 md:px-16 lg:px-20 z-10 transition-all`}
               style={{
                 clipPath: isRTL 
                   ? "polygon(12% 0, 100% 0, 100% 100%, 0% 100%)" 
                   : "polygon(0 0, 100% 0, 88% 100%, 0 100%)"
               }}
             >
-              <div className="max-w-[520px] animate-in fade-in slide-in-from-left-4 duration-500">
+              <div className="max-w-[520px] animate-in fade-in slide-in-from-left-6 duration-500">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 text-xs font-bold uppercase tracking-wider mb-3 backdrop-blur-xs">
+                  <span className="w-2 h-2 rounded-full bg-[#f48161] animate-pulse"></span>
+                  <span>{currentHero.tag}</span>
+                </div>
+
                 <h1 className="text-3xl sm:text-4xl lg:text-[42px] font-bold leading-tight mb-4 tracking-tight drop-shadow-xs">
                   <span>{currentHero.titlePrefix}</span>
                   {currentHero.price && (
@@ -282,7 +417,7 @@ export default function Home() {
                 <div className="flex flex-wrap gap-4">
                   <Link
                     href={currentHero.ctaPrimaryLink}
-                    className="inline-flex items-center gap-2 bg-[#f48161] hover:bg-[#e46e4e] text-white font-bold text-xs uppercase tracking-wider px-7 py-3.5 shadow-lg transition transform hover:-translate-y-0.5 cursor-pointer"
+                    className="inline-flex items-center gap-2 bg-[#f48161] hover:bg-[#e46e4e] text-white font-bold text-xs uppercase tracking-wider px-7 py-3.5 shadow-lg transition transform hover:-translate-y-0.5 cursor-pointer rounded-lg"
                   >
                     <span>{currentHero.ctaPrimary}</span>
                     <ArrowRight className={`w-4 h-4 ${isRTL ? "rotate-180" : ""}`} />
@@ -290,7 +425,7 @@ export default function Home() {
 
                   <Link
                     href={currentHero.ctaSecondaryLink}
-                    className="inline-flex items-center gap-2 bg-[#689ebd] hover:bg-[#588da9] text-white font-bold text-xs uppercase tracking-wider px-7 py-3.5 shadow-lg transition transform hover:-translate-y-0.5 cursor-pointer"
+                    className="inline-flex items-center gap-2 bg-[#689ebd] hover:bg-[#588da9] text-white font-bold text-xs uppercase tracking-wider px-7 py-3.5 shadow-lg transition transform hover:-translate-y-0.5 cursor-pointer rounded-lg"
                   >
                     <span>{currentHero.ctaSecondary}</span>
                   </Link>
@@ -344,51 +479,91 @@ export default function Home() {
         </section>
 
         {/* ========================================================
-            2. NOS OFFRES D'ASSURANCE (Figma Group 72)
+            2. NOS OFFRES D'ASSURANCE (Défilement horizontal & cartes compactes)
            ======================================================== */}
-        <section className="py-16 md:py-20 bg-white">
-          <div className="max-w-7xl mx-auto px-6 text-center">
-            <h2 className="text-3xl md:text-[34px] font-black text-[#153954] mb-3 tracking-tight">
-              {t("home.offres.title", "Nos offres d’assurance")}
-            </h2>
-            <p className="text-slate-500 max-w-2xl mx-auto text-sm md:text-base mb-14 leading-relaxed">
-              {t("home.offres.subtitle", "Nos offres d'assurance pour les particuliers sont conçues pour offrir une protection complète à un prix abordable.")}
-            </p>
+        <section className="py-10 md:py-12 bg-white">
+          <div className="max-w-[1440px] mx-auto px-4 sm:px-6">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-5">
+              <div className="text-center md:text-left">
+                <h2 className="text-2xl md:text-3xl font-black text-[#153954] mb-2 tracking-tight">
+                  {t("home.offres.title", "Nos offres d’assurance")}
+                </h2>
+                <p className="text-slate-500 max-w-2xl text-xs md:text-sm leading-relaxed">
+                  {t("home.offres.subtitle", "Nos offres d'assurance pour les particuliers sont conçues pour offrir une protection complète à un prix abordable.")}
+                </p>
+              </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6 md:gap-8">
+              {/* Boutons de navigation manuelle du carrousel */}
+              <div className="flex items-center justify-center gap-2 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => scrollOffers("left")}
+                  className="w-9 h-9 rounded-full bg-slate-50 hover:bg-[#153954] text-slate-700 hover:text-white border border-slate-200 flex items-center justify-center transition shadow-xs hover:shadow-md cursor-pointer"
+                  aria-label="Défiler vers la gauche"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => scrollOffers("right")}
+                  className="w-9 h-9 rounded-full bg-slate-50 hover:bg-[#153954] text-slate-700 hover:text-white border border-slate-200 flex items-center justify-center transition shadow-xs hover:shadow-md cursor-pointer"
+                  aria-label="Défiler vers la droite"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+
+            {/* Carrousel d'offres à défilement horizontal fluide avec scrollbar orange soft transparent */}
+            <div
+              ref={offersScrollRef}
+              onMouseEnter={() => setIsOffersHovered(true)}
+              onMouseLeave={() => setIsOffersHovered(false)}
+              onMouseDown={() => setUserTookControl(true)}
+              onTouchStart={() => setUserTookControl(true)}
+              onWheel={() => setUserTookControl(true)}
+              onScroll={() => {
+                // Dès que l'utilisateur scroll manuellement, on coupe l'auto-scroll
+                if (isOffersHovered) {
+                  setUserTookControl(true);
+                }
+              }}
+              className="flex items-stretch gap-5 overflow-x-auto orange-soft-scrollbar scroll-smooth pt-2 pb-5 px-2"
+              style={{ scrollSnapType: "x mandatory" }}
+            >
               {offres.map((item, idx) => (
                 <Link
                   key={idx}
                   href={item.link}
-                  className="flex flex-col items-center text-center group cursor-pointer"
+                  className="w-[230px] sm:w-[250px] shrink-0 bg-white p-4 sm:p-5 rounded-2xl border border-slate-100 flex flex-col items-center text-center group cursor-pointer transition-all duration-300 transform hover:-translate-y-1.5 select-none"
+                  style={{
+                    boxShadow: `0 10px 24px -6px ${item.shadowColor}`,
+                    scrollSnapAlign: "start"
+                  }}
                 >
-                  <div className={`w-24 h-24 md:w-28 md:h-28 rounded-full ${item.bgColor} flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-110 shadow-xs border-2 border-white`}>
-                    <img src={item.icon} alt={item.title} className="w-12 h-12 object-contain" />
+                  <div 
+                    className={`w-14 h-14 rounded-xl ${item.bgColor} flex items-center justify-center mb-3 transition-transform duration-300 group-hover:scale-105 border-2 border-white`}
+                    style={{
+                      boxShadow: `0 4px 12px -2px ${item.shadowColor}`
+                    }}
+                  >
+                    <img src={item.icon} alt={item.title} className="w-7 h-7 object-contain" />
                   </div>
-                  <h3 className="font-bold text-base text-slate-800 mb-2 group-hover:text-[#f48161] transition">
+                  <h3 className="font-bold text-base text-slate-800 mb-1 group-hover:text-[#f48161] transition">
                     {item.title}
                   </h3>
-                  <p className="text-xs text-slate-500 line-clamp-3 leading-relaxed px-1">
+                  <p className="text-[11px] text-slate-500 line-clamp-2 leading-relaxed mb-3 flex-1">
                     {item.desc}
                   </p>
+                  <span 
+                    className="mt-auto text-[11px] font-bold flex items-center gap-1.5 transition-colors"
+                    style={{ color: item.accentColor }}
+                  >
+                    <span>{t("home.offres.discover", "Découvrir l'offre")}</span>
+                    <ArrowRight className="w-3 h-3 transform group-hover:translate-x-1 transition-transform" />
+                  </span>
                 </Link>
               ))}
-            </div>
-
-            {/* Slider Dots */}
-            <div className="flex justify-center gap-2 mt-10">
-              <button 
-                type="button" 
-                onClick={() => setActiveOffrePage(0)}
-                className={`w-2.5 h-2.5 rounded-full cursor-pointer transition ${activeOffrePage === 0 ? "bg-[#f48161]" : "bg-slate-300"}`} 
-                aria-label="Page 1"
-              />
-              <button 
-                type="button" 
-                onClick={() => setActiveOffrePage(1)}
-                className={`w-2.5 h-2.5 rounded-full cursor-pointer transition ${activeOffrePage === 1 ? "bg-[#f48161]" : "bg-slate-300"}`} 
-                aria-label="Page 2"
-              />
             </div>
           </div>
         </section>

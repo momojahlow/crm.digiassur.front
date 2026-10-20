@@ -3,9 +3,10 @@ import { Link, useLocation } from "wouter";
 import { 
   ChevronDown, 
   Menu, 
-  X,
-  Phone,
-  Check
+  X, 
+  Phone, 
+  Check,
+  Home as HomeIcon
 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Language } from "@/i18n/translations";
@@ -68,6 +69,7 @@ export default function DigiassurHeader({ onSimulate }: DigiassurHeaderProps) {
   ];
 
   const products = [
+    { name: t("nav.home", "Accueil"), icon: undefined, isHome: true, href: "/" },
     { name: t("nav.auto", "Auto"), icon: "/images/icon-car.svg", href: "/auto" },
     { name: t("nav.moto", "Moto"), icon: "/images/icon-moto.svg", href: "/moto" },
     { name: t("nav.accident", "Accident"), icon: "/images/icon-accident.svg", href: "/accident" },
@@ -79,9 +81,8 @@ export default function DigiassurHeader({ onSimulate }: DigiassurHeaderProps) {
   ];
 
   const isProductActive = (href: string) => {
-    if (location === "/" && href === "/auto") return true;
-    if (location !== "/" && location.startsWith(href)) return true;
-    return false;
+    if (href === "/") return location === "/";
+    return location.startsWith(href);
   };
 
   return (
@@ -191,25 +192,19 @@ export default function DigiassurHeader({ onSimulate }: DigiassurHeaderProps) {
                     : "text-slate-700 hover:text-[#1d4b75] hover:bg-slate-50"
                 }`}
               >
-                <img 
-                  src={item.icon} 
-                  alt="" 
-                  className={`w-5 h-5 object-contain ${isActive ? "filter sepia contrast-150" : "opacity-75"}`} 
-                />
+                {item.isHome ? (
+                  <HomeIcon className={`w-4 h-4 ${isActive ? "text-[#f48161]" : "text-slate-500"}`} />
+                ) : item.icon ? (
+                  <img 
+                    src={item.icon} 
+                    alt="" 
+                    className={`w-5 h-5 object-contain ${isActive ? "filter sepia contrast-150" : "opacity-75"}`} 
+                  />
+                ) : null}
                 <span>{item.name}</span>
               </Link>
             );
           })}
-
-          {/* Search Trigger */}
-          <button 
-            type="button" 
-            onClick={() => setSearchOpen(!searchOpen)}
-            className="ml-2 p-2 text-slate-500 hover:text-[#1d4b75] hover:bg-slate-100 rounded-full transition cursor-pointer"
-            aria-label={t("common.search", "Recherche")}
-          >
-            <img src="/images/icon-search.svg" alt="Search" className="w-5 h-5" />
-          </button>
         </nav>
 
         {/* Mobile Header Right Actions */}
@@ -249,29 +244,6 @@ export default function DigiassurHeader({ onSimulate }: DigiassurHeaderProps) {
           </button>
         </div>
       </div>
-
-      {/* Search Dropdown */}
-      {searchOpen && (
-        <div className="border-t border-slate-100 bg-slate-50 py-3 px-6 shadow-inner animate-in fade-in duration-200">
-          <div className="max-w-[1440px] mx-auto flex items-center gap-3">
-            <img src="/images/icon-search.svg" alt="" className="w-4 h-4 opacity-50" />
-            <input
-              type="text"
-              placeholder={t("common.searchPlaceholder", "Que recherchez-vous ? (ex: devis auto, moto, épargne...)")}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-white px-4 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-[#568ba9]"
-              autoFocus
-            />
-            <button
-              onClick={() => setSearchOpen(false)}
-              className="text-xs font-medium text-slate-500 hover:text-slate-800 cursor-pointer"
-            >
-              {t("common.close", "Fermer")}
-            </button>
-          </div>
-        </div>
-      )}
 
       {/* Mobile Drawer Navigation */}
       {mobileMenuOpen && (

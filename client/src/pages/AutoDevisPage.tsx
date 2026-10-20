@@ -85,6 +85,7 @@ interface ContratState {
   debut: string;
   formule: string;
   compagnie?: string;
+  compagniePrice?: number;
   garanties: ContratGaranties;
   servicing: number;
   assistance: number;
@@ -293,15 +294,23 @@ export default function AutoDevisPage() {
     return d.toISOString().split("T")[0];
   }, [contrat.debut, contrat.duree]);
 
+  // Prix effectif de base : si mode comparateur et qu'une offre est sélectionnée, utilise le tarif remisé négocié
+  const effectiveBasePrime = useMemo(() => {
+    if (viewMode === "comparateur" && typeof contrat.compagniePrice === "number") {
+      return contrat.compagniePrice;
+    }
+    return activeFormulaPrice;
+  }, [viewMode, contrat.compagniePrice, activeFormulaPrice]);
+
   // Total Premium
   const totalPrime = useMemo(() => {
     return (
-      Number(activeFormulaPrice) +
+      Number(effectiveBasePrime) +
       Number(contrat.assistance || 0) +
       Number(contrat.carte_verte || 0) +
       Number(contrat.servicing || 0)
     ).toFixed(2);
-  }, [activeFormulaPrice, contrat.assistance, contrat.carte_verte, contrat.servicing]);
+  }, [effectiveBasePrime, contrat.assistance, contrat.carte_verte, contrat.servicing]);
 
   // Step Validation
   const validateStep = (targetStep: number): boolean => {
@@ -1612,10 +1621,11 @@ export default function AutoDevisPage() {
                       duree={contrat.duree}
                       formuleActive={contrat.formule}
                       selectedCompagnie={contrat.compagnie || "AtlantaSanad"}
-                      onSelectCompagnie={(compagnie) => {
+                      onSelectCompagnie={(compagnie, calculatedPrice) => {
                         setContrat(c => ({
                           ...c,
-                          compagnie
+                          compagnie,
+                          compagniePrice: calculatedPrice
                         }));
                       }}
                       onProceed={() => setStep(4)}
@@ -2301,7 +2311,20 @@ export default function AutoDevisPage() {
                         </div>
                       </div>
 
-                      <p className="text-slate-700"><strong>Prime auto :</strong> {activeFormulaPrice.toLocaleString()} DH</p>
+                      <p className="text-slate-700">
+                        <strong>Prime auto :</strong> {effectiveBasePrime.toLocaleString()} DH
+                        {viewMode === "comparateur" && typeof contrat.compagniePrice === "number" && contrat.compagniePrice < activeFormulaPrice && (
+                          <span className="ml-1.5 text-[10px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">
+                            Tarif négocié
+                          </span>
+                        )}
+                      </p>
+                      {viewMode === "comparateur" && typeof contrat.compagniePrice === "number" && contrat.compagniePrice < activeFormulaPrice && (
+                        <div className="flex items-center justify-between text-[11px] text-emerald-700 font-bold bg-emerald-50/80 px-2 py-1 rounded border border-emerald-200 mt-1">
+                          <span>Remise négociée {contrat.compagnie} :</span>
+                          <span>-{Math.round(activeFormulaPrice - contrat.compagniePrice)} DH</span>
+                        </div>
+                      )}
                       {contrat.assistance > 0 && (
                         <p className="text-slate-700"><strong>Assistance étendue :</strong> {contrat.assistance} DH</p>
                       )}

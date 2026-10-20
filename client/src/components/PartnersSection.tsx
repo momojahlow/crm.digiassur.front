@@ -11,12 +11,6 @@ export default function PartnersSection() {
       className: "h-12 w-auto max-w-[120px]",
     },
     {
-      name: "Allianz",
-      logo: "/images/allianz.svg",
-      fallback: "https://digiassur.ma/assets/img/allianz-2-1-2.svg",
-      className: "h-9 w-auto max-w-[140px]",
-    },
-    {
       name: "Sanlam",
       logo: "/images/sanlam.png",
       fallback: "https://digiassur.ma/assets/img/groupe-2798@2x.png",

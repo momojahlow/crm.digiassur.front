@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Check, Star, ShieldCheck, Zap, Award, ThumbsUp, ArrowRight, Sparkles, Filter } from "lucide-react";
 
 export interface PartnerOffer {
@@ -49,7 +49,7 @@ export default function DevisPartnerComparator({
           logo: "/images/atlanta.png",
           fallbackLogo: "https://digiassur.ma/assets/img/rectangle-9@2x.png",
           badge: "Partenaire Privilège • Prix Web Négocié",
-          badgeColor: "bg-gradient-to-r from-amber-500 to-orange-500 text-white",
+          badgeColor: "bg-[#E85023] text-white",
           rating: 4.9,
           reviewCount: 980,
           discountPercent: 5,
@@ -68,7 +68,7 @@ export default function DevisPartnerComparator({
           logo: "/images/sanlam.png",
           fallbackLogo: "https://digiassur.ma/assets/img/groupe-2798@2x.png",
           badge: "N°1 Réseau Deux-Roues",
-          badgeColor: "bg-blue-600 text-white",
+          badgeColor: "bg-[#0075C9] text-white",
           rating: 4.8,
           reviewCount: 1240,
           discountPercent: 2,
@@ -87,7 +87,7 @@ export default function DevisPartnerComparator({
           logo: "/images/rma.svg",
           fallbackLogo: "https://digiassur.ma/assets/img/rma-1-1.svg",
           badge: "Indemnisation Accélérée",
-          badgeColor: "bg-emerald-600 text-white",
+          badgeColor: "bg-[#001F5F] text-white",
           rating: 4.7,
           reviewCount: 860,
           features: [
@@ -105,7 +105,7 @@ export default function DevisPartnerComparator({
           logo: "/images/axa.svg",
           fallbackLogo: "https://digiassur.ma/assets/img/axa-768-1-2.svg",
           badge: "Solidité Internationale",
-          badgeColor: "bg-[#153954] text-white",
+          badgeColor: "bg-[#00008F] text-white border-l-4 border-[#CF4044]",
           rating: 4.7,
           reviewCount: 1450,
           features: [
@@ -128,7 +128,7 @@ export default function DevisPartnerComparator({
         logo: "/images/atlanta.png",
         fallbackLogo: "https://digiassur.ma/assets/img/rectangle-9@2x.png",
         badge: "Coup de Cœur Digiassur • Meilleur Prix Web",
-        badgeColor: "bg-gradient-to-r from-[#f48161] to-[#e46e4e] text-white",
+        badgeColor: "bg-[#E85023] text-white",
         rating: 4.9,
         reviewCount: 2340,
         discountPercent: 8,
@@ -149,7 +149,7 @@ export default function DevisPartnerComparator({
         logo: "/images/sanlam.png",
         fallbackLogo: "https://digiassur.ma/assets/img/groupe-2798@2x.png",
         badge: "Réseau d'Agences N°1 au Maroc",
-        badgeColor: "bg-blue-600 text-white",
+        badgeColor: "bg-[#0075C9] text-white",
         rating: 4.8,
         reviewCount: 3890,
         discountPercent: 5,
@@ -170,7 +170,7 @@ export default function DevisPartnerComparator({
         logo: "/images/rma.svg",
         fallbackLogo: "https://digiassur.ma/assets/img/rma-1-1.svg",
         badge: "Service Client 5 Étoiles",
-        badgeColor: "bg-emerald-600 text-white",
+        badgeColor: "bg-[#001F5F] text-white",
         rating: 4.8,
         reviewCount: 1980,
         discountPercent: 4,
@@ -191,7 +191,7 @@ export default function DevisPartnerComparator({
         logo: "/images/axa.svg",
         fallbackLogo: "https://digiassur.ma/assets/img/axa-768-1-2.svg",
         badge: "Marque Mondiale de Référence",
-        badgeColor: "bg-[#153954] text-white",
+        badgeColor: "bg-[#00008F] text-white border-l-4 border-[#CF4044]",
         rating: 4.7,
         reviewCount: 4120,
         discountPercent: 3,
@@ -204,26 +204,6 @@ export default function DevisPartnerComparator({
         deductibleBdg: "250 DH",
         replacementVehicle: "10 jours inclus",
         assistanceHighlight: "Réseau international d'assistance",
-        isRecommended: false
-      },
-      {
-        id: "allianz",
-        name: "Allianz Maroc",
-        logo: "/images/allianz.svg",
-        fallbackLogo: "https://digiassur.ma/assets/img/allianz-2-1-2.svg",
-        badge: "Excellence Garantie",
-        badgeColor: "bg-indigo-600 text-white",
-        rating: 4.6,
-        reviewCount: 1150,
-        features: [
-          "Dépannage toutes causes (erreur carburant, crevaison)",
-          "Option valeur à neuf étendue",
-          "Assistance voyage Europe comprise",
-          "Plateforme client digitale intuitive"
-        ],
-        deductibleBdg: "350 DH",
-        replacementVehicle: "5 jours inclus",
-        assistanceHighlight: "Assistance globale Allianz Global Assistance",
         isRecommended: false
       }
     ];
@@ -259,6 +239,16 @@ export default function DevisPartnerComparator({
       return a.finalPrice - b.finalPrice;
     });
   }, [offersWithPricing, sortBy]);
+
+  // Synchronisation automatique du prix sélectionné avec le parent dès le chargement ou le changement de formule
+  useEffect(() => {
+    if (selectedCompagnie && offersWithPricing.length > 0) {
+      const currentOffer = offersWithPricing.find(o => o.name === selectedCompagnie) || offersWithPricing[0];
+      if (currentOffer) {
+        onSelectCompagnie(currentOffer.name, currentOffer.finalPrice);
+      }
+    }
+  }, [selectedCompagnie, offersWithPricing]);
 
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
@@ -434,7 +424,7 @@ export default function DevisPartnerComparator({
                         : "bg-[#153954] hover:bg-[#102c42] text-white"
                     }`}
                   >
-                    <span>{isSelected ? "Continuer avec cette offre" : "Choisir cette offre"}</span>
+                    <span>Choisir cette offre</span>
                     <ArrowRight className="w-4 h-4" />
                   </button>
                 </div>
