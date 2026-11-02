@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import DigiassurHeader from "@/components/DigiassurHeader";
 import DigiassurFooter from "@/components/DigiassurFooter";
 import FloatingWidgets from "@/components/FloatingWidgets";
@@ -17,7 +18,7 @@ import {
 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
-export default function Home() {
+export default function Home({ initialArticles }: { initialArticles?: any[] } = {}) {
   const { t, isRTL } = useLanguage();
   const [activeHeroSlide, setActiveHeroSlide] = useState(0);
   const [activeSimPage, setActiveSimPage] = useState(0);
@@ -25,6 +26,7 @@ export default function Home() {
   const [activeTestimonialPage, setActiveTestimonialPage] = useState(0);
   const offersScrollRef = useRef<HTMLDivElement>(null);
   const [isOffersHovered, setIsOffersHovered] = useState(false);
+  const [isSimHovered, setIsSimHovered] = useState(false);
   const [userTookControl, setUserTookControl] = useState(false);
 
   // Hero Slides avec les différentes offres qui existent (Auto, Moto, Habitation, Santé, Épargne)
@@ -156,6 +158,17 @@ export default function Home() {
     return () => clearInterval(interval);
   }, [isOffersHovered, userTookControl]);
 
+  // Défilement automatique de "Nos simulations" toutes les 4.5 secondes (pause au survol)
+  useEffect(() => {
+    if (isSimHovered) return;
+
+    const timer = setInterval(() => {
+      setActiveSimPage((prev) => (prev + 1) % 3);
+    }, 4500);
+
+    return () => clearInterval(timer);
+  }, [isSimHovered]);
+
   // Scroll horizontal manuel des offres (arrête aussi l'auto-scroll car l'utilisateur a pris la main)
   const scrollOffers = (direction: "left" | "right") => {
     setUserTookControl(true);
@@ -241,8 +254,9 @@ export default function Home() {
     }
   ];
 
-  // 3 Simulation Cards
+  // 9 Simulation Cards across 3 pages of 3
   const simulations = [
+    // Page 1
     {
       title: t("home.simulations.auto.title", "Simulateur Auto"),
       subtitle: t("home.simulations.auto.subtitle", "Effectuez gratuitement votre devis Auto"),
@@ -263,6 +277,50 @@ export default function Home() {
       buttonText: t("home.simulations.habitation.buttonText", "Découvrez votre simulation"),
       image: "/images/sim-habitation.png",
       link: "/habitation"
+    },
+    // Page 2
+    {
+      title: t("home.simulations.moto.title", "Simulateur Moto"),
+      subtitle: t("home.simulations.moto.subtitle", "Simulez et comparez les meilleures garanties Moto"),
+      buttonText: t("home.simulations.moto.buttonText", "Demandez votre simulation"),
+      image: "/images/banner-moto-welcome.png",
+      link: "/moto/devis-moto"
+    },
+    {
+      title: t("home.simulations.accident.title", "Simulateur Accident"),
+      subtitle: t("home.simulations.accident.subtitle", "Protégez vos proches contre les aléas du quotidien"),
+      buttonText: t("home.simulations.accident.buttonText", "Découvrez votre simulation"),
+      image: "/images/accident-pic-1.jpg",
+      link: "/accident"
+    },
+    {
+      title: t("home.simulations.voyage.title", "Simulateur Voyage"),
+      subtitle: t("home.simulations.voyage.subtitle", "Souscrivez votre assurance voyage monde en 2 minutes"),
+      buttonText: t("home.simulations.voyage.buttonText", "Découvrez votre simulation"),
+      image: "/images/voyage-pic.jpg",
+      link: "/voyage"
+    },
+    // Page 3
+    {
+      title: t("home.simulations.epargne.title", "Simulateur Épargne"),
+      subtitle: t("home.simulations.epargne.subtitle", "Valorisez votre capital avec un rendement garanti"),
+      buttonText: t("home.simulations.epargne.buttonText", "Simulez votre épargne"),
+      image: "/images/epargne-pic.jpg",
+      link: "/epargne"
+    },
+    {
+      title: t("home.simulations.loisir.title", "Simulateur Loisir"),
+      subtitle: t("home.simulations.loisir.subtitle", "Assurez vos vélos, équipements de sport et passions"),
+      buttonText: t("home.simulations.loisir.buttonText", "Découvrez votre simulation"),
+      image: "/images/loisir-pic-1.png",
+      link: "/loisir"
+    },
+    {
+      title: t("home.simulations.entreprise.title", "Simulateur Entreprise"),
+      subtitle: t("home.simulations.entreprise.subtitle", "Des solutions sur mesure pour les pros et flottes"),
+      buttonText: t("home.simulations.entreprise.buttonText", "Demandez votre simulation"),
+      image: "/images/hero-car-dealership.png",
+      link: "/entreprise"
     }
   ];
 
@@ -276,55 +334,88 @@ export default function Home() {
     { name: "AtlantaSanad", logo: "/images/atlanta.png", height: "h-11" }
   ];
 
-  // Testimonials
+  // 4 Testimonials with distinct photos and matching roles
   const testimonials = [
     {
       name: t("home.testimonials.t1.name", "Rida Kamal"),
-      role: t("home.testimonials.t1.role", "Directeur général"),
+      role: t("home.testimonials.t1.role", "Informaticien"),
       avatar: "/images/avatar-rida.png",
-      quote: t("home.testimonials.t1.quote", "J'ai récemment travaillé avec Digiassur pour obtenir une couverture d'assurance pour mon entreprise. Je suis très impressionné par le niveau de service que j'ai reçu.")
+      quote: t("home.testimonials.t1.quote", "J'ai souscrit mon assurance auto et mon matériel pro chez Digiassur. Le parcours 100% en ligne est ultra rapide et très bien pensé.")
     },
     {
       name: t("home.testimonials.t2.name", "Aya Sultan"),
-      role: t("home.testimonials.t2.role", "Directrice Artistique"),
+      role: t("home.testimonials.t2.role", "Architecte d'intérieur"),
       avatar: "/images/avatar-aya.png",
       quote: t("home.testimonials.t2.quote", "J'ai comparé et souscrit mon assurance auto en 5 minutes. Attestation reçue directement chez moi le lendemain, service impeccable !")
     },
     {
       name: t("home.testimonials.t3.name", "Mehdi Benjelloun"),
       role: t("home.testimonials.t3.role", "Cadre financier"),
-      avatar: "/images/avatar-rida.png",
+      avatar: "/images/avatar-mehdi.jpg",
       quote: t("home.testimonials.t3.quote", "Une expérience 100% digitale fluide et transparente. Les conseillers sont réactifs et les tarifs sont les plus compétitifs du marché.")
+    },
+    {
+      name: t("home.testimonials.t4.name", "Sara Alami"),
+      role: t("home.testimonials.t4.role", "Consultante RH"),
+      avatar: "/images/avatar-sara.png",
+      quote: t("home.testimonials.t4.quote", "Remboursement rapide pour mon assurance santé et suivi très clair. Enfin un courtier moderne qui simplifie réellement nos démarches au quotidien !")
     }
   ];
 
-  // 4 Blog Articles
-  const articles = [
+  // Fallback Blog Articles if not passed as Inertia prop
+  const defaultArticles = [
     {
+      id: 1,
+      slug: "les-bienfaits-de-la-mousse-de-mer",
       category: t("home.articles.categoryHealth", "Santé"),
       title: t("home.articles.art1.title", "Les bienfaits de la mousse de mer."),
       excerpt: t("home.articles.art1.excerpt", "La mousse de mer est une excellente source de vitamines et de minéraux. Elle contient notamment des vitamines A, B, C et E, ainsi que des minéraux tels que le calcium, ..."),
       image: "/images/blog-mousse-mer.png"
     },
     {
+      id: 2,
+      slug: "sensehacking-quest-ce-que-cest-et-comment-ca-marche",
       category: t("home.articles.categoryHealth", "Santé"),
       title: t("home.articles.art2.title", "Sensehacking : Qu'est ce que c'est et comment ça marche?"),
       excerpt: t("home.articles.art2.excerpt", "Le terme \"sensehacking\" désigne une pratique visant à exploiter les sens de l'être humain pour améliorer sa santé mentale et physique..."),
       image: "/images/blog-sensehacking.png"
     },
     {
+      id: 3,
+      slug: "top-7-des-aliments-pour-lutter-contre-la-fatigue",
       category: t("home.articles.categoryHealth", "Santé"),
       title: t("home.articles.art3.title", "Notre santé dépend de notre alimentation"),
       excerpt: t("home.articles.art3.excerpt", "L'alimentation joue un rôle crucial dans notre santé. Une alimentation équilibrée et variée, riche en fruits, légumes, céréales complètes, protéines maigres ..."),
       image: "/images/blog-alimentation.png"
     },
     {
+      id: 4,
+      slug: "vitamine-d-bienfaits-roles-et-symptomes-dune-carence",
       category: t("home.articles.categoryHealth", "Santé"),
       title: t("home.articles.art4.title", "L'importance de la vitamine D"),
       excerpt: t("home.articles.art4.excerpt", "La vitamine D est une vitamine liposoluble produite naturellement par le corps lorsque la peau est exposée aux rayons du soleil. Elle est également présente dans ..."),
       image: "/images/blog-vitamine-d.png"
     }
   ];
+
+  const [articles, setArticles] = useState<any[]>(
+    initialArticles && initialArticles.length > 0 ? initialArticles : defaultArticles
+  );
+
+  useEffect(() => {
+    if (initialArticles && initialArticles.length > 0) {
+      setArticles(initialArticles);
+    } else {
+      fetch("/api/blog-posts")
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data) => {
+          if (Array.isArray(data) && data.length > 0) {
+            setArticles(data.slice(0, 4));
+          }
+        })
+        .catch(() => {});
+    }
+  }, [initialArticles]);
 
   // 7 Key Advantages
   const advantages = [
@@ -571,7 +662,11 @@ export default function Home() {
         {/* ========================================================
             3. NOS SIMULATIONS (Figma Group 71)
            ======================================================== */}
-        <section className="py-16 md:py-20 bg-slate-50 relative overflow-hidden">
+        <section 
+          className="py-16 md:py-20 bg-slate-50 relative overflow-hidden"
+          onMouseEnter={() => setIsSimHovered(true)}
+          onMouseLeave={() => setIsSimHovered(false)}
+        >
           {/* Subtle curved background lines */}
           <div className="absolute right-0 top-0 w-96 h-96 rounded-full border border-orange-200/40 pointer-events-none -mr-48 -mt-24" />
           <div className="absolute right-12 top-12 w-80 h-80 rounded-full border border-orange-200/30 pointer-events-none -mr-40" />
@@ -584,55 +679,79 @@ export default function Home() {
               {t("home.simulations.subtitle", "Vous cherchez à obtenir une assurance qui correspond à vos besoins, mais vous ne savez pas par où commencer ? Les simulations pour l'assurance des particuliers peuvent vous aider à trouver la couverture qui convient le mieux à votre situation personnelle.")}
             </p>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {simulations.map((sim, idx) => (
-                <div
-                  key={idx}
-                  className="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-200/80 hover:shadow-xl transition-all duration-300 flex flex-col text-start group"
-                >
-                  <div className="h-48 overflow-hidden relative">
-                    <img
-                      src={sim.image}
-                      alt={sim.title}
-                      className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
-                    />
-                  </div>
+            {/* 3 Sim Cards sliced by activeSimPage */}
+            {(() => {
+              const simPageSize = 3;
+              const currentSims = simulations.slice(activeSimPage * simPageSize, (activeSimPage + 1) * simPageSize);
+              const totalSimPages = Math.ceil(simulations.length / simPageSize);
 
-                  <div className="p-6 flex-1 flex flex-col justify-between">
-                    <div>
-                      <h3 className="text-xl font-bold text-[#153954] mb-1">
-                        {sim.title}
-                      </h3>
-                      <p className="text-sm text-slate-500 mb-6">
-                        {sim.subtitle}
-                      </p>
-                    </div>
-
-                    <Link
-                      href={sim.link}
-                      className="w-full py-3 px-5 rounded-full bg-[#f48161] hover:bg-[#e46e4e] text-white font-bold text-xs uppercase tracking-wider text-center shadow-md transition transform hover:-translate-y-0.5 inline-block cursor-pointer"
+              return (
+                <>
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={activeSimPage}
+                      initial={{ opacity: 0, y: 16 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -16 }}
+                      transition={{ duration: 0.32, ease: "easeOut" }}
+                      className="grid grid-cols-1 md:grid-cols-3 gap-8"
                     >
-                      {sim.buttonText}
-                    </Link>
-                  </div>
-                </div>
-              ))}
-            </div>
+                      {currentSims.map((sim, idx) => (
+                        <motion.div
+                          key={sim.title}
+                          initial={{ opacity: 0, y: 18 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.3, delay: idx * 0.08, ease: "easeOut" }}
+                          whileHover={{ y: -6, transition: { duration: 0.2 } }}
+                          className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl border border-slate-200/80 transition-shadow duration-300 flex flex-col text-start group"
+                        >
+                          <div className="h-48 overflow-hidden relative">
+                            <img
+                              src={sim.image}
+                              alt={sim.title}
+                              className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                            />
+                          </div>
 
-            {/* Slider Dots */}
-            <div className="flex justify-center gap-2 mt-10">
-              {[0, 1, 2].map((dot) => (
-                <button
-                  key={dot}
-                  type="button"
-                  onClick={() => setActiveSimPage(dot)}
-                  className={`w-2.5 h-2.5 rounded-full transition-all cursor-pointer ${
-                    activeSimPage === dot ? "bg-[#f48161]" : "bg-slate-300"
-                  }`}
-                  aria-label={`Sim page ${dot + 1}`}
-                />
-              ))}
-            </div>
+                          <div className="p-6 flex-1 flex flex-col justify-between">
+                            <div>
+                              <h3 className="text-xl font-bold text-[#153954] mb-1">
+                                {sim.title}
+                              </h3>
+                              <p className="text-sm text-slate-500 mb-6">
+                                {sim.subtitle}
+                              </p>
+                            </div>
+
+                            <Link
+                              href={sim.link}
+                              className="w-full py-3 px-5 rounded-full bg-[#f48161] hover:bg-[#e46e4e] text-white font-bold text-xs uppercase tracking-wider text-center shadow-md transition transform hover:-translate-y-0.5 inline-block cursor-pointer"
+                            >
+                              {sim.buttonText}
+                            </Link>
+                          </div>
+                        </motion.div>
+                      ))}
+                    </motion.div>
+                  </AnimatePresence>
+
+                  {/* Slider Dots */}
+                  <div className="flex justify-center items-center gap-2 mt-10">
+                    {Array.from({ length: totalSimPages }).map((_, dot) => (
+                      <button
+                        key={dot}
+                        type="button"
+                        onClick={() => setActiveSimPage(dot)}
+                        className={`h-2.5 rounded-full transition-all duration-300 cursor-pointer ${
+                          activeSimPage === dot ? "w-8 bg-[#f48161]" : "w-2.5 bg-slate-300 hover:bg-slate-400"
+                        }`}
+                        aria-label={`Page simulation ${dot + 1}`}
+                      />
+                    ))}
+                  </div>
+                </>
+              );
+            })()}
           </div>
         </section>
 
@@ -657,26 +776,10 @@ export default function Home() {
                   <img
                     src={partner.logo}
                     alt={partner.name}
-                    className={`${partner.height} max-w-[140px] object-contain filter grayscale hover:grayscale-0 transition duration-300`}
+                    className={`${partner.height} max-w-[140px] object-contain transition duration-300 hover:scale-105`}
                   />
                 </div>
               ))}
-            </div>
-
-            {/* Slider Dots */}
-            <div className="flex justify-center gap-2 mt-8">
-              <button 
-                type="button" 
-                onClick={() => setActivePartnerPage(0)}
-                className={`w-2.5 h-2.5 rounded-full cursor-pointer transition ${activePartnerPage === 0 ? "bg-[#f48161]" : "bg-slate-300"}`} 
-                aria-label="Partner page 1"
-              />
-              <button 
-                type="button" 
-                onClick={() => setActivePartnerPage(1)}
-                className={`w-2.5 h-2.5 rounded-full cursor-pointer transition ${activePartnerPage === 1 ? "bg-[#f48161]" : "bg-slate-300"}`} 
-                aria-label="Partner page 2"
-              />
             </div>
           </div>
         </section>
@@ -693,11 +796,11 @@ export default function Home() {
             <h2 className="text-3xl md:text-[34px] font-black text-[#153954] mb-3 tracking-tight">
               {t("home.testimonials.title", "Témoignages")}
             </h2>
-            <p className="text-slate-500 max-w-2xl mx-auto text-sm md:text-base mb-14 leading-relaxed">
+            <p className="text-slate-500 max-w-2xl mx-auto text-xs md:text-[13px] mb-12 leading-relaxed">
               {t("home.testimonials.subtitle", "Nous nous efforçons de fournir à nos clients un service exceptionnel et personnalisé. Nous sommes fiers de voir que nos efforts ont porté leurs fruits et que nos clients sont satisfaits de nos services.")}
             </p>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-start">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-start">
               {testimonials.map((tItem, idx) => (
                 <div
                   key={idx}
@@ -711,7 +814,7 @@ export default function Home() {
                     <img
                       src={tItem.avatar}
                       alt={tItem.name}
-                      className="w-12 h-12 rounded-full object-cover border-2 border-orange-200"
+                      className="w-12 h-12 rounded-full object-cover border-2 border-orange-200 shrink-0"
                     />
                     <div>
                       <h4 className="font-bold text-slate-800 text-sm">{tItem.name}</h4>
@@ -719,21 +822,6 @@ export default function Home() {
                     </div>
                   </div>
                 </div>
-              ))}
-            </div>
-
-            {/* Slider Dots */}
-            <div className="flex justify-center gap-2 mt-10">
-              {[0, 1, 2].map((dot) => (
-                <button
-                  key={dot}
-                  type="button"
-                  onClick={() => setActiveTestimonialPage(dot)}
-                  className={`w-2.5 h-2.5 rounded-full transition-all cursor-pointer ${
-                    activeTestimonialPage === dot ? "bg-[#f48161]" : "bg-slate-300"
-                  }`}
-                  aria-label={`Testimonial page ${dot + 1}`}
-                />
               ))}
             </div>
           </div>
@@ -752,50 +840,55 @@ export default function Home() {
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-start">
-              {articles.map((art, idx) => (
-                <div
-                  key={idx}
-                  className="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-200/80 hover:shadow-xl transition-all duration-300 flex flex-col group"
-                >
-                  <div className="h-44 overflow-hidden relative">
-                    <img
-                      src={art.image}
-                      alt={art.title}
-                      className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
-                    />
-                    <span className={`absolute top-3 ${isRTL ? "right-3" : "left-3"} bg-[#f48161] text-white text-[11px] font-bold px-3 py-1 rounded-full uppercase tracking-wider`}>
-                      {art.category}
-                    </span>
-                  </div>
+              {articles.map((art, idx) => {
+                const articleUrl = `/blog-digiassur/${art.slug || 'article-' + (idx + 1)}`;
+                return (
+                  <div
+                    key={art.id || idx}
+                    className="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-200/80 hover:shadow-xl transition-all duration-300 flex flex-col group"
+                  >
+                    <Link href={articleUrl} className="h-44 overflow-hidden relative block cursor-pointer">
+                      <img
+                        src={art.image}
+                        alt={art.title}
+                        className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                      />
+                      <span className={`absolute top-3 ${isRTL ? "right-3" : "left-3"} bg-[#f48161] text-white text-[11px] font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow-sm`}>
+                        {art.category}
+                      </span>
+                    </Link>
 
-                  <div className="p-5 flex-1 flex flex-col justify-between">
-                    <div>
-                      <h3 className="font-bold text-base text-slate-800 mb-2 line-clamp-2 group-hover:text-[#f48161] transition">
-                        {art.title}
-                      </h3>
-                      <p className="text-xs text-slate-500 leading-relaxed line-clamp-3 mb-4">
-                        {art.excerpt}
-                      </p>
-                    </div>
+                    <div className="p-5 flex-1 flex flex-col justify-between">
+                      <div>
+                        <Link href={articleUrl} className="block group/title">
+                          <h3 className="font-bold text-base text-slate-800 mb-2 line-clamp-2 group-hover/title:text-[#f48161] transition cursor-pointer">
+                            {art.title}
+                          </h3>
+                        </Link>
+                        <p className="text-xs text-slate-500 leading-relaxed line-clamp-3 mb-4">
+                          {art.excerpt}
+                        </p>
+                      </div>
 
-                    <div className={`flex ${isRTL ? "justify-start" : "justify-end"} pt-2`}>
-                      <button
-                        type="button"
-                        className="w-9 h-9 rounded-lg bg-[#f48161] hover:bg-[#e46e4e] text-white flex items-center justify-center transition shadow-xs cursor-pointer"
-                        aria-label={t("home.articles.readArticleAria", "Lire l'article")}
-                      >
-                        <ChevronRight className={`w-5 h-5 ${isRTL ? "rotate-180" : ""}`} />
-                      </button>
+                      <div className={`flex ${isRTL ? "justify-start" : "justify-end"} pt-2`}>
+                        <Link
+                          href={articleUrl}
+                          className="w-9 h-9 rounded-lg bg-[#f48161] hover:bg-[#e46e4e] text-white flex items-center justify-center transition shadow-xs cursor-pointer"
+                          aria-label={t("home.articles.readArticleAria", "Lire l'article")}
+                        >
+                          <ChevronRight className={`w-5 h-5 ${isRTL ? "rotate-180" : ""}`} />
+                        </Link>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
-            {/* Read more button */}
+            {/* Read more button -> /blog-digiassur */}
             <div className="mt-12">
               <Link
-                href="/contact"
+                href="/blog-digiassur"
                 className="inline-flex items-center gap-2 bg-[#f48161] hover:bg-[#e46e4e] text-white font-bold text-xs uppercase tracking-wider px-8 py-3.5 rounded-full shadow-lg transition transform hover:-translate-y-0.5 cursor-pointer"
               >
                 <FileText className="w-4 h-4" />

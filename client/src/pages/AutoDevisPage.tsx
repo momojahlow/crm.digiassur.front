@@ -335,11 +335,69 @@ export default function AutoDevisPage() {
     return Object.keys(err).length === 0;
   };
 
-  const handleNext = () => {
-    if (validateStep(step)) {
-      setStep(prev => Math.min(prev + 1, lastStep));
-      window.scrollTo({ top: 300, behavior: "smooth" });
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [devisNumero, setDevisNumero] = useState<string>("");
+
+  const handleNext = async () => {
+    if (!validateStep(step)) return;
+
+    if (step === 4) {
+      setIsSubmitting(true);
+      try {
+        const payload = {
+          prospect: {
+            nom: prospect.nom,
+            prenom: prospect.prenom,
+            telephone: prospect.telephone,
+            email: prospect.email,
+          },
+          vehicule: {
+            marque: vehicule.marque,
+            modele: vehicule.modele,
+            energie: vehicule.energie,
+            p_fiscale: vehicule.p_fiscale,
+            van: vehicule.van,
+            date_mec: vehicule.date_mec,
+            immNum,
+            immCode,
+            immChiffre,
+          },
+          devis: {
+            prime_totale: parseFloat(totalPrime),
+            prime_nette: activeBreakdown?.primeNette ?? 0,
+            formule: contrat.formule,
+            compagnie: contrat.compagnie || "AtlantaSanad",
+            duree: contrat.duree,
+            date_effet: contrat.debut,
+            garanties: contrat.garanties,
+            assistance: contrat.assistance,
+            carte_verte: contrat.carte_verte,
+            servicing: contrat.servicing,
+          },
+        };
+
+        const res = await fetch("/auto/devis-auto", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+          },
+          body: JSON.stringify(payload),
+        });
+
+        const data = await res.json();
+        if (data && data.devis_numero) {
+          setDevisNumero(data.devis_numero);
+        }
+      } catch (e) {
+        console.error("Erreur enregistrement devis auto:", e);
+      } finally {
+        setIsSubmitting(false);
+      }
     }
+
+    setStep(prev => Math.min(prev + 1, lastStep));
+    window.scrollTo({ top: 300, behavior: "smooth" });
   };
 
   const handlePrev = () => {
@@ -1982,7 +2040,7 @@ export default function AutoDevisPage() {
 
                   <div className="max-w-2xl mx-auto text-slate-600 text-sm md:text-base leading-relaxed space-y-2">
                     <p>
-                      Votre devis Digiassur <strong>N° DA-{Math.floor(100000 + Math.random() * 900000)}</strong> a été généré avec succès.
+                      Votre devis Digiassur <strong>N° {devisNumero || `DA-${Math.floor(100000 + Math.random() * 900000)}`}</strong> a été généré avec succès.
                     </p>
                     <p>
                       Une copie détaillée a été envoyée à l'adresse <strong>{prospect.email || "votre adresse email"}</strong> et nos conseillers vont vous joindre au <strong>{prospect.telephone || "votre numéro"}</strong>.
@@ -2163,10 +2221,25 @@ export default function AutoDevisPage() {
                     <button
                       type="button"
                       onClick={handleNext}
-                      className="px-8 py-3.5 rounded-full font-bold text-xs uppercase tracking-wider bg-[#f48161] hover:bg-[#e46e4e] text-white shadow-lg inline-flex items-center gap-2 cursor-pointer transition transform hover:-translate-y-0.5"
+                      disabled={isSubmitting}
+                      className="px-8 py-3.5 rounded-full font-bold text-xs uppercase tracking-wider bg-[#f48161] hover:bg-[#e46e4e] disabled:opacity-60 disabled:cursor-not-allowed text-white shadow-lg inline-flex items-center gap-2 cursor-pointer transition transform hover:-translate-y-0.5"
                     >
-                      <span>{step === 3 ? "Valider mon offre" : "Suivant"}</span>
-                      {step === 3 ? <Check className="w-4 h-4" /> : <ArrowRight className="w-4 h-4" />}
+                      <span>
+                        {isSubmitting
+                          ? "Génération en cours..."
+                          : step === 3
+                          ? "Valider mon offre"
+                          : step === 4
+                          ? "Voir mon devis final"
+                          : "Suivant"}
+                      </span>
+                      {isSubmitting ? (
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      ) : step === 3 ? (
+                        <Check className="w-4 h-4" />
+                      ) : (
+                        <ArrowRight className="w-4 h-4" />
+                      )}
                     </button>
                   </div>
                 </div>

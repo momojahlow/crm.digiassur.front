@@ -69,9 +69,54 @@ export default function SanteDevisPage() {
     }
   };
 
-  const handleNext = (e: React.FormEvent) => {
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [devisNumero, setDevisNumero] = useState<string>("");
+
+  const handleNext = async (e: React.FormEvent) => {
     e.preventDefault();
     if (validate()) {
+      setIsSubmitting(true);
+      try {
+        const payload = {
+          prospect: {
+            nom: formData.nom,
+            prenom: formData.prenom,
+            telephone: formData.telephone,
+            email: formData.email,
+            cin: formData.cin,
+            date_naissance: formData.dateNaissance,
+            ville: formData.ville,
+            adresse: formData.adresse,
+            profession: formData.profession,
+          },
+          details: {
+            typeCouverture: formData.typeCouverture,
+            tauxRemboursement: formData.tauxRemboursement,
+            beneficiaires: formData.beneficiaires,
+            plafondAnnuel: formData.plafondAnnuel,
+            prime_totale: 3600,
+          },
+        };
+
+        const res = await fetch("/sante/obtenir-un-devis", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+          },
+          body: JSON.stringify(payload),
+        });
+
+        const data = await res.json();
+        if (data && data.devis_numero) {
+          setDevisNumero(data.devis_numero);
+        }
+      } catch (err) {
+        console.error("Erreur devis sante:", err);
+      } finally {
+        setIsSubmitting(false);
+      }
+
       setStep(2);
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
@@ -375,10 +420,15 @@ export default function SanteDevisPage() {
                 <div className="flex justify-end pt-4">
                   <button
                     type="submit"
-                    className="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-[#f48360] to-[#ff9478] hover:from-[#e3714e] hover:to-[#f48360] text-white rounded-full font-bold shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2"
+                    disabled={isSubmitting}
+                    className="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-[#f48360] to-[#ff9478] hover:from-[#e3714e] hover:to-[#f48360] disabled:opacity-60 disabled:cursor-not-allowed text-white rounded-full font-bold shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer"
                   >
-                    <span>Recevoir mon devis Santé gratuit</span>
-                    <ArrowRight className="w-4 h-4" />
+                    <span>{isSubmitting ? "Enregistrement en cours..." : "Recevoir mon devis Santé gratuit"}</span>
+                    {isSubmitting ? (
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    ) : (
+                      <ArrowRight className="w-4 h-4" />
+                    )}
                   </button>
                 </div>
               </form>
@@ -397,7 +447,7 @@ export default function SanteDevisPage() {
 
               <div className="max-w-2xl mx-auto text-slate-600 text-sm md:text-base leading-relaxed space-y-2">
                 <p>
-                  Votre devis Digiassur Santé & Complémentaire <strong>N° DS-{Math.floor(100000 + Math.random() * 900000)}</strong> a été généré avec succès.
+                  Votre devis Digiassur Santé & Complémentaire <strong>N° {devisNumero || `DS-${Math.floor(100000 + Math.random() * 900000)}`}</strong> a été généré avec succès.
                 </p>
                 <p>
                   Une copie détaillée a été envoyée à l'adresse <strong>{formData.email || "votre adresse email"}</strong> et nos conseillers experts vont vous joindre au <strong>{formData.telephone || "votre numéro"}</strong>.

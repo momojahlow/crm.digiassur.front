@@ -194,11 +194,67 @@ export default function MotoDevisPage() {
     return Object.keys(err).length === 0;
   };
 
-  const handleNext = () => {
-    if (validateStep(step)) {
-      setStep(prev => Math.min(prev + 1, lastStep));
-      window.scrollTo({ top: 280, behavior: "smooth" });
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [devisNumero, setDevisNumero] = useState<string>("");
+
+  const handleNext = async () => {
+    if (!validateStep(step)) return;
+
+    if (step === 3) {
+      setIsSubmitting(true);
+      try {
+        const payload = {
+          prospect: {
+            nom: prospect.nom,
+            prenom: prospect.prenom,
+            telephone: prospect.telephone,
+            email: prospect.email,
+            ville: prospect.ville,
+          },
+          vehicule: {
+            marque: moto.marque,
+            modele: moto.modele,
+            puissance_fiscale: moto.puissance_fiscale,
+            van: moto.van,
+            date_mec: moto.date_mec,
+            date_premiere_circulation: moto.date_mec,
+            immNum,
+            immCode,
+            immChiffre: immPref,
+            cylindree: moto.puissance_fiscale === 1 ? 50 : moto.puissance_fiscale === 2 ? 80 : moto.puissance_fiscale === 3 ? 125 : 500,
+          },
+          devis: {
+            prime_totale: pricingBreakdown?.totalTtc ?? 0,
+            prime_nette: pricingBreakdown?.rcNette ?? 0,
+            formule: "Formule Responsabilité Civile + Défense Recours",
+            compagnie: selectedCompagnie || "AtlantaSanad",
+            duree: duree.includes("6") ? "semestrielle" : duree.includes("3") ? "trimestrielle" : "annuelle",
+            date_effet: moto.date_debut,
+          },
+        };
+
+        const res = await fetch("/moto/devis-moto", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+          },
+          body: JSON.stringify(payload),
+        });
+
+        const data = await res.json();
+        if (data && data.devis_numero) {
+          setDevisNumero(data.devis_numero);
+        }
+      } catch (e) {
+        console.error("Erreur enregistrement devis moto:", e);
+      } finally {
+        setIsSubmitting(false);
+      }
     }
+
+    setStep(prev => Math.min(prev + 1, lastStep));
+    window.scrollTo({ top: 280, behavior: "smooth" });
   };
 
   const handlePrev = () => {
@@ -943,7 +999,7 @@ export default function MotoDevisPage() {
 
                   <div className="max-w-2xl mx-auto text-slate-600 text-sm md:text-base leading-relaxed space-y-2">
                     <p>
-                      Votre devis Digiassur Moto <strong>N° DM-{Math.floor(100000 + Math.random() * 900000)}</strong> a été généré avec succès.
+                      Votre devis Digiassur Moto <strong>N° {devisNumero || `DM-${Math.floor(100000 + Math.random() * 900000)}`}</strong> a été généré avec succès.
                     </p>
                     <p>
                       Une copie détaillée a été envoyée à l'adresse <strong>{prospect.email || "votre adresse email"}</strong> et nos conseillers vont vous joindre au <strong>{prospect.telephone || "votre numéro"}</strong>.
@@ -1120,10 +1176,21 @@ export default function MotoDevisPage() {
                     <button
                       type="button"
                       onClick={handleNext}
-                      className="px-8 py-3.5 rounded-full font-bold text-xs uppercase tracking-wider bg-[#f48161] hover:bg-[#e46e4e] text-white shadow-lg inline-flex items-center gap-2 cursor-pointer transition transform hover:-translate-y-0.5"
+                      disabled={isSubmitting}
+                      className="px-8 py-3.5 rounded-full font-bold text-xs uppercase tracking-wider bg-[#f48161] hover:bg-[#e46e4e] disabled:opacity-60 disabled:cursor-not-allowed text-white shadow-lg inline-flex items-center gap-2 cursor-pointer transition transform hover:-translate-y-0.5"
                     >
-                      <span>Suivant</span>
-                      <ArrowRight className="w-4 h-4" />
+                      <span>
+                        {isSubmitting
+                          ? "Génération en cours..."
+                          : step === 3
+                          ? "Valider mon devis moto"
+                          : "Suivant"}
+                      </span>
+                      {isSubmitting ? (
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      ) : (
+                        <ArrowRight className="w-4 h-4" />
+                      )}
                     </button>
                   </div>
                 </div>

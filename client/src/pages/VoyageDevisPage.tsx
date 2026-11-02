@@ -102,11 +102,59 @@ export default function VoyageDevisPage() {
     return Object.keys(errs).length === 0;
   };
 
-  const handleNext = () => {
-    if (validateStep(step)) {
-      setStep(s => Math.min(s + 1, lastStep));
-      window.scrollTo({ top: 0, behavior: "smooth" });
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [devisNumero, setDevisNumero] = useState<string>("");
+
+  const handleNext = async () => {
+    if (!validateStep(step)) return;
+
+    if (step === 4) {
+      setIsSubmitting(true);
+      try {
+        const payload = {
+          prospect: {
+            nom: assure.nom,
+            prenom: assure.prenom,
+            telephone: assure.telephone,
+            email: assure.email,
+            cin: assure.cin,
+            date_naissance: assure.dateNaissance,
+            ville: assure.ville,
+            adresse: assure.adresse,
+          },
+          details: {
+            destination: assure.destination,
+            dateDepart: assure.dateDepart,
+            dateRetour: assure.dateRetour,
+            motif: assure.motif,
+            passeport: assure.passeport,
+            famille,
+            prime_totale: 650.00,
+          },
+        };
+
+        const res = await fetch("/voyage/obtenir-un-devis", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+          },
+          body: JSON.stringify(payload),
+        });
+
+        const data = await res.json();
+        if (data && data.devis_numero) {
+          setDevisNumero(data.devis_numero);
+        }
+      } catch (err) {
+        console.error("Erreur devis voyage:", err);
+      } finally {
+        setIsSubmitting(false);
+      }
     }
+
+    setStep(s => Math.min(s + 1, lastStep));
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handlePrev = () => {
@@ -688,10 +736,15 @@ export default function VoyageDevisPage() {
                   <button
                     type="button"
                     onClick={handleNext}
-                    className="px-8 py-3 bg-[#f48360] hover:bg-[#e46e4e] text-white font-bold text-sm uppercase rounded-full shadow-md transition flex items-center gap-2 cursor-pointer"
+                    disabled={isSubmitting}
+                    className="px-8 py-3 bg-[#f48360] hover:bg-[#e46e4e] disabled:opacity-60 disabled:cursor-not-allowed text-white font-bold text-sm uppercase rounded-full shadow-md transition flex items-center gap-2 cursor-pointer"
                   >
-                    <span>Finaliser mon devis</span>
-                    <ArrowRight className="w-4 h-4" />
+                    <span>{isSubmitting ? "Génération en cours..." : "Finaliser mon devis"}</span>
+                    {isSubmitting ? (
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    ) : (
+                      <ArrowRight className="w-4 h-4" />
+                    )}
                   </button>
                 </div>
               </div>
@@ -710,7 +763,7 @@ export default function VoyageDevisPage() {
 
                 <div className="max-w-2xl mx-auto text-slate-600 text-sm md:text-base leading-relaxed space-y-2">
                   <p>
-                    Votre devis Digiassur Voyage <strong>N° DV-{Math.floor(100000 + Math.random() * 900000)}</strong> a été généré avec succès.
+                    Votre devis Digiassur Voyage <strong>N° {devisNumero || `DV-${Math.floor(100000 + Math.random() * 900000)}`}</strong> a été généré avec succès.
                   </p>
                   <p>
                     Une copie détaillée a été envoyée à l'adresse <strong>{assure.email || "votre adresse email"}</strong> et nos conseillers vont vous joindre au <strong>{assure.telephone || "votre numéro"}</strong>.

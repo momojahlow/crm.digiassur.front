@@ -63,9 +63,53 @@ export default function HabitationDevisPage() {
     }
   };
 
-  const handleNext = (e: React.FormEvent) => {
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [devisNumero, setDevisNumero] = useState<string>("");
+
+  const handleNext = async (e: React.FormEvent) => {
     e.preventDefault();
     if (validate()) {
+      setIsSubmitting(true);
+      try {
+        const payload = {
+          prospect: {
+            nom: formData.nom,
+            prenom: formData.prenom,
+            telephone: formData.telephone,
+            email: formData.email,
+            ville: formData.ville,
+            adresse: formData.adresse,
+          },
+          details: {
+            typeLogement: formData.typeLogement,
+            statut: formData.statut,
+            valeurMobilier: formData.valeurMobilier,
+            superficie: formData.superficie,
+            pieces: formData.pieces,
+            anneeConstruction: formData.anneeConstruction,
+            prime_totale: 1200,
+          },
+        };
+
+        const res = await fetch("/habitation/obtenir-un-devis", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+          },
+          body: JSON.stringify(payload),
+        });
+
+        const data = await res.json();
+        if (data && data.devis_numero) {
+          setDevisNumero(data.devis_numero);
+        }
+      } catch (err) {
+        console.error("Erreur devis habitation:", err);
+      } finally {
+        setIsSubmitting(false);
+      }
+
       setStep(2);
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
@@ -305,10 +349,15 @@ export default function HabitationDevisPage() {
                 <div className="flex justify-end pt-4 border-t border-slate-100">
                   <button
                     type="submit"
-                    className="px-8 py-3.5 bg-[#f48360] hover:bg-[#e46e4e] text-white font-bold text-sm uppercase rounded-full shadow-lg transition flex items-center gap-2 cursor-pointer"
+                    disabled={isSubmitting}
+                    className="px-8 py-3.5 bg-[#f48360] hover:bg-[#e46e4e] disabled:opacity-60 disabled:cursor-not-allowed text-white font-bold text-sm uppercase rounded-full shadow-lg transition flex items-center gap-2 cursor-pointer"
                   >
-                    <span>Recevoir mon devis gratuit</span>
-                    <ArrowRight className="w-4 h-4" />
+                    <span>{isSubmitting ? "Enregistrement en cours..." : "Recevoir mon devis gratuit"}</span>
+                    {isSubmitting ? (
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    ) : (
+                      <ArrowRight className="w-4 h-4" />
+                    )}
                   </button>
                 </div>
               </form>
@@ -327,7 +376,7 @@ export default function HabitationDevisPage() {
 
               <div className="max-w-2xl mx-auto text-slate-600 text-sm md:text-base leading-relaxed space-y-2">
                 <p>
-                  Votre devis Digiassur Habitation <strong>N° DH-{Math.floor(100000 + Math.random() * 900000)}</strong> a été généré avec succès.
+                  Votre devis Digiassur Habitation <strong>N° {devisNumero || `DH-${Math.floor(100000 + Math.random() * 900000)}`}</strong> a été généré avec succès.
                 </p>
                 <p>
                   Une copie détaillée a été envoyée à l'adresse <strong>{formData.email || "votre adresse email"}</strong> et nos conseillers vont vous joindre au <strong>{formData.telephone || "votre numéro"}</strong>.

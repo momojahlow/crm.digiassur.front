@@ -95,9 +95,52 @@ export default function EpargneDevisPage() {
     return Object.keys(errs).length === 0;
   };
 
-  const handleNext = (e: React.FormEvent) => {
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [devisNumero, setDevisNumero] = useState<string>("");
+
+  const handleNext = async (e: React.FormEvent) => {
     e.preventDefault();
     if (validate()) {
+      setIsSubmitting(true);
+      try {
+        const payload = {
+          prospect: {
+            nom: formData.nom,
+            prenom: formData.prenom,
+            telephone: formData.telephone,
+            email: formData.email,
+            ville: formData.ville,
+          },
+          details: {
+            age: formData.age,
+            duree: formData.duree,
+            versementInitial: formData.versementInitial,
+            versementMensuel: formData.versementMensuel,
+            rendement: formData.rendement,
+            capitalEstime: simulation.finalCapital,
+            prime_totale: formData.versementMensuel * 12,
+          },
+        };
+
+        const res = await fetch("/epargne/obtenir-un-devis", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+          },
+          body: JSON.stringify(payload),
+        });
+
+        const data = await res.json();
+        if (data && data.devis_numero) {
+          setDevisNumero(data.devis_numero);
+        }
+      } catch (err) {
+        console.error("Erreur devis epargne:", err);
+      } finally {
+        setIsSubmitting(false);
+      }
+
       setStep(2);
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
@@ -365,10 +408,15 @@ export default function EpargneDevisPage() {
                   <div className="pt-2">
                     <button
                       type="submit"
-                      className="w-full py-4 bg-[#f48360] hover:bg-[#e46e4e] text-white rounded-xl font-bold uppercase tracking-wider shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer text-sm"
+                      disabled={isSubmitting}
+                      className="w-full py-4 bg-[#f48360] hover:bg-[#e46e4e] disabled:opacity-60 disabled:cursor-not-allowed text-white rounded-xl font-bold uppercase tracking-wider shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer text-sm"
                     >
-                      <span>{t("common.getMyQuote", "Obtenir mon devis épargne")}</span>
-                      <ArrowRight className={`w-4 h-4 ${isRTL ? "rotate-180" : ""}`} />
+                      <span>{isSubmitting ? t("common.loading", "Enregistrement en cours...") : t("common.getMyQuote", "Obtenir mon devis épargne")}</span>
+                      {isSubmitting ? (
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      ) : (
+                        <ArrowRight className={`w-4 h-4 ${isRTL ? "rotate-180" : ""}`} />
+                      )}
                     </button>
                   </div>
                 </form>
@@ -472,7 +520,7 @@ export default function EpargneDevisPage() {
 
               <div className="max-w-2xl mx-auto text-slate-600 text-sm md:text-base leading-relaxed space-y-2">
                 <p>
-                  Votre dossier Digiassur Épargne & Retraite <strong>N° DE-{Math.floor(100000 + Math.random() * 900000)}</strong> a été calculé avec succès.
+                  Votre dossier Digiassur Épargne & Retraite <strong>N° {devisNumero || `DE-${Math.floor(100000 + Math.random() * 900000)}`}</strong> a été calculé avec succès.
                 </p>
                 <p>
                   Une étude patrimoniale complète a été envoyée à l'adresse <strong>{formData.email || "votre adresse email"}</strong> et nos conseillers en gestion de patrimoine vont vous joindre au <strong>{formData.telephone || "votre numéro"}</strong>.

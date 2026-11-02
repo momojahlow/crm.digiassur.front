@@ -146,9 +146,53 @@ export default function AccidentDevisPage() {
     return Object.keys(errs).length === 0;
   };
 
-  const handleNext = () => {
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [devisNumero, setDevisNumero] = useState<string>("");
+
+  const handleNext = async () => {
     if (step === 2) {
       if (validateStep2()) {
+        setIsSubmitting(true);
+        try {
+          const payload = {
+            prospect: {
+              nom: prospect.nom,
+              prenom: prospect.prenom,
+              telephone: prospect.telephone,
+              email: prospect.email,
+              cin: prospect.cin,
+              date_naissance: prospect.dateNaissance,
+              ville: prospect.ville,
+              adresse: prospect.adresse,
+              profession: prospect.profession,
+            },
+            details: {
+              formule,
+              prime_totale: currentTotal,
+              options: selectedOptions,
+              type_personne: prospect.typePersonne,
+            },
+          };
+
+          const res = await fetch("/accident/devis-accident", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Accept": "application/json",
+            },
+            body: JSON.stringify(payload),
+          });
+
+          const data = await res.json();
+          if (data && data.devis_numero) {
+            setDevisNumero(data.devis_numero);
+          }
+        } catch (e) {
+          console.error("Erreur devis accident:", e);
+        } finally {
+          setIsSubmitting(false);
+        }
+
         setStep(3);
         window.scrollTo({ top: 0, behavior: "smooth" });
       }
@@ -1265,10 +1309,15 @@ export default function AccidentDevisPage() {
                 <button
                   type="button"
                   onClick={handleNext}
-                  className="btn text-white gap-2 px-8 py-2.5 rounded-full bg-[#f48360] hover:bg-orange-600 transition flex items-center font-bold text-sm cursor-pointer shadow-md shadow-orange-200"
+                  disabled={isSubmitting}
+                  className="btn text-white gap-2 px-8 py-2.5 rounded-full bg-[#f48360] hover:bg-orange-600 disabled:opacity-60 disabled:cursor-not-allowed transition flex items-center font-bold text-sm cursor-pointer shadow-md shadow-orange-200"
                 >
-                  <span>Suivant</span>
-                  <ArrowRight className="w-4 h-4" />
+                  <span>{isSubmitting ? "Génération en cours..." : "Suivant"}</span>
+                  {isSubmitting ? (
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  ) : (
+                    <ArrowRight className="w-4 h-4" />
+                  )}
                 </button>
               </div>
             </div>
@@ -1289,7 +1338,7 @@ export default function AccidentDevisPage() {
 
               <div className="max-w-2xl mx-auto text-slate-600 text-sm md:text-base leading-relaxed space-y-2">
                 <p>
-                  Votre devis Digiassur Individuelle Accident <strong>N° DA-{Math.floor(100000 + Math.random() * 900000)}</strong> a été généré avec succès.
+                  Votre devis Digiassur Individuelle Accident <strong>N° {devisNumero || `DA-${Math.floor(100000 + Math.random() * 900000)}`}</strong> a été généré avec succès.
                 </p>
                 <p>
                   Une copie détaillée a été envoyée à l'adresse <strong>{prospect.email || "votre adresse email"}</strong> et nos conseillers vont vous joindre au <strong>{prospect.telephone || "votre numéro"}</strong>.
