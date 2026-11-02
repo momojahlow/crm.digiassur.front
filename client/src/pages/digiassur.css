@@ -456,3 +456,44 @@
   .auto-result-card-topline { flex-direction:column; }
   .auto-lowest-badge { align-self:flex-start; }
 }
+
+/* Dark home-inspired treatment for the Auto comparison hero. */
+.auto-comparator-hero {
+  color: #fff;
+  background: linear-gradient(118deg, #174a63 0%, #1b5974 54%, #286d83 100%);
+}
+.auto-comparator-hero::after {
+  border-color: rgba(255, 255, 255, 0.17);
+}
+.auto-comparator-hero-photo {
+  background-image: linear-gradient(90deg, rgba(23, 74, 98, 0.97) 0%, rgba(27, 89, 116, 0.88) 45%, rgba(29, 84, 106, 0.5) 100%), url('https://digiassur.ma/assets/img/rectangle-3-1.png');
+}
+.auto-comparator-hero .product-breadcrumb {
+  color: #c8dfe4;
+}
+.auto-comparator-hero .product-breadcrumb a {
+  color: #fff;
+}
+.auto-comparator-hero-copy .section-kicker {
+  color: #ffad97;
+}
+.auto-comparator-hero-copy h1 {
+  color: #fff;
+}
+.auto-comparator-hero-copy h1 em {
+  color: #ff9b80;
+}
+.auto-comparator-hero-copy > p {
+  color: #e2eef0;
+}
+.auto-comparator-trust {
+  color: #c8dfe4;
+}
+.auto-comparator-trust svg {
+  color: #9dd0b8;
+}
+@media (max-width: 760px) {
+  .auto-comparator-hero-photo {
+    background-image: linear-gradient(180deg, rgba(23, 74, 98, 0.3) 0%, rgba(23, 74, 98, 0.72) 55%, rgba(23, 74, 98, 0.94) 100%), url('https://digiassur.ma/assets/img/rectangle-3-1.png');
+  }
+}
